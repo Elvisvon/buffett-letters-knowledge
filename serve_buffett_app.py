@@ -25,6 +25,7 @@
 
 import argparse
 import http.server
+from urllib.parse import quote
 import json
 import os
 import socketserver
@@ -122,7 +123,7 @@ def main():
               "可在应用「设置」面板手动填写密钥")
 
     srv, port = pick_port(args.port)
-    url = "http://127.0.0.1:%d/%s" % (port, INDEX)
+    url = "http://127.0.0.1:%d/%s" % (port, quote(INDEX, safe=''))  # 中文路径百分号编码，兼容任意默认浏览器
     print("[ok] 服务已启动: %s" % url)
     print("     模型: %s | 按 Ctrl+C 停止" % cfg["model"])
     if not args.no_browser:
