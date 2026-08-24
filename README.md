@@ -2,17 +2,6 @@
 
 一个**完全离线的单文件 Web 应用**：把巴菲特致股东信知识库（合伙人信 1956–1969、伯克希尔股东信 1965–2024、概念/公司/人物词条）内嵌为单个 HTML，支持多维度分类、全文搜索、阅读划线、笔记与 LLM 讨论。
 
-## 两个前端版本
-
-本项目提供**两套并存的前端**，共享同一份数据与全部功能，仅视觉风格不同：
-
-| 文件 | 风格 | 说明 |
-| :--- | :--- | :--- |
-| `巴菲特投资智慧.html` | 经典暖米色 | 原版：暖米色编辑风，顶栏 + 浅色侧栏 |
-| `巴菲特投资智慧-v2.html` | chian.io 风格 | 新版：深色固定侧栏 + 衬线大标题 + 极简编辑设计，参考 [chian.io/projects/buffett-letters](https://chian.io/projects/buffett-letters) |
-
-两个版本可通过页面内的「✨ 新版」/「切换经典版 →」链接互相跳转，笔记、收藏等本地数据共享（同一 localStorage）。
-
 ## 功能
 
 - **主页**（点击左上角「巴菲特投资智慧」随时返回）：统计总览、全文搜索、快速浏览入口（信件/概念/公司/人物）、分类索引五维入口、必读经典书单、最新信件、热门主题、继续阅读（自动记录上次阅读位置）
@@ -31,22 +20,30 @@
 - **背景解释**：选中文章中的词语 →「🔍 背景解释」，AI 结合文章内容与**写作年份的市场背景**（从年度索引自动注入：市场环境、重大事件、核心主题）解释金融概念；支持就解释继续追问；满意的解释可保存到笔记「背景解释」栏，随时回顾，导出时一并包含
 - **编辑风索引纵览**：顶栏「📖 索引」进入独立的杂志风分类索引页（`#/index`），Playfair 衬线标题 + 暖米色排版，含 Hero 统计、5 个标签页（年度信件 / 主题分类 / 行业分类 / 事件时期 / 选股方法）、信件系列与事件类型筛选；信件卡片可直接跳转应用内阅读，与主应用共享全部数据，不替换原有界面
 
-## 安装版（跨 Mac 可安装 App）
+## 安装版（跨 Mac 可安装 App，原生窗口 + Dock 图标）
 
 ```bash
 python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/巴菲特投资智慧-vX.Y.dmg
 ```
 
 - **DMG 安装**：把 `巴菲特投资智慧.app` 拖入 Applications（或任意位置）即可；首次打开如被 Gatekeeper 拦截，右键 → 打开，或 `xattr -dr com.apple.quarantine "/Applications/巴菲特投资智慧.app"`
+- **原生体验**：双击 App → 打开原生窗口（Swift + WKWebView 承载页面），**Dock 图标停留**，后台自动拉起本地服务（127.0.0.1:8666）；关闭窗口即退出并停止服务
+- **外部链接**：原文链接等外部网页自动用系统默认浏览器打开，应用内始终停留在本地页面
 - **自包含**：188 篇文章 / 分类索引 / 巴菲特人格 Skill / 构建脚本全部内嵌于 App 内，不依赖安装路径，完全离线可用
-- **停止**：关闭启动服务的「终端」窗口
 - **LLM 密钥**：应用内设置面板填写，或先 `export DEEPSEEK_API_KEY=sk-xxx` 再启动（密钥不落盘）
+
+## 记忆材料持久化（笔记 / 收藏 / 已读 / AI 对话）
+
+- 笔记、划线高亮、收藏、已读标记、文章 AI 讨论、与巴菲特对话，都会**实时保存到本地文件**：`~/Library/Application Support/巴菲特投资智慧/state.json`
+- 该目录属于**本机用户数据**，任何 Git 仓库都不会包含它——上传 GitHub 不涉及这部分信息；如需改存项目目录，可设 `BUFFETT_DATA_DIR`（此时项目 `.gitignore` 已忽略 `.buffett-data/` 兜底）
+- API Key 等设置**绝不落盘**：只存在于内存（环境变量注入）或浏览器 localStorage
+- 直接双击 html（无服务）时自动降级为浏览器 localStorage，不影响使用
 
 ## 快速开始
 
 **唯一入口：`python3 serve_buffett_app.py`**（本地服务 + 环境变量密钥注入 + 自动打开浏览器）
 
-- 普通使用（推荐）：双击「巴菲特投资智慧.app」（跨机可安装版，见下）
+- 普通使用（推荐）：双击「巴菲特投资智慧.app」（原生窗口版，见上）
 - 开发调试：双击「启动巴菲特知识库.command」或终端运行 `python3 serve_buffett_app.py`
 - 直接双击 html 也可离线阅读（此时在应用「设置」面板手动填写 API Key，仅存本机浏览器）
 
@@ -63,24 +60,23 @@ python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/�
 知识库或分类索引有更新后：
 
 ```bash
-python3 build_buffett_app.py        # 经典版 → 巴菲特投资智慧.html
-python3 build_buffett_v2.py         # chian.io 风格版 → 巴菲特投资智慧-v2.html
+python3 build_buffett_app.py        # → 巴菲特投资智慧.html
+python3 package_app.py              # → dist/巴菲特投资智慧.app + DMG
 ```
 
-仅依赖 Python 3 标准库（含纯标准库 xlsx 解析器，无需 openpyxl）。
+仅依赖 Python 3 标准库（含纯标准库 xlsx 解析器，无需 openpyxl）；App 壳需 macOS Command Line Tools（自带 swiftc）。
 
 ## 目录结构
 
 ```
-├── 巴菲特投资智慧.html               # 经典版单文件应用（暖米色风格）
-├── 巴菲特投资智慧-v2.html            # chian.io 风格版单文件应用（深色侧栏）
+├── 巴菲特投资智慧.html               # 单文件应用（数据全部内嵌，2.6MB 压缩后）
 ├── 巴菲特致股东信知识库/             # 原始文章（md + 原站 html）
 ├── 巴菲特致股东信分类索引(1956-2025) .xlsx  # 五维分类索引数据源
-├── build_buffett_app.py             # 经典版构建脚本
-├── build_buffett_v2.py              # chian.io 风格版构建脚本
-├── serve_buffett_app.py             # 本地启动器（环境变量注入密钥）
-├── 启动巴菲特知识库.command           # macOS 一键启动
-├── 巴菲特投资智慧.app                # macOS App 封装（本地服务+浏览器自动打开）
+├── build_buffett_app.py             # 构建脚本
+├── serve_buffett_app.py             # 本地启动器（环境变量注入密钥 + /api/state 记忆持久化）
+├── 启动巴菲特知识库.command           # macOS 一键启动（终端方式）
+├── macapp/main.swift                # 原生窗口壳（Swift + WKWebView，Dock 图标）
+├── package_app.py                   # App/DMG 打包器
 ├── skills/celebrity-buffett/         # 项目级巴菲特人格 Skill（构建时嵌入应用）
 └── llm-config.js                    # 默认 LLM 配置（无密钥）
 ```

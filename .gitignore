@@ -20,3 +20,7 @@ __pycache__/
 # 打包产物（App / DMG）
 dist/
 *.dmg
+
+# 记忆材料（笔记/收藏/已读/AI 对话）：默认存 ~/Library/Application Support/巴菲特投资智慧/
+# （用户级目录，天然不进 Git）；仅当设置 BUFFETT_DATA_DIR 指向项目内时由本规则兜底忽略
+.buffett-data/

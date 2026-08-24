@@ -812,6 +812,33 @@ const store = {
 const NOTES_KEY='bf_notes', FAVS_KEY='bf_favs', SETTINGS_KEY='bf_settings', CHAT_KEY='bf_chat';
 const CAT_NAME = {index:'索引',partnership:'合伙人信',berkshire:'伯克希尔股东信',special:'特别信件',concept:'概念',company:'公司',person:'人物'};
 
+/* ============ 记忆材料本地持久化（经 /api/state 写本地文件） ============
+   笔记 / 收藏 / 已读 / AI 对话 存到 serve 端本地文件（默认用户目录，
+   不进 Git）；settings（可能含 API Key）只留在浏览器 localStorage，绝不落盘。 */
+const API_STATE='/api/state';
+const STATE_KEYS=['notes','favs','read','chat','buffett_chat'];
+const STATE_LS_MAP={notes:NOTES_KEY,favs:FAVS_KEY,read:'bf_read',chat:CHAT_KEY,buffett_chat:'bf_buffett_chat'};
+const _nonEmpty = v => { try{ const s=JSON.stringify(v); return s!==undefined && s!=='null' && s!=='{}' && s!=='[]'; }catch(e){ return false; } };
+const pushRemoteState = (()=>{ let t=null; return ()=>{ clearTimeout(t); t=setTimeout(()=>{
+  const payload={};
+  STATE_KEYS.forEach(k=>payload[k]=store.get(STATE_LS_MAP[k],null));
+  fetch(API_STATE,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+},300); }; })();
+async function loadRemoteState(){
+  try{
+    const r=await fetch(API_STATE,{cache:'no-store'});
+    if(!r.ok) return false;
+    const st=await r.json();
+    const fileHas=STATE_KEYS.some(k=>_nonEmpty(st[k]));
+    if(fileHas){                                  // 本地文件为权威 → 覆盖 localStorage
+      STATE_KEYS.forEach(k=>{ if(_nonEmpty(st[k])) store.set(STATE_LS_MAP[k],st[k]); });
+      return true;
+    }
+    if(STATE_KEYS.some(k=>_nonEmpty(store.get(STATE_LS_MAP[k],null)))) pushRemoteState(); // 首次迁移
+    return true;
+  }catch(e){ return false; }                      // file:// 直开（无服务）→ 继续用 localStorage
+}
+
 /* ================= 数据 ================= */
 const DATA = window.BUFFETT_DATA;
 const ART = DATA.articles;
@@ -846,13 +873,13 @@ ART.forEach(a => (a.links||[]).forEach(([tid])=>{ if(backlinks[tid]) backlinks[t
 /* ================= 本地存储 ================= */
 const notesDb = () => store.get(NOTES_KEY,{});
 const notesOf  = id => notesDb()[id] || {hls:[],notes:[],articleNote:null,bg:[]};
-const saveNotes = (id,obj) => { const db=notesDb(); db[id]=obj; store.set(NOTES_KEY,db); };
+const saveNotes = (id,obj) => { const db=notesDb(); db[id]=obj; store.set(NOTES_KEY,db); pushRemoteState(); };
 const favs = () => store.get(FAVS_KEY,[]);
 const isFav = id => favs().includes(id);
 const toggleFav = id => {
   let f=favs();
   f = f.includes(id) ? f.filter(x=>x!==id) : f.concat(id);
-  store.set(FAVS_KEY,f); return f.includes(id);
+  store.set(FAVS_KEY,f); pushRemoteState(); return f.includes(id);
 };
 const READ_KEY='bf_read';
 const reads = () => store.get(READ_KEY,[]);
@@ -860,11 +887,11 @@ const isRead = id => reads().includes(id);
 const toggleRead = id => {
   let r=reads();
   r = r.includes(id) ? r.filter(x=>x!==id) : r.concat(id);
-  store.set(READ_KEY,r); return r.includes(id);
+  store.set(READ_KEY,r); pushRemoteState(); return r.includes(id);
 };
 const hasNotes = id => { const n=notesOf(id); return !!((n.hls&&n.hls.length)||(n.notes&&n.notes.length)||(n.articleNote&&n.articleNote.text)||(n.bg&&n.bg.length)); };
 const chatOf = id => store.get(CHAT_KEY,{})[id] || [];
-const saveChat = (id,msgs) => { const db=store.get(CHAT_KEY,{}); db[id]=msgs; store.set(CHAT_KEY,db); };
+const saveChat = (id,msgs) => { const db=store.get(CHAT_KEY,{}); db[id]=msgs; store.set(CHAT_KEY,db); pushRemoteState(); };
 const settings = () => {
   const s = store.get(SETTINGS_KEY,{});
   const c = window.BUFFETT_LLM_CONFIG || {};
@@ -2137,7 +2164,7 @@ $('#aiInputBox').addEventListener('keydown',e=>{
 const chatViewEl = $('#chatView');
 const BUFFETT_CHAT_KEY = 'bf_buffett_chat';
 const buffettChat = () => store.get(BUFFETT_CHAT_KEY, []);
-const saveBuffettChat = msgs => store.set(BUFFETT_CHAT_KEY, msgs);
+const saveBuffettChat = msgs => { store.set(BUFFETT_CHAT_KEY, msgs); pushRemoteState(); };
 function showChatView(){
   readerEl.hidden = true; libEl.hidden = true; homeEl.hidden = true; idxEl.hidden = true;
   layoutEl.hidden = false; chatViewEl.hidden = false;
@@ -2241,7 +2268,7 @@ async function sendBuffett(){
 $('#chatSend').onclick=sendBuffett;
 $('#chatInputBox').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendBuffett(); } });
 $('#chatBack').onclick=()=>{ location.hash='#/'; };
-$('#chatClear').onclick=()=>{ store.set(BUFFETT_CHAT_KEY,[]); renderChatView(); toast('对话已清空'); };
+$('#chatClear').onclick=()=>{ saveBuffettChat([]); renderChatView(); toast('对话已清空'); };
 
 /* ================= 背景解释 ================= */
 const bgState = { term:'', ctx:'', msgs:[], busy:false, saved:false };
@@ -2868,7 +2895,7 @@ function toast(msg){
 }
 renderSidebar();
 $('#sortSel').value = state.sort;   // 默认排序与状态保持一致
-onHash();
+loadRemoteState().then(onHash);     // 先恢复本地文件中的记忆材料，再渲染当前视图
 
 /* 测试钩子 */
 window.BUF={state,openArticle,doSearch,visibleList,mdToHtml,toPlain,plainOf,applyHighlights,

@@ -38,6 +38,34 @@ INDEX = "巴菲特投资智慧.html"
 DEFAULT_BASE = "https://api.deepseek.com/v1"
 DEFAULT_MODEL = "deepseek-v4-flash"
 
+# 记忆材料（笔记/收藏/已读/AI 对话）的本地持久化目录：
+#   默认 ~/Library/Application Support/巴菲特投资智慧/（用户级目录，天然不进 Git）
+#   可用环境变量 BUFFETT_DATA_DIR 覆盖（例如指向项目内时请在 .gitignore 忽略）
+DATA_DIR = (os.environ.get("BUFFETT_DATA_DIR") or
+            os.path.join(os.path.expanduser("~"), "Library", "Application Support", "巴菲特投资智慧"))
+STATE_FILE = os.path.join(DATA_DIR, "state.json")
+
+
+def load_state():
+    """读取记忆材料 state.json；不存在或损坏时返回空 dict。"""
+    try:
+        with open(STATE_FILE, encoding="utf-8") as f:
+            obj = json.load(f)
+            return obj if isinstance(obj, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def save_state(obj):
+    """原子写 state.json（先写临时文件再 rename）。"""
+    os.makedirs(DATA_DIR, exist_ok=True)
+    tmp = STATE_FILE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=1)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, STATE_FILE)
+
 
 def load_root_env():
     """向上查找项目根 .env（解析为 dict，找不到返回 {}）。"""
@@ -79,6 +107,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.send_response(204)
             self.end_headers()
             return
+        if path == "/api/state":
+            body = json.dumps(load_state(), ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if path == "/llm-config.js":
             cfg = resolve_llm_config()
             body = ("/* 动态生成：密钥由 serve_buffett_app.py 从环境变量注入，不落盘。 */\n"
@@ -95,14 +132,51 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.path = "/" + INDEX  # 首页直接指向应用
         return super().do_GET()
 
+    def do_PUT(self):
+        """PUT /api/state：浏览器把记忆材料（笔记/收藏/已读/AI 对话）写回本地文件。
+
+        整体替换语义（前端总是提交完整 5 键状态）；只接受白名单字段，
+        绝不接收 settings（其中可能含 API Key），密钥依旧只存在于内存 /
+        浏览器 localStorage。
+        """
+        path = self.path.split("?", 1)[0]
+        if path != "/api/state":
+            self.send_response(404)
+            self.end_headers()
+            return
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            raw = self.rfile.read(length) if length else b"{}"
+            obj = json.loads(raw.decode("utf-8"))
+            if not isinstance(obj, dict):
+                raise ValueError("state must be an object")
+            allowed = {"notes", "favs", "read", "chat", "buffett_chat"}
+            clean = {k: v for k, v in obj.items() if k in allowed and isinstance(v, (dict, list))}
+            save_state(clean)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(b'{"ok":true}')
+        except (ValueError, OSError) as e:
+            self.send_response(400)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(('{"ok":false,"error":%s}' % json.dumps(str(e))).encode("utf-8"))
+
     def log_message(self, fmt, *args):
         sys.stderr.write("[server] %s\n" % (fmt % args))
+
+
+class ReuseTCPServer(socketserver.ThreadingTCPServer):
+    """允许端口复用：开发/重启频繁时避免 TIME_WAIT 导致绑定失败。"""
+    allow_reuse_address = True
 
 
 def pick_port(preferred):
     for port in range(preferred, preferred + 20):
         try:
-            srv = socketserver.ThreadingTCPServer(("127.0.0.1", port), Handler)
+            srv = ReuseTCPServer(("127.0.0.1", port), Handler)
             return srv, port
         except OSError:
             continue
