@@ -105,8 +105,29 @@ def split_terms(text):
     return [t.strip() for t in re.split(r"[;；,，]+", text or "") if t.strip()]
 
 
-def parse_classification_index():
-    """解析「巴菲特致股东信分类索引(1977-2025).xlsx」→ 5 个维度（缺失时返回 None）。"""
+def md_to_plain(md):
+    """Markdown → 纯文本（供年度摘要合成等使用）。"""
+    s = re.sub(r"!\[([^\]]*)\]\([^)]*\)", r"\1", md)
+    s = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", s)
+    s = re.sub(r"\[\^[^\]]*\]\([^)]*\)", "", s)
+    s = re.sub(r"\[\^[^\]]*\]", "", s)
+    s = re.sub(r"^#{1,6}\s+", "", s, flags=re.M)
+    s = re.sub(r"^\s*>\s?", "", s, flags=re.M)
+    s = re.sub(r"^\s*([-*+]|\d+\.)\s+", "", s, flags=re.M)
+    s = re.sub(r"^---+$", "", s, flags=re.M)
+    s = re.sub(r"[|*_`~]", " ", s)
+    s = re.sub(r"\s+", " ", s)
+    return s.strip()
+
+
+def parse_classification_index(letter_years=None, by_id=None):
+    """解析「巴菲特致股东信分类索引(1977-2025).xlsx」→ 5 个维度（缺失时返回 None）。
+
+    letter_years: {年份: [文章id, ...]} 信件类文章按年份分组；用于给 Excel
+    未覆盖的早年（1956-1976 等）自动合成年度索引条目。
+    """
+    letter_years = letter_years or {}
+    by_id = by_id or {}
     if not os.path.isfile(XLSX_PATH):
         print("[skip] 未找到分类索引 xlsx，跳过", file=sys.stderr)
         return None
@@ -176,8 +197,8 @@ def parse_classification_index():
                         "cases": str(cell(row, 4)).strip(),
                         "shift": str(cell(row, 5)).strip()})
 
-    # ---- 年度总索引 ----
-    years = []
+    # ---- 年度总索引：Excel(1977-2025) + 知识库早年信件补全(1956-1976) ----
+    years, seen_y = [], set()
     for i, row in enumerate(grids.get("年度总索引", [])[1:], 1):
         yv = cell(row, 0)
         if not str(yv).strip():
@@ -193,9 +214,25 @@ def parse_classification_index():
                       "i": split_terms(cell(row, 4)),
                       "bg": str(cell(row, 5)).strip(),
                       "e": str(cell(row, 6)).strip()})
+        seen_y.add(y)
+    # 补全 Excel 未覆盖的年份（如 1956-1976 合伙人信/早期股东信）：
+    # 摘要取当年主信正文开头（去日期行），事件/主题字段留空
+    for y in sorted(k for k in letter_years if k not in seen_y):
+        ids = letter_years[y]
+        main = sorted(ids, key=lambda aid: (1 if re.search(r"年\d+月|年中", aid) else 0, aid))[0]
+        art = by_id.get(main)
+        summary = ""
+        if art:
+            plain = md_to_plain(art["md"])
+            plain = re.sub(r"^\d{4}年\d{1,2}月\d{1,2}日\s*", "", plain)
+            summary = plain[:200]
+        years.append({"k": "Y%d" % y, "y": y, "a": "巴菲特",
+                      "s": summary, "t": [], "i": [], "bg": "", "e": ""})
+    years.sort(key=lambda x: x["y"])
 
-    print("[ok] 已解析分类索引：主题%d / 行业%d / 事件%d / 方法%d / 年度%d"
-          % (len(topics), len(industries), len(events), len(methods), len(years)))
+    print("[ok] 已解析分类索引：主题%d / 行业%d / 事件%d / 方法%d / 年度%d（%d-%d）"
+          % (len(topics), len(industries), len(events), len(methods), len(years),
+             years[0]["y"] if years else 0, years[-1]["y"] if years else 0))
     return {"topic": topics, "industry": industries,
             "event": events, "method": methods, "year": years}
 
@@ -346,7 +383,12 @@ def build():
             cats.append({"key": cat_key, "name": name, "count": n, "order": order})
 
     years = sorted({a["year"] for a in articles if a["year"]})
-    idx = parse_classification_index()
+    # 信件类文章按年份分组（年度索引补全早年用）
+    letter_years = {}
+    for a in articles:
+        if a["year"] and a["catKey"] in ("berkshire", "partnership", "special"):
+            letter_years.setdefault(a["year"], []).append(a["id"])
+    idx = parse_classification_index(letter_years, by_id)
     data = {
         "title": "巴菲特投资智慧",
         "subtitle": "巴菲特致股东信知识库 · 阅读研究",
@@ -413,6 +455,7 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
 .sb-sec{margin-bottom:18px}
 .sb-title{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:1px;margin-bottom:8px;
   display:flex;justify-content:space-between;align-items:center}
+.sb-title-range{font-weight:400;letter-spacing:0}
 .sb-item{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;
   padding:5px 8px;border-radius:7px;font-size:13.5px;color:var(--ink2);text-align:left}
 .sb-item:hover{background:var(--line2);color:var(--ink)}
@@ -678,7 +721,7 @@ const BYID = {};
 ART.forEach(a => BYID[a.id]=a);
 const IDX = DATA.idx || {topic:[],industry:[],event:[],method:[],year:[]};
 const IDX_DIM_NAME = {topic:'主题分类', industry:'行业分类', event:'事件时期', method:'选股方法', year:'年度索引'};
-const IDX_DIM_DESC = {topic:'坎宁安主题分类', industry:'涉及行业', event:'市场事件/时期', method:'投资方法演进', year:'1977–2025 逐年索引'};
+const IDX_DIM_DESC = {topic:'坎宁安主题分类', industry:'涉及行业', event:'市场事件/时期', method:'投资方法演进', year:'逐年索引'};
 const plainCache = {};
 function toPlain(md){
   let s = md
@@ -995,6 +1038,12 @@ function renderIdxSidebar(){
   const el=$('#sbIdx');
   if(!el) return;
   el.innerHTML='';
+  const yItems=IDX.year||[];
+  const yRangeEl=$('#idxRange');
+  if(yRangeEl){
+    const ys=yItems.map(x=>x.y).filter(Boolean);
+    yRangeEl.textContent = ys.length ? '('+Math.min.apply(null,ys)+'-'+Math.max.apply(null,ys)+')' : '';
+  }
   ['topic','industry','event','method','year'].forEach(dim=>{
     const items=IDX[dim]||[];
     const g=document.createElement('div');
@@ -1799,7 +1848,7 @@ __CSS__
 <div id="layout">
   <aside id="sidebar">
     <div class="sb-sec">
-      <div class="sb-title">分类索引 <span style="font-weight:400">(1977-2025)</span></div>
+      <div class="sb-title">分类索引 <span class="sb-title-range" id="idxRange"></span></div>
       <div id="sbIdx"></div>
     </div>
     <div class="sb-sec">
