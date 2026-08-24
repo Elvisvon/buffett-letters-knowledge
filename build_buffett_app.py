@@ -242,6 +242,8 @@ def parse_classification_index(letter_years=None, by_id=None):
             "i": list(dict.fromkeys(x for r in rows for x in r["i"])),
             "bg": "；".join(_uniq([r["bg"] for r in rows])),
             "e": "、".join(_uniq([r["e"] for r in rows])),
+            "link": "；".join(_uniq([r["link"] for r in rows if r["link"]])),
+            "series": _uniq([r["series"] for r in rows]),
         })
         seen_y.add(y)
     # 兜底：Excel 未覆盖的年份（如未来新增信件），从知识库正文合成条目
@@ -255,7 +257,7 @@ def parse_classification_index(letter_years=None, by_id=None):
             plain = re.sub(r"^\d{4}年\d{1,2}月\d{1,2}日\s*", "", plain)
             summary = plain[:200]
         years.append({"k": "Y%d" % y, "y": y, "a": "巴菲特",
-                      "s": summary, "t": [], "i": [], "bg": "", "e": ""})
+                      "s": summary, "t": [], "i": [], "bg": "", "e": "", "link": "", "series": []})
     years.sort(key=lambda x: x["y"])
 
     print("[ok] 已解析分类索引：主题%d / 行业%d / 事件%d / 方法%d / 年度%d（%d-%d）"
@@ -458,8 +460,40 @@ def build():
         "yearRange": [years[0], years[-1]] if years else [],
         "articles": articles,
         "idx": idx,
+        "buffettPersona": load_buffett_persona(),
     }
     return data, tag_count
+
+
+def load_buffett_persona():
+    """加载 distilly 生成的 celebrity-buffett 人格内容（构建时嵌入，供「与巴菲特对话」专栏使用）。
+
+    候选路径：
+      1. 用户级 DSH 技能源：~/.agents/skills/celebrity/buffett/{persona,work}.md
+      2. DSH 安装副本：~/.dsh/skills/celebrity-buffett/SKILL.md（剥离 frontmatter）
+    全部缺失时返回空串（应用内会显示提示）。
+    """
+    candidates = [
+        (os.path.expanduser("~/.agents/skills/celebrity/buffett"), ["persona.md", "work.md"]),
+        (os.path.expanduser("~/.dsh/skills/celebrity-buffett"), ["SKILL.md"]),
+    ]
+    for base, files in candidates:
+        parts, ok = [], True
+        for fn in files:
+            p = os.path.join(base, fn)
+            if not os.path.isfile(p):
+                ok = False
+                break
+            text = open(p, encoding="utf-8").read()
+            if fn == "SKILL.md":
+                m = re.match(r"^---\n.*?\n---\n", text, re.S)  # 剥离 YAML frontmatter
+                if m:
+                    text = text[m.end():]
+            parts.append(text)
+        if ok:
+            return "\n\n".join(parts)
+    print("[warn] 未找到 celebrity-buffett 人格文件，跳过「与巴菲特对话」内容嵌入", file=sys.stderr)
+    return ""
 
 
 # ---------------------------------------------------------------- 应用模板
@@ -606,6 +640,26 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
 .home-last .hl-title{font-weight:700;font-size:15px}
 .home-last .hl-time{font-size:12px;color:var(--ink3);margin-left:auto;white-space:nowrap}
 
+/* ---------- 与巴菲特对话（专栏）---------- */
+.chat-entry{display:flex;align-items:center;gap:16px;margin-top:22px;padding:18px 22px;
+  background:linear-gradient(90deg,#faf4e4,#fdf9f0);border:1px solid #e3d5b8;border-left:5px solid var(--accent2);
+  border-radius:14px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.chat-entry:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(90,70,30,.12)}
+.chat-entry .ce-ic{font-size:32px;line-height:1}
+.chat-entry .ce-body{flex:1;min-width:0}
+.chat-entry .ce-title{font:700 18px var(--serif);color:var(--accent);margin-bottom:3px}
+.chat-entry .ce-desc{font-size:13px;color:var(--ink2);line-height:1.7}
+.chat-entry .ce-arrow{font-size:14px;color:var(--accent2);font-weight:600;white-space:nowrap}
+.chat-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.chat-title{font:700 19px var(--serif);flex:1;min-width:220px}
+.chat-title .chat-sub{display:block;font:400 12px var(--sans);color:var(--ink3);margin-top:3px}
+.chat-intro{background:#faf6ea;border:1px solid #e3d5b8;border-radius:10px;padding:10px 15px;
+  font-size:12.5px;color:#4d4638;line-height:1.8;margin:12px 0}
+.chat-intro.warn{background:#fdecec;border-color:#f5c2c2;color:#9f1239}
+.chat-body{margin-top:12px;display:flex;flex-direction:column;height:calc(100vh - 215px);min-height:430px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+
 /* ---------- 主区 ---------- */
 #main{flex:1;min-width:0;padding:22px 26px 80px}
 #libHead{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;flex-wrap:wrap}
@@ -721,6 +775,19 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
 #articleNote:focus{border-color:var(--accent2)}
 .note-saved{font-size:11px;color:var(--ink3);margin-top:4px}
 .note-empty{color:var(--ink3);font-size:12.5px;line-height:1.8}
+.nt-tag{display:inline-block;font-size:10.5px;font-weight:600;padding:1px 7px;border-radius:10px;margin-bottom:4px;letter-spacing:.3px}
+.nt-tag-ai{background:#e8f0fb;color:#2563eb}
+.nt-tag-bg{background:#f0f6e6;color:#4d7c0f}
+.note-sec h4{display:flex;align-items:center;justify-content:space-between}
+.note-clear-btn{font-size:11px;font-weight:400;color:var(--ink3);border:1px solid var(--line);
+  border-radius:6px;padding:1px 8px;background:var(--panel);cursor:pointer}
+.note-clear-btn:hover{color:#b91c1c;border-color:#f5c2c2;background:#fde8e8}
+.bg-saved-item{display:flex;align-items:center;gap:7px;padding:4px 8px;border-radius:6px;font-size:12.5px;
+  color:var(--ink2);width:100%;text-align:left}
+.bg-saved-item:hover{background:var(--line2)}
+.bg-saved-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.bg-saved-del{flex:0 0 auto;color:var(--ink3);padding:1px 5px;border-radius:5px;font-size:12px}
+.bg-saved-del:hover{color:#b91c1c;background:#fde8e8}
 
 /* AI 讨论 */
 #tab-ai{display:none;flex-direction:column;padding:0}
@@ -733,6 +800,8 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
 .ai-note-btn{margin-top:7px;font-size:11.5px;color:var(--accent2);border:1px dashed #cbb78d;
   border-radius:12px;padding:2px 10px;background:#fbf7ee;white-space:nowrap;align-self:flex-start}
 .ai-note-btn:hover{background:#f3e6c8}
+.ai-note-btn.saved{color:var(--green);border-color:#a7c08a;background:#f0f6e6}
+.ai-note-btn.saved:hover{background:#e3edd3}
 .ai-msg .qref{display:block;font-size:11.5px;color:var(--ink3);margin-bottom:5px;border-left:2px solid var(--line);padding-left:7px}
 .ai-msg p{margin:.4em 0}
 .ai-msg ul,.ai-msg ol{margin-left:1.3em}
@@ -837,6 +906,101 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
   transition:transform .25s,opacity .25s;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:80vw}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
+/* ---------- 编辑风索引页（#idxView） ---------- */
+#idxView{background:#faf8f4;color:#1a1a1a;font:15px/1.7 var(--sans);min-height:calc(100vh - 57px);
+  -webkit-font-smoothing:antialiased}
+#idxView .iv-hero{padding:60px 24px 44px;text-align:center;border-bottom:1px solid #e8e3db;
+  background:linear-gradient(180deg,#fdfbf7 0%,#faf8f4 100%)}
+#idxView .iv-hero-inner{max-width:860px;margin:0 auto}
+#idxView .iv-eyebrow{font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;
+  color:#8b6f47;margin-bottom:18px}
+#idxView .iv-hero h1{font:700 clamp(28px,4.5vw,42px)/1.25 var(--serif);margin-bottom:14px}
+#idxView .iv-hero h1 em{font-style:italic;color:#8b6f47}
+#idxView .iv-hero-sub{font-size:14.5px;color:#4a4a4a;max-width:560px;margin:0 auto 28px;line-height:1.8}
+#idxView .iv-stats{display:flex;justify-content:center;gap:38px;flex-wrap:wrap}
+#idxView .iv-stat{text-align:center}
+#idxView .iv-stat-num{font:700 30px/1 var(--serif)}
+#idxView .iv-stat-label{font-size:11px;color:#8a8580;letter-spacing:1px;text-transform:uppercase;margin-top:6px}
+#idxView .iv-nav{position:sticky;top:57px;z-index:40;background:rgba(250,248,244,.94);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #e8e3db;padding:0 24px}
+#idxView .iv-nav-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:2px;overflow-x:auto}
+#idxView .iv-nav-brand{font:700 14px/1 var(--serif);white-space:nowrap;margin-right:18px;padding:13px 0;color:#8b6f47}
+#idxView .iv-tab{font-size:13px;font-weight:500;padding:13px 15px;border:none;background:none;
+  color:#8a8580;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+#idxView .iv-tab:hover{color:#1a1a1a}
+#idxView .iv-tab.active{color:#1a1a1a;font-weight:600}
+#idxView .iv-tab.active::after{content:'';position:absolute;bottom:0;left:15px;right:15px;height:2px;background:#8b6f47}
+#idxView .iv-pane{display:none}
+#idxView .iv-pane.active{display:block}
+#idxView .iv-section{max-width:860px;margin:0 auto;padding:36px 24px 16px}
+#idxView .iv-sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:4px;flex-wrap:wrap}
+#idxView .iv-sec-title{font:700 21px/1.3 var(--serif)}
+#idxView .iv-sec-meta{font-size:13px;color:#8a8580}
+#idxView .iv-sec-desc{font-size:13.5px;color:#8a8580;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #e8e3db}
+#idxView .iv-filter-bar{max-width:860px;margin:0 auto;padding:14px 24px;display:flex;gap:8px;
+  flex-wrap:wrap;align-items:center;border-bottom:1px solid #e8e3db}
+#idxView .iv-filter-label{font-size:11.5px;color:#8a8580;letter-spacing:.5px;text-transform:uppercase;margin-right:2px}
+#idxView .iv-filter-group{display:flex;gap:5px;flex-wrap:wrap}
+#idxView .iv-filter-btn{font-size:12px;font-weight:500;padding:4px 12px;border:1px solid #e8e3db;
+  border-radius:20px;background:transparent;color:#4a4a4a;cursor:pointer;transition:all .2s;white-space:nowrap}
+#idxView .iv-filter-btn:hover{border-color:#8b6f47;color:#8b6f47}
+#idxView .iv-filter-btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+#idxView .iv-filter-div{width:1px;height:18px;background:#e8e3db;margin:0 5px}
+#idxView .iv-letter{display:grid;grid-template-columns:72px 1fr;gap:20px;padding:24px 0;
+  border-bottom:1px solid #e8e3db;transition:background .15s}
+#idxView .iv-letter:hover{background:#f5f2ec;margin:0 -24px;padding-left:24px;padding-right:24px}
+#idxView .iv-letter-year{font:700 28px/1 var(--serif);text-align:right;padding-top:3px}
+#idxView .iv-letter-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+#idxView .iv-series-badge{font-size:10px;font-weight:600;letter-spacing:.5px;padding:2px 8px;border-radius:3px}
+#idxView .iv-series-badge.partnership{background:rgba(107,91,149,.1);color:#6b5b95}
+#idxView .iv-series-badge.berkshire{background:rgba(44,95,124,.1);color:#2c5f7c}
+#idxView .iv-letter-author{font-size:12.5px;color:#8a8580}
+#idxView .iv-letter-title{font:600 17px/1.4 var(--serif);margin-bottom:6px}
+#idxView .iv-letter-title a{color:#1a1a1a}
+#idxView .iv-letter-title a:hover{color:#8b6f47;text-decoration:none}
+#idxView .iv-letter-summary{font-size:13.5px;color:#4a4a4a;line-height:1.75;margin-bottom:9px}
+#idxView .iv-letter-tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+#idxView .iv-tag{font-size:11px;padding:2px 8px;border-radius:3px;background:#f0ece4;color:#4a4a4a;letter-spacing:.3px}
+#idxView .iv-tag.theme{background:rgba(139,111,71,.1);color:#8b6f47}
+#idxView .iv-tag.ev-crisis{background:rgba(192,57,43,.08);color:#c0392b;font-weight:500}
+#idxView .iv-tag.ev-bubble{background:rgba(211,84,0,.08);color:#d35400;font-weight:500}
+#idxView .iv-tag.ev-inflation{background:rgba(184,134,11,.08);color:#b8860b;font-weight:500}
+#idxView .iv-tag.ev-war{background:rgba(93,78,55,.08);color:#5d4e37;font-weight:500}
+#idxView .iv-tag.ev-pandemic{background:rgba(41,128,185,.08);color:#2980b9;font-weight:500}
+#idxView .iv-tag.ev-normal{background:rgba(39,99,42,.06);color:#27632a;font-weight:500}
+#idxView .iv-letter-link{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:500;
+  color:#8b6f47;text-decoration:none;margin-left:auto;transition:gap .2s}
+#idxView .iv-letter-link:hover{gap:7px}
+#idxView .iv-letter-ctx{font-size:12px;color:#8a8580;margin-top:6px;font-style:italic}
+#idxView .iv-card{padding:24px 0;border-bottom:1px solid #e8e3db}
+#idxView .iv-card:hover{background:#f5f2ec;margin:0 -24px;padding-left:24px;padding-right:24px;transition:background .15s}
+#idxView .iv-card-head{display:flex;align-items:baseline;gap:10px;margin-bottom:9px;flex-wrap:wrap}
+#idxView .iv-card-num{font:600 13px/1 var(--serif);color:#8b6f47;min-width:26px}
+#idxView .iv-card-title{font:600 17px/1.4 var(--serif)}
+#idxView .iv-card-sub{font-size:12.5px;color:#8a8580}
+#idxView .iv-card-body{font-size:13.5px;color:#4a4a4a;line-height:1.75;margin-bottom:9px}
+#idxView .iv-card-label{font-size:11px;font-weight:600;color:#8a8580;letter-spacing:.5px;
+  text-transform:uppercase;margin-top:9px;margin-bottom:4px}
+#idxView .iv-card-text{font-size:13px;color:#4a4a4a;line-height:1.7}
+#idxView .iv-card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+#idxView .iv-year-tag{font-size:11px;padding:2px 8px;border-radius:3px;background:#f0ece4;color:#4a4a4a}
+#idxView .iv-card-row{display:grid;grid-template-columns:100px 1fr;gap:14px;margin-top:7px}
+#idxView .iv-card-row-label{font-size:12px;font-weight:600;color:#8a8580;letter-spacing:.3px;padding-top:2px}
+#idxView .iv-card-row-value{font-size:13px;color:#4a4a4a;line-height:1.7}
+#idxView .iv-event-period{display:inline-block;font-size:12px;font-weight:600;padding:2px 10px;
+  border-radius:3px;margin-bottom:7px}
+#idxView .iv-period-crisis{background:rgba(192,57,43,.08);color:#c0392b}
+#idxView .iv-period-bubble{background:rgba(211,84,0,.08);color:#d35400}
+#idxView .iv-period-inflation{background:rgba(184,134,11,.08);color:#b8860b}
+#idxView .iv-period-war{background:rgba(93,78,55,.08);color:#5d4e37}
+#idxView .iv-period-pandemic{background:rgba(41,128,185,.08);color:#2980b9}
+#idxView .iv-period-normal{background:rgba(39,99,42,.06);color:#27632a}
+#idxView .iv-method-era{font:600 14px/1 var(--serif);color:#8b6f47;margin-bottom:4px}
+#idxView .iv-method-method{font-size:13.5px;font-weight:600;color:#1a1a1a;margin-bottom:7px}
+#idxView .iv-footer{max-width:860px;margin:36px auto 0;padding:24px;text-align:center;
+  font-size:12.5px;color:#8a8580;line-height:1.8;border-top:1px solid #e8e3db}
+#idxView .iv-empty{text-align:center;padding:44px 24px;color:#8a8580}
+
 /* ---------- 响应式 ---------- */
 @media (max-width:1100px){
   #rpanel{width:280px;flex-basis:280px}
@@ -854,6 +1018,12 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
   #tab-ai{min-height:420px}
   #tab-bg{min-height:420px}
   #article{max-width:none}
+  #idxView .iv-letter{grid-template-columns:56px 1fr;gap:12px}
+  #idxView .iv-letter-year{font-size:22px}
+  #idxView .iv-card-row{grid-template-columns:1fr;gap:3px}
+  #idxView .iv-stats{gap:22px}
+  #idxView .iv-stat-num{font-size:24px}
+  #idxView .iv-nav{top:57px}
 }
 @media (min-width:861px){#menuBtn{display:none}}
 """
@@ -1362,6 +1532,7 @@ function renderHome(){
       '</div>'+
       '<div class="hh-search"><input id="homeQ" placeholder="搜索文章、概念、公司、人物…" autocomplete="off"><button id="homeQGo">搜索</button></div>'+
     '</div>'+
+    '<div class="chat-entry" data-chat="1"><span class="ce-ic">🗣</span><div class="ce-body"><div class="ce-title">与巴菲特对话</div><div class="ce-desc">以 celebrity-buffett 人格回答你的投资问题——护城河 / 安全边际 / 能力圈 / 决策启发式，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
     '<section class="home-sec"><h2>📚 快速浏览</h2><div class="home-grid">'+
       tiles.map(t=>'<button class="home-tile" data-go=\''+JSON.stringify({cat:t[3].split(':')[1]})+'\'><div class="ht-ic">'+t[1]+'</div><div class="ht-name">'+t[0]+'</div><div class="ht-desc">'+t[2]+'</div></button>').join('')+
     '</div></section>'+
@@ -1387,6 +1558,8 @@ function renderHome(){
   }
 }
 homeEl.addEventListener('click',e=>{
+  const ce=e.target.closest('[data-chat]');
+  if(ce){ location.hash='#/chat'; return; }
   const art=e.target.closest('[data-art]');
   if(art){ location.hash='#/a/'+art.dataset.art; return; }
   const tg=e.target.closest('[data-tag]');
@@ -1427,7 +1600,8 @@ function rowHtml(a){
 }
 
 function renderLibrary(){
-  readerEl.hidden = true; libEl.hidden = false; homeEl.hidden = true;
+  readerEl.hidden = true; libEl.hidden = false; homeEl.hidden = true; idxEl.hidden = true; chatViewEl.hidden = true;
+  layoutEl.hidden = false;
   const list = visibleList();
   const it = idxActiveItem();
   $('#libTitle').textContent = it
@@ -1498,7 +1672,8 @@ function openArticle(id){
   const a = BYID[id];
   if (!a) return;
   state.cur = id;
-  libEl.hidden = true; readerEl.hidden = false; homeEl.hidden = true;
+  libEl.hidden = true; readerEl.hidden = false; homeEl.hidden = true; idxEl.hidden = true; chatViewEl.hidden = true;
+  layoutEl.hidden = false;
   store.set('bf_last', {id, ts: Date.now()});
   $('#rTitle').textContent = a.title;
   $('#rMeta').innerHTML =
@@ -1742,8 +1917,10 @@ function renderNotesPanel(){
   ntEl.innerHTML='';
   (n.notes||[]).slice().reverse().forEach(nt=>{
     const d=document.createElement('div');
-    d.className='nt-item';
-    d.innerHTML='<div style="flex:1">'+
+    d.className='nt-item'+(nt.source?' nt-src-'+nt.source:'');
+    const srcLabel=nt.source==='ai'?'<span class="nt-tag nt-tag-ai">🤖 AI 答复</span>'
+      :nt.source==='bg'?'<span class="nt-tag nt-tag-bg">🔍 背景解释</span>':'';
+    d.innerHTML='<div style="flex:1">'+srcLabel+
       (nt.quote?'<div class="qt">'+esc(nt.quote.slice(0,180))+'</div>':'')+
       '<div class="body">'+esc(nt.text||'')+'</div></div>'+
       '<button class="edit-btn" title="编辑">✎</button>'+
@@ -1751,7 +1928,13 @@ function renderNotesPanel(){
     d.querySelector('.edit-btn').onclick=()=>openNoteModal(null,nt.id);
     d.querySelector('.x-btn').onclick=()=>{
       n.notes=n.notes.filter(x=>x.id!==nt.id); saveNotes(id,n);
-      renderNotesPanel(); toast('已删除笔记');
+      // 同步清除 AI 聊天 / 背景解释中对应消息的 noteId
+      const cm=chatOf(id);
+      cm.forEach(x=>{ if(x.noteId===nt.id) x.noteId=null; });
+      saveChat(id,cm);
+      if(bgState.msgs) bgState.msgs.forEach(x=>{ if(x.noteId===nt.id) x.noteId=null; });
+      renderNotesPanel(); renderChatPanel(); renderBgPanel();
+      toast('已删除笔记');
     };
     ntEl.appendChild(d);
   });
@@ -1808,6 +1991,13 @@ function renderNotesPanel(){
     },600);
   };
   saved.textContent = n.articleNote&&n.articleNote.text ? '上次保存 '+new Date(n.articleNote.ts).toLocaleString('zh-CN',{hour:'2-digit',minute:'2-digit'}) : '自动保存';
+  const clrBtn=$('#clearArticleNote');
+  if(clrBtn) clrBtn.onclick=()=>{
+    if(!an.value.trim()){ toast('文章笔记为空'); return; }
+    an.value=''; n.articleNote=null; saveNotes(id,n);
+    saved.textContent='已清空';
+    renderNotesPanel(); toast('已清空文章笔记');
+  };
   const cnt=(n.hls||[]).length+(n.notes||[]).length+(n.bg||[]).length+(n.articleNote&&n.articleNote.text?1:0);
   $('#notesCnt').textContent=cnt?'('+cnt+')':'';
 }
@@ -1893,25 +2083,20 @@ function renderChatPanel(){
   }
   $('#aiInput').style.display='flex';
   $('#aiStatus').textContent='';
-  let lastUser='';
   msgs.forEach(m=>{
     const d=document.createElement('div');
     d.className='ai-msg '+m.role;
     if(m.quote) d.innerHTML='<span class="qref">'+esc(m.quote.slice(0,200))+'</span>'+mdLight(m.content);
     else d.innerHTML=mdLight(m.content);
-    if(m.role==='user') lastUser=m.content;
     if(m.role==='assistant'){
+      // 检查该条答复是否已保存到笔记（笔记可能在笔记面板被删除）
+      const curNotes=notesOf(id);
+      const stillSaved=m.noteId && (curNotes.notes||[]).some(x=>x.id===m.noteId);
       const btn=document.createElement('button');
-      btn.className='ai-note-btn';
-      btn.textContent='📝 加入笔记';
-      btn.title='把这条 AI 答复加入本文笔记（可编辑后保存）';
-      btn.onclick=()=>{
-        openNoteModal(
-          lastUser ? '我的提问：'+lastUser.slice(0,300) : '',
-          null,
-          'AI 答复（'+a.title+'）：\n'+m.content.slice(0,6000)
-        );
-      };
+      btn.className='ai-note-btn'+(stillSaved?' saved':'');
+      btn.textContent=stillSaved?'✓ 已保存笔记':'📝 保存到笔记';
+      btn.title=stillSaved?'点击从笔记中删除这条答复':'仅把这条 AI 答复保存到笔记';
+      btn.onclick=()=>toggleAiNote(m,btn,id);
       d.appendChild(btn);
     }
     box.appendChild(d);
@@ -1936,6 +2121,37 @@ function mdLight(t){
     .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>')
     .replace(/`([^`]+)`/g,'<code>$1</code>')
     .replace(/\n/g,'<br>');
+}
+function toggleAiNote(m,btn,id){
+  const n=notesOf(id);
+  n.notes=n.notes||[];
+  if(m.noteId && n.notes.some(x=>x.id===m.noteId)){
+    // 已保存 → 删除该条笔记
+    n.notes=n.notes.filter(x=>x.id!==m.noteId);
+    m.noteId=null;
+    saveNotes(id,n);
+    const msgs=chatOf(id);
+    const idx=msgs.findIndex(x=>x===m || (x.ts===m.ts && x.content===m.content));
+    if(idx>=0){ msgs[idx].noteId=null; saveChat(id,msgs); }
+    btn.classList.remove('saved');
+    btn.textContent='📝 保存到笔记';
+    btn.title='仅把这条 AI 答复保存到笔记';
+    toast('已从笔记中删除');
+  } else {
+    // 未保存 → 仅保存该条 AI 答复（不含问题和其他答复）
+    const noteId=uid();
+    n.notes.push({id:noteId, quote:'', text:m.content, source:'ai', label:'🤖 AI 答复', ts:Date.now()});
+    m.noteId=noteId;
+    saveNotes(id,n);
+    const msgs=chatOf(id);
+    const idx=msgs.findIndex(x=>x===m || (x.ts===m.ts && x.content===m.content));
+    if(idx>=0){ msgs[idx].noteId=noteId; saveChat(id,msgs); }
+    btn.classList.add('saved');
+    btn.textContent='✓ 已保存笔记';
+    btn.title='点击从笔记中删除这条答复';
+    toast('已保存到笔记');
+  }
+  renderNotesPanel();
 }
 function buildAiMessages(userText){
   const a=BYID[state.cur];
@@ -2032,6 +2248,107 @@ $('#aiInputBox').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendAi(); }
 });
 
+/* ================= 与巴菲特对话（celebrity-buffett）================= */
+const chatViewEl = $('#chatView');
+const BUFFETT_CHAT_KEY = 'bf_buffett_chat';
+const buffettChat = () => store.get(BUFFETT_CHAT_KEY, []);
+const saveBuffettChat = msgs => store.set(BUFFETT_CHAT_KEY, msgs);
+function showChatView(){
+  readerEl.hidden = true; libEl.hidden = true; homeEl.hidden = true; idxEl.hidden = true;
+  layoutEl.hidden = false; chatViewEl.hidden = false;
+  document.title = '与巴菲特对话 · '+DATA.title;
+  renderChatView();
+  window.scrollTo(0,0);
+}
+function renderChatView(){
+  const intro=$('#chatIntro');
+  const hasPersona=!!(DATA.buffettPersona||'').trim();
+  intro.innerHTML = hasPersona
+    ? '<div class="chat-intro"><b>🧬 巴菲特人格已加载</b>（celebrity-buffett：6 个心智模型 / 8 条决策启发式 / Agentic Protocol 先研究再回答）。回答严格基于致股东信语料与人格框架，超出语料的推断会明确标注；发送「退出」结束对话。</div>'
+    : '<div class="chat-intro warn">⚠️ 未嵌入 celebrity-buffett 人格数据——请先运行 distilly 生成技能并重新构建本应用。</div>';
+  const box=$('#chatMsgs');
+  box.innerHTML='';
+  const msgs=buffettChat();
+  if(!settingsOk()){
+    box.innerHTML='<div class="ai-welcome">🤖 「与巴菲特对话」需要配置大模型接口（DeepSeek 等 OpenAI 兼容接口）。<br><br><button class="btn primary" id="chatOpenSettings" style="font-size:13px">⚙ 打开设置</button></div>';
+    const b=$('#chatOpenSettings'); if(b) b.onclick=openSettings;
+    $('#chatChips').innerHTML=''; $('#chatInput').style.display='none'; $('#chatStatus').textContent='';
+    return;
+  }
+  $('#chatInput').style.display='flex';
+  msgs.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='ai-msg '+m.role;
+    d.innerHTML=mdLight(m.content);
+    box.appendChild(d);
+  });
+  if(!msgs.length){
+    $('#chatChips').innerHTML=[
+      '用巴菲特框架评估：我该集中持有还是分散？',
+      '如何看待当前 A 股的市场波动？',
+      '什么是护城河？怎么判断一家公司有没有？',
+      '如果我只能记住三条投资原则，应该是什么？',
+      '你犯过最大的错误是什么？学到了什么？',
+    ].map(t=>'<button class="ai-chip">'+esc(t)+'</button>').join('');
+    $('#chatChips').onclick=e=>{ const c=e.target.closest('.ai-chip'); if(c){ $('#chatInputBox').value=c.textContent; sendBuffett(); } };
+  } else $('#chatChips').innerHTML='';
+  box.scrollTop=box.scrollHeight;
+}
+function buildBuffettMessages(userText){
+  const persona=(DATA.buffettPersona||'').slice(0,14000);
+  const sys=[
+    '你正在扮演「巴菲特（celebrity-buffett）」——一个基于巴菲特致股东信知识库（1956–2025，81 封信件 + 35 概念 + 61 公司案例）蒸馏的投资决策与判断框架助手。',
+    '【角色与人格（persona）】',
+    persona,
+    '【附加规则】',
+    '1. 用巴菲特的口吻与框架回答：生意比喻（护城河/裸泳/称重机）、"我们"体、先讲道理后给结论、自嘲式承认局限；',
+    '2. 先按 Agentic Protocol 研究再回答：可预测性（能力圈）→ 护城河 → 管理层 → 价格安全边际 → 叙事触发器 → 错误清单反查；',
+    '3. 涉及具体事实/数字/年份必须来自上述语料；语料没有的，明确说"语料中没有，这是我的框架推演"；绝不编造巴菲特说过的具体话；',
+    '4. 回答不构成投资建议；涉及用户具体持仓时给出分析框架而非买卖指令；',
+    '5. 中文回答，结构清晰；用户说「退出」时简短告别。',
+  ].join('\n');
+  const msgs=[{role:'system',content:sys}];
+  buffettChat().filter(m=>m.role==='user'||m.role==='assistant').slice(-12)
+    .forEach(m=>msgs.push({role:m.role,content:m.content.slice(0,3000)}));
+  msgs.push({role:'user',content:userText});
+  return msgs;
+}
+let buffettBusy=false;
+async function sendBuffett(){
+  if(buffettBusy) return;
+  const box=$('#chatInputBox');
+  const text=box.value.trim();
+  if(!text){ toast('请输入问题'); return; }
+  if(!settingsOk()){ openSettings(); return; }
+  const msgs=buffettChat();
+  msgs.push({role:'user',content:text,ts:Date.now()});
+  saveBuffettChat(msgs);
+  box.value='';
+  renderChatView();
+  buffettBusy=true;
+  $('#chatSend').disabled=true;
+  $('#chatStatus').textContent='巴菲特思考中…（'+(settings().model.split('/').pop()||'')+'）';
+  try{
+    const reply=await callLLM(buildBuffettMessages(text));
+    const msgs2=buffettChat();
+    msgs2.push({role:'assistant',content:reply,ts:Date.now()});
+    saveBuffettChat(msgs2);
+    renderChatView();
+  }catch(err){
+    const msgs2=buffettChat();
+    msgs2.push({role:'err',content:'请求失败：'+err.message,ts:Date.now()});
+    saveBuffettChat(msgs2);
+    renderChatView();
+  }
+  buffettBusy=false;
+  $('#chatSend').disabled=false;
+  $('#chatStatus').textContent='';
+}
+$('#chatSend').onclick=sendBuffett;
+$('#chatInputBox').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendBuffett(); } });
+$('#chatBack').onclick=()=>{ location.hash='#/'; };
+$('#chatClear').onclick=()=>{ store.set(BUFFETT_CHAT_KEY,[]); renderChatView(); toast('对话已清空'); };
+
 /* ================= 背景解释 ================= */
 const bgState = { term:'', ctx:'', msgs:[], busy:false, saved:false };
 
@@ -2042,6 +2359,15 @@ function switchToBgTab(){
   state.tab='bg';
   $$('.tabpane').forEach(p=>p.classList.remove('active'));
   $('#tab-bg').classList.add('active');
+}
+function switchToNotesTab(){
+  $$('.rp-tab').forEach(x=>x.classList.remove('active'));
+  const t=document.querySelector('.rp-tab[data-tab="notes"]');
+  if(t) t.classList.add('active');
+  state.tab='notes';
+  $$('.tabpane').forEach(p=>p.classList.remove('active'));
+  $('#tab-notes').classList.add('active');
+  renderNotesPanel();
 }
 
 function buildBgMessages(term, ctx, followUp){
@@ -2090,26 +2416,32 @@ function renderBgPanel(){
   const a=BYID[id];
   const box=$('#bgMsgs');
   const savedBox=$('#bgSaved');
-  // 已保存列表
+  // 已保存的背景解释（来自笔记中 source='bg' 的条目）
   const n=notesOf(id);
-  const saved=(n.bg||[]).slice().sort((x,y)=>y.ts-x.ts);
+  const saved=(n.notes||[]).filter(x=>x.source==='bg').sort((x,y)=>y.ts-x.ts);
   if(saved.length){
     savedBox.hidden=false;
     const list=savedBox.querySelector('#bgSavedList');
     list.innerHTML=saved.map(b=>
-      '<button class="bg-saved-item" data-bgid="'+b.id+'"><span class="bg-dot"></span>'+
-      '<span>'+esc(b.term)+'</span><span class="bg-time">'+new Date(b.ts).toLocaleDateString('zh-CN')+'</span></button>'
+      '<div class="bg-saved-item" data-bgid="'+b.id+'"><span class="bg-dot"></span>'+
+      '<span class="bg-saved-label">'+esc(b.quote||b.label||'背景解释')+'</span>'+
+      '<button class="bg-saved-del" data-delbg="'+b.id+'" title="删除">✕</button></div>'
     ).join('');
     list.onclick=e=>{
-      const it=e.target.closest('[data-bgid]');
-      if(!it) return;
-      const b=(n.bg||[]).find(x=>x.id===it.dataset.bgid);
-      if(b){
-        bgState.term=b.term; bgState.ctx=''; bgState.saved=true;
-        bgState.msgs=[{role:'assistant',content:b.explanation,ts:b.ts}].concat(b.qa||[]);
-        $('#bgTermInput').value=b.term;
-        renderBgPanel();
+      const del=e.target.closest('[data-delbg]');
+      if(del){
+        e.stopPropagation();
+        n.notes=n.notes.filter(x=>x.id!==del.dataset.delbg);
+        saveNotes(id,n);
+        // 同步清除 bgState 中对应消息的 noteId
+        bgState.msgs.forEach(m=>{ if(m.noteId===del.dataset.delbg) m.noteId=null; });
+        toast('已删除');
+        renderBgPanel(); renderNotesPanel();
+        return;
       }
+      // 点击条目切换到笔记 tab
+      const it=e.target.closest('[data-bgid]');
+      if(it){ switchToNotesTab(); renderNotesPanel(); }
     };
   } else {
     savedBox.hidden=true;
@@ -2131,16 +2463,19 @@ function renderBgPanel(){
   termEl.className='bg-msg term';
   termEl.textContent='📌 '+bgState.term;
   box.appendChild(termEl);
-  // 消息
+  // 消息（每条 AI 答复独立保存/删除）
   bgState.msgs.forEach(m=>{
     const d=document.createElement('div');
     d.className='bg-msg '+m.role;
     if(m.role==='assistant'){
       d.innerHTML=mdLight(m.content);
+      const curNotes=notesOf(id);
+      const stillSaved=m.noteId && (curNotes.notes||[]).some(x=>x.id===m.noteId);
       const btn=document.createElement('button');
-      btn.className='bg-note-btn'+(bgState.saved?' saved':'');
-      btn.textContent=bgState.saved?'✓ 已保存到笔记':'📝 保存到笔记';
-      btn.onclick=()=>saveBgToNotes();
+      btn.className='bg-note-btn'+(stillSaved?' saved':'');
+      btn.textContent=stillSaved?'✓ 已保存笔记':'📝 保存到笔记';
+      btn.title=stillSaved?'点击从笔记中删除这条解释':'仅把这条解释保存到笔记';
+      btn.onclick=()=>toggleBgNote(m,btn,id);
       d.appendChild(btn);
     } else {
       d.textContent=m.content;
@@ -2204,27 +2539,29 @@ async function sendBgFollowUp(){
   renderBgPanel();
 }
 
-function saveBgToNotes(){
-  if(!bgState.term||!bgState.msgs.length){ toast('暂无可保存的解释'); return; }
-  const first=bgState.msgs.find(m=>m.role==='assistant');
-  if(!first){ toast('暂无可保存的解释'); return; }
-  const id=state.cur, n=notesOf(id);
-  n.bg=n.bg||[];
-  const qa=bgState.msgs.slice(bgState.msgs.indexOf(first)+1)
-    .filter(m=>m.role==='user'||m.role==='assistant')
-    .map(m=>({role:m.role,content:m.content,ts:m.ts}));
-  const existing=n.bg.find(b=>b.term===bgState.term);
-  if(existing){
-    existing.explanation=first.content;
-    existing.qa=qa;
-    existing.ts=Date.now();
-    toast('已更新背景解释笔记');
+function toggleBgNote(m,btn,id){
+  const n=notesOf(id);
+  n.notes=n.notes||[];
+  if(m.noteId && n.notes.some(x=>x.id===m.noteId)){
+    // 已保存 → 删除该条笔记
+    n.notes=n.notes.filter(x=>x.id!==m.noteId);
+    m.noteId=null;
+    saveNotes(id,n);
+    btn.classList.remove('saved');
+    btn.textContent='📝 保存到笔记';
+    btn.title='仅把这条解释保存到笔记';
+    toast('已从笔记中删除');
   } else {
-    n.bg.push({id:uid(),term:bgState.term,explanation:first.content,qa,ts:Date.now()});
-    toast('已保存到笔记·背景解释');
+    // 未保存 → 仅保存该条解释（不含追问和其他回答）
+    const noteId=uid();
+    n.notes.push({id:noteId, quote:bgState.term||'背景解释', text:m.content, source:'bg', label:'🔍 背景解释', ts:Date.now()});
+    m.noteId=noteId;
+    saveNotes(id,n);
+    btn.classList.add('saved');
+    btn.textContent='✓ 已保存笔记';
+    btn.title='点击从笔记中删除这条解释';
+    toast('已保存到笔记');
   }
-  bgState.saved=true;
-  saveNotes(id,n);
   renderBgPanel();
   renderNotesPanel();
 }
@@ -2331,10 +2668,281 @@ $$('.rp-tab').forEach(t=>{
   };
 });
 
+/* ================= 编辑风索引视图 ================= */
+const idxEl = $('#idxView');
+const layoutEl = $('#layout');
+const IV = {tab:'letters', series:'all', event:'all', rendered:{}};
+
+const IV_EV_CLS = {
+  '危机/股灾':'ev-crisis','泡沫/狂热':'ev-bubble','通胀/加息':'ev-inflation',
+  '战争/恐袭':'ev-war','疫情':'ev-pandemic','正常':'ev-normal'
+};
+const IV_PERIOD_CLS = {
+  '危机/股灾':'iv-period-crisis','泡沫/狂热':'iv-period-bubble','通胀/加息':'iv-period-inflation',
+  '战争/恐袭':'iv-period-war','疫情':'iv-period-pandemic','正常':'iv-period-normal'
+};
+const IV_SERIES_CLS = {'合伙基金信':'partnership','伯克希尔信':'berkshire'};
+
+function ivEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function ivArticleForYear(y, seriesName){
+  const ck = seriesName==='合伙基金信' ? 'partnership' : 'berkshire';
+  return ART.find(a=>a.year===y && a.catKey===ck);
+}
+
+function ivPrimaryArticle(yr){
+  // Prefer berkshire, then partnership
+  return ivArticleForYear(yr.y,'伯克希尔信') || ivArticleForYear(yr.y,'合伙基金信');
+}
+
+function ivCleanSummary(s){
+  // Strip 【series】 prefixes from merged-year summaries
+  return String(s||'').replace(/【[^】]+】/g,'').trim();
+}
+
+function ivEventTags(yr){
+  return String(yr.e||'').split(/[、,，;；]/).map(x=>x.trim()).filter(Boolean);
+}
+
+function ivAllEventTags(){
+  const set = new Set();
+  (IDX.year||[]).forEach(yr=>ivEventTags(yr).forEach(t=>set.add(t)));
+  return Array.from(set);
+}
+
+function showIndexView(){
+  if(state.cur) state.cur=null;
+  readerEl.hidden=true; libEl.hidden=true; homeEl.hidden=true; chatViewEl.hidden=true;
+  layoutEl.hidden=true; idxEl.hidden=false;
+  document.title='巴菲特致股东信分类索引 · 编辑风';
+  if(!IV.rendered.stats) renderIvStats();
+  if(!IV.rendered[IV.tab]) renderIvTab(IV.tab);
+  renderIvFilterBar();
+  window.scrollTo(0,0);
+}
+
+function renderIvStats(){
+  const nLetters = ART.filter(a=>a.catKey==='partnership'||a.catKey==='berkshire').length;
+  const stats = [
+    [nLetters, 'Letters'],
+    [(IDX.topic||[]).length, 'Themes'],
+    [(IDX.industry||[]).length, 'Industries'],
+    [(IDX.event||[]).length, 'Eras'],
+    [(IDX.method||[]).length, 'Methods'],
+  ];
+  $('#ivStats').innerHTML = stats.map(s=>
+    '<div class="iv-stat"><div class="iv-stat-num">'+s[0]+'</div><div class="iv-stat-label">'+s[1]+'</div></div>'
+  ).join('');
+  $('#ivFooter').innerHTML =
+    '数据来源：巴菲特致合伙人及股东信（1956–2025）· 坎宁安《巴菲特致股东的信》主题分类<br>'+
+    '本页为应用内编辑风索引视图，与主应用共享全部数据与功能 · <a href="#/" style="color:#8b6f47">返回主视图</a>';
+  IV.rendered.stats=true;
+}
+
+function renderIvFilterBar(){
+  const bar = $('#ivFilterBar');
+  if(IV.tab!=='letters'){bar.innerHTML=''; bar.style.display='none'; return;}
+  bar.style.display='flex';
+  const series = [['all','全部'],['合伙基金信','合伙基金信'],['伯克希尔信','伯克希尔信']];
+  const evTags = ivAllEventTags();
+  bar.innerHTML =
+    '<span class="iv-filter-label">信件系列</span>'+
+    '<div class="iv-filter-group">'+
+      series.map(s=>'<button class="iv-filter-btn'+(IV.series===s[0]?' active':'')+'" data-sfilter="'+s[0]+'">'+s[1]+'</button>').join('')+
+    '</div>'+
+    '<div class="iv-filter-div"></div>'+
+    '<span class="iv-filter-label">事件类型</span>'+
+    '<div class="iv-filter-group">'+
+      '<button class="iv-filter-btn'+(IV.event==='all'?' active':'')+'" data-efilter="all">全部</button>'+
+      evTags.map(t=>'<button class="iv-filter-btn'+(IV.event===t?' active':'')+'" data-efilter="'+ivEsc(t)+'">'+ivEsc(t)+'</button>').join('')+
+    '</div>';
+  bar.querySelectorAll('[data-sfilter]').forEach(b=>b.onclick=()=>{IV.series=b.dataset.sfilter; renderIvFilterBar(); renderIvLetters();});
+  bar.querySelectorAll('[data-efilter]').forEach(b=>b.onclick=()=>{IV.event=b.dataset.efilter; renderIvFilterBar(); renderIvLetters();});
+}
+
+function renderIvTab(tab){
+  IV.tab=tab;
+  document.querySelectorAll('#idxView .iv-tab').forEach(t=>t.classList.toggle('active',t.dataset.ivtab===tab));
+  ['letters','themes','industries','events','methods'].forEach(t=>{
+    const el=$('#iv'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el) el.classList.toggle('active',t===tab);
+  });
+  renderIvFilterBar();
+  if(tab==='letters') renderIvLetters();
+  else if(tab==='themes') renderIvThemes();
+  else if(tab==='industries') renderIvIndustries();
+  else if(tab==='events') renderIvEvents();
+  else if(tab==='methods') renderIvMethods();
+  IV.rendered[tab]=true;
+}
+
+function renderIvLetters(){
+  const years = (IDX.year||[]).slice().sort((a,b)=>a.y-b.y);
+  const filtered = years.filter(yr=>{
+    if(IV.series!=='all'){
+      const has = (yr.series||[]).some(s=>s===IV.series);
+      if(!has) return false;
+    }
+    if(IV.event!=='all'){
+      const tags = ivEventTags(yr);
+      if(!tags.includes(IV.event)) return false;
+    }
+    return true;
+  });
+  const container = $('#ivLetters');
+  if(!filtered.length){
+    container.innerHTML='<div class="iv-empty">没有符合筛选条件的信件</div>';
+    return;
+  }
+  let html = '<div class="iv-section"><div class="iv-sec-head"><span class="iv-sec-title">年度信件</span>'+
+    '<span class="iv-sec-meta">'+filtered.length+' 封 · 1956–2025</span></div>'+
+    '<div class="iv-sec-desc">按年份排列的巴菲特致合伙人及股东信，点击标题可在应用内阅读全文。</div></div>';
+  filtered.forEach(yr=>{
+    const art = ivPrimaryArticle(yr);
+    const tags = ivEventTags(yr);
+    const seriesArr = yr.series||[];
+    const badges = seriesArr.map(s=>{
+      const cls = IV_SERIES_CLS[s]||'';
+      return '<span class="iv-series-badge '+cls+'">'+ivEsc(s)+'</span>';
+    }).join('');
+    const topicTags = (yr.t||[]).slice(0,3).map(t=>'<span class="iv-tag theme">'+ivEsc(t)+'</span>').join('');
+    const evTags = tags.map(t=>{
+      const cls = IV_EV_CLS[t]||'';
+      return '<span class="iv-tag '+cls+'">'+ivEsc(t)+'</span>';
+    }).join('');
+    const title = art ? '<a href="#/a/'+encodeURIComponent(art.id)+'">'+yr.y+' 年'+(seriesArr.includes('合伙基金信')?'致合伙人信':'致股东信')+'</a>' : yr.y+' 年信';
+    const extLink = (yr.link||'').split('；').filter(Boolean)[0];
+    const readLink = art ? '<a href="#/a/'+encodeURIComponent(art.id)+'" class="iv-letter-link">阅读全文 →</a>' :
+      (extLink ? '<a href="'+ivEsc(extLink)+'" target="_blank" rel="noopener" class="iv-letter-link">阅读原文 →</a>' : '');
+    const ctx = yr.bg ? '<div class="iv-letter-ctx">'+ivEsc(yr.bg)+'</div>' : '';
+    html += '<div class="iv-section" style="padding-top:0;padding-bottom:0">'+
+      '<div class="iv-letter">'+
+        '<div class="iv-letter-year">'+yr.y+'</div>'+
+        '<div class="iv-letter-body">'+
+          '<div class="iv-letter-meta">'+badges+
+            '<span class="iv-letter-author">'+ivEsc(yr.a||'')+'</span>'+
+          '</div>'+
+          '<div class="iv-letter-title">'+title+'</div>'+
+          '<div class="iv-letter-summary">'+ivEsc(ivCleanSummary(yr.s))+'</div>'+
+          '<div class="iv-letter-tags">'+topicTags+evTags+readLink+'</div>'+
+          ctx+
+        '</div>'+
+      '</div></div>';
+  });
+  container.innerHTML=html;
+}
+
+function renderIvThemes(){
+  const themes = IDX.topic||[];
+  let html = '<div class="iv-section"><div class="iv-sec-head"><span class="iv-sec-title">主题分类</span>'+
+    '<span class="iv-sec-meta">'+themes.length+' 个主题</span></div>'+
+    '<div class="iv-sec-desc">基于坎宁安《巴菲特致股东的信》的主题分类法，将数十年信件按核心投资主题归类。</div></div>';
+  themes.forEach((th,i)=>{
+    const years = (th.y||[]).slice(0,8);
+    const concepts = (th.con||[]).slice(0,6);
+    html += '<div class="iv-section" style="padding-top:0;padding-bottom:0"><div class="iv-card">'+
+      '<div class="iv-card-head">'+
+        '<span class="iv-card-num">'+String(i+1).padStart(2,'0')+'</span>'+
+        '<span class="iv-card-title">'+ivEsc(th.n||th.c||'')+'</span>'+
+      '</div>'+
+      '<div class="iv-card-body">'+ivEsc(th.d||'')+'</div>'+
+      (th.rep?'<div class="iv-card-label">代表信件</div><div class="iv-card-text">'+ivEsc(th.rep)+'</div>':'')+
+      (concepts.length?'<div class="iv-card-label">关键概念</div><div class="iv-card-tags">'+
+        concepts.map(c=>'<span class="iv-tag theme">'+ivEsc(c)+'</span>').join('')+'</div>':'')+
+      (years.length?'<div class="iv-card-label">重点年份</div><div class="iv-card-tags">'+
+        years.map(y=>'<span class="iv-year-tag">'+y+'</span>').join('')+'</div>':'')+
+    '</div></div>';
+  });
+  $('#ivThemes').innerHTML=html;
+}
+
+function renderIvIndustries(){
+  const inds = IDX.industry||[];
+  let html = '<div class="iv-section"><div class="iv-sec-head"><span class="iv-sec-title">行业分类</span>'+
+    '<span class="iv-sec-meta">'+inds.length+' 个行业</span></div>'+
+    '<div class="iv-sec-desc">巴菲特投资过的核心行业与代表性公司，按行业归类相关信件。</div></div>';
+  inds.forEach((ind,i)=>{
+    const years = (ind.y||[]).slice(0,10);
+    html += '<div class="iv-section" style="padding-top:0;padding-bottom:0"><div class="iv-card">'+
+      '<div class="iv-card-head">'+
+        '<span class="iv-card-num">'+String(i+1).padStart(2,'0')+'</span>'+
+        '<span class="iv-card-title">'+ivEsc(ind.n||'')+'</span>'+
+        (ind.co?'<span class="iv-card-sub">· '+ivEsc(ind.co)+'</span>':'')+
+      '</div>'+
+      '<div class="iv-card-body">'+ivEsc(ind.d||'')+'</div>'+
+      (years.length?'<div class="iv-card-label">重点年份</div><div class="iv-card-tags">'+
+        years.map(y=>'<span class="iv-year-tag">'+y+'</span>').join('')+'</div>':'')+
+    '</div></div>';
+  });
+  $('#ivIndustries').innerHTML=html;
+}
+
+function renderIvEvents(){
+  const events = IDX.event||[];
+  let html = '<div class="iv-section"><div class="iv-sec-head"><span class="iv-sec-title">事件时期</span>'+
+    '<span class="iv-sec-meta">'+events.length+' 个时期</span></div>'+
+    '<div class="iv-sec-desc">巴菲特投资生涯中经历的重大市场事件与时期，及其观点与教训。</div></div>';
+  events.forEach((ev,i)=>{
+    const years = (ev.y||[]);
+    // Determine period class from first event tag
+    const firstTag = ivEventTags({e:ev.n}).concat(ivEventTags({e:ev.bg})).find(t=>IV_PERIOD_CLS[t]) ||
+                     (ev.n&&IV_PERIOD_CLS[Object.keys(IV_PERIOD_CLS).find(k=>ev.n.includes(k))]) || '';
+    const periodCls = IV_PERIOD_CLS[firstTag] || '';
+    html += '<div class="iv-section" style="padding-top:0;padding-bottom:0"><div class="iv-card">'+
+      '<div class="iv-card-head">'+
+        '<span class="iv-card-num">'+String(i+1).padStart(2,'0')+'</span>'+
+        '<span class="iv-card-title">'+ivEsc(ev.n||'')+'</span>'+
+      '</div>'+
+      (ev.rng?'<span class="iv-event-period '+(periodCls||'')+'">'+ivEsc(ev.rng)+'</span>':'')+
+      (ev.bg?'<div class="iv-card-label">市场背景</div><div class="iv-card-text">'+ivEsc(ev.bg)+'</div>':'')+
+      (ev.act?'<div class="iv-card-label">观点与行动</div><div class="iv-card-text">'+ivEsc(ev.act)+'</div>':'')+
+      (ev.les?'<div class="iv-card-label">经验教训</div><div class="iv-card-text">'+ivEsc(ev.les)+'</div>':'')+
+      (years.length?'<div class="iv-card-label">相关信件年份</div><div class="iv-card-tags">'+
+        years.map(y=>'<span class="iv-year-tag">'+y+'</span>').join('')+'</div>':'')+
+    '</div></div>';
+  });
+  $('#ivEvents').innerHTML=html;
+}
+
+function renderIvMethods(){
+  const methods = IDX.method||[];
+  let html = '<div class="iv-section"><div class="iv-sec-head"><span class="iv-sec-title">选股方法演进</span>'+
+    '<span class="iv-sec-meta">'+methods.length+' 个阶段</span></div>'+
+    '<div class="iv-sec-desc">巴菲特从"烟蒂投资"到"护城河"的选股方法演变历程。</div></div>';
+  methods.forEach((m,i)=>{
+    const years = (m.y||[]);
+    html += '<div class="iv-section" style="padding-top:0;padding-bottom:0"><div class="iv-card">'+
+      '<div class="iv-card-head">'+
+        '<span class="iv-card-num">'+String(i+1).padStart(2,'0')+'</span>'+
+        '<span class="iv-card-title">'+ivEsc((m.n||'').replace(/\n/g,' '))+'</span>'+
+      '</div>'+
+      (m.m?'<div class="iv-method-method">'+ivEsc((m.m||'').replace(/\n/g,' '))+'</div>':'')+
+      (m.view?'<div class="iv-card-label">核心观点</div><div class="iv-card-text">'+ivEsc(m.view)+'</div>':'')+
+      (m.cases?'<div class="iv-card-label">代表案例</div><div class="iv-card-text">'+ivEsc(m.cases)+'</div>':'')+
+      (m.shift?'<div class="iv-card-label">关键转变</div><div class="iv-card-text">'+ivEsc(m.shift)+'</div>':'')+
+      (years.length?'<div class="iv-card-label">代表年份</div><div class="iv-card-tags">'+
+        years.map(y=>'<span class="iv-year-tag">'+y+'</span>').join('')+'</div>':'')+
+    '</div></div>';
+  });
+  $('#ivMethods').innerHTML=html;
+}
+
+// Tab click delegation
+document.addEventListener('click', function(e){
+  const tab = e.target.closest('#idxView .iv-tab');
+  if(tab){ renderIvTab(tab.dataset.ivtab); }
+});
+// Index button
+(function(){
+  const btn = document.getElementById('indexBtn');
+  if(btn) btn.onclick = function(){ location.hash = '#/index'; };
+})();
+
 /* ================= 路由 / 启动 ================= */
 function showHome(){
   if (state.cur) state.cur=null;
-  readerEl.hidden = true; libEl.hidden = true; homeEl.hidden = false;
+  readerEl.hidden = true; libEl.hidden = true; homeEl.hidden = false; idxEl.hidden = true; chatViewEl.hidden = true;
+  layoutEl.hidden = false;
   document.title = DATA.title+' · 致股东信知识库';
   renderHome();
   window.scrollTo(0,0);
@@ -2351,6 +2959,8 @@ function onHash(){
   const id=m?decodeURIComponent(m[1]):null;
   if(id&&BYID[id]) openArticle(id);
   else if(location.hash==='#/library') renderAllNoHash();
+  else if(location.hash==='#/index') showIndexView();
+  else if(location.hash==='#/chat') showChatView();
   else showHome();
 }
 window.addEventListener('hashchange',onHash);
@@ -2369,7 +2979,8 @@ onHash();
 /* 测试钩子 */
 window.BUF={state,openArticle,doSearch,visibleList,mdToHtml,toPlain,plainOf,applyHighlights,
   addHighlight,notesOf,saveNotes,settings,callLLM,exportNotes,store,BYID,ART,
-  bgState,renderBgPanel,explainBgTerm,sendBgFollowUp,saveBgToNotes,buildBgMessages,switchToBgTab,selectionContext};
+  bgState,renderBgPanel,explainBgTerm,sendBgFollowUp,toggleBgNote,toggleAiNote,buildBgMessages,
+  switchToBgTab,switchToNotesTab,selectionContext,renderChatPanel,renderNotesPanel};
 """
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -2410,8 +3021,10 @@ __CSS__
       <option value="grid">卡片</option>
       <option value="rows">列表</option>
     </select>
+    <button class="tbtn" id="indexBtn" title="编辑风索引纵览">📖 索引</button>
     <button class="tbtn" id="notesExport" title="导出全部笔记">📥 导出笔记</button>
     <button class="tbtn" id="settingsBtn" title="LLM 设置">⚙ 设置</button>
+    <a class="tbtn" href="巴菲特投资智慧-v2.html" title="chian.io 风格新版" style="text-decoration:none">✨ 新版</a>
   </div>
 </header>
 <div id="sidebarBackdrop"></div>
@@ -2442,6 +3055,25 @@ __CSS__
   </aside>
   <main id="main">
     <div id="home" hidden></div>
+    <div id="chatView" hidden>
+      <div class="chat-head">
+        <button class="tbtn" id="chatBack">← 返回</button>
+        <div class="chat-title">🗣 与巴菲特对话
+          <span class="chat-sub">基于 celebrity-buffett 人格（致股东信知识库蒸馏）· 仅供参考，不构成投资建议</span>
+        </div>
+        <button class="tbtn" id="chatClear" title="清空本对话记录">清空对话</button>
+      </div>
+      <div id="chatIntro"></div>
+      <div class="chat-body">
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div class="ai-chips" id="chatChips"></div>
+        <div class="ai-status" id="chatStatus"></div>
+        <div class="ai-input" id="chatInput">
+          <textarea id="chatInputBox" rows="2" placeholder="用巴菲特的方式问我任何投资问题…（发送「退出」结束对话）"></textarea>
+          <button id="chatSend">发送</button>
+        </div>
+      </div>
+    </div>
     <div id="library" hidden>
       <div id="libHead">
         <span id="libTitle">全部文章</span>
@@ -2480,7 +3112,7 @@ __CSS__
             <div class="note-sec"><h4>划线高亮</h4><div id="ntHighlights"></div></div>
             <div class="note-sec"><h4>笔记</h4><div id="ntNotes"></div></div>
             <div class="note-sec"><h4>背景解释</h4><div id="ntBg"></div></div>
-            <div class="note-sec"><h4>文章笔记（自动保存）</h4>
+            <div class="note-sec"><h4>文章笔记（自动保存）<button class="note-clear-btn" id="clearArticleNote" title="清空文章笔记">清空</button></h4>
               <textarea id="articleNote" placeholder="记录你对这篇文章的理解、与 A 股实践的关联…"></textarea>
               <div class="note-saved" id="noteSaved"></div>
             </div>
@@ -2572,6 +3204,34 @@ __CSS__
       <button class="btn primary" id="setSave">保存</button>
     </div>
   </div>
+</div>
+
+<div id="idxView" hidden>
+  <header class="iv-hero">
+    <div class="iv-hero-inner">
+      <div class="iv-eyebrow">Warren Buffett · 1956–2025</div>
+      <h1>巴菲特致股东信<em>分类索引</em></h1>
+      <p class="iv-hero-sub">按年度、主题、行业、事件时期、选股方法五个维度，系统梳理巴菲特投资思想的演进脉络。</p>
+      <div class="iv-stats" id="ivStats"></div>
+    </div>
+  </header>
+  <nav class="iv-nav">
+    <div class="iv-nav-inner">
+      <span class="iv-nav-brand">索引</span>
+      <button class="iv-tab active" data-ivtab="letters">📅 年度信件</button>
+      <button class="iv-tab" data-ivtab="themes">🏷 主题分类</button>
+      <button class="iv-tab" data-ivtab="industries">🏭 行业分类</button>
+      <button class="iv-tab" data-ivtab="events">🌪 事件时期</button>
+      <button class="iv-tab" data-ivtab="methods">🧭 选股方法</button>
+    </div>
+  </nav>
+  <div class="iv-filter-bar" id="ivFilterBar"></div>
+  <div id="ivLetters" class="iv-pane active"></div>
+  <div id="ivThemes" class="iv-pane"></div>
+  <div id="ivIndustries" class="iv-pane"></div>
+  <div id="ivEvents" class="iv-pane"></div>
+  <div id="ivMethods" class="iv-pane"></div>
+  <footer class="iv-footer" id="ivFooter"></footer>
 </div>
 
 <div id="toast"></div>
