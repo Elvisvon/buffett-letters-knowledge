@@ -187,6 +187,9 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
 .badge.year{background:#e8e4d8;color:var(--ink2)}
 .badge.kind{background:#e3ecf7;color:var(--blue)}
 .card-fav{margin-left:auto;font-size:15px;color:#d9b64e;cursor:pointer;padding:0 2px}
+.card-read{font-size:12px;color:var(--green)}
+.rd-tick{color:var(--green);font-weight:700}
+.card.is-read .card-title a{color:#a39b8a}
 .card-note{font-size:12px;color:var(--green)}
 .card-title{font-size:15.5px;font-weight:700;line-height:1.45}
 .card-title a{color:var(--ink)}
@@ -645,6 +648,7 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
           <div class="r-idx" id="rIdxLine"></div>
         </div>
         <div class="r-actions">
+          <button class="tbtn" id="rRead" title="标记已读 / 再点取消">📖 未读</button>
           <button class="tbtn" id="rFav" title="收藏">☆</button>
           <button class="tbtn" id="rPrev">← 上一篇</button>
           <button class="tbtn" id="rNext">下一篇 →</button>
@@ -849,6 +853,14 @@ const toggleFav = id => {
   let f=favs();
   f = f.includes(id) ? f.filter(x=>x!==id) : f.concat(id);
   store.set(FAVS_KEY,f); return f.includes(id);
+};
+const READ_KEY='bf_read';
+const reads = () => store.get(READ_KEY,[]);
+const isRead = id => reads().includes(id);
+const toggleRead = id => {
+  let r=reads();
+  r = r.includes(id) ? r.filter(x=>x!==id) : r.concat(id);
+  store.set(READ_KEY,r); return r.includes(id);
 };
 const hasNotes = id => { const n=notesOf(id); return !!((n.hls&&n.hls.length)||(n.notes&&n.notes.length)||(n.articleNote&&n.articleNote.text)||(n.bg&&n.bg.length)); };
 const chatOf = id => store.get(CHAT_KEY,{})[id] || [];
@@ -1339,7 +1351,7 @@ function cardHtml(a){
   const excerpt = state.q ? snippet(a) : plainOf(a).slice(0,130);
   const exHtml = state.q ? esc(excerpt).replace(new RegExp('('+state.q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>') : esc(excerpt);
   const tags=(a.tags||[]).slice(0,6).map(t=>'<span class="mini-tag">'+esc(t)+'</span>').join('');
-  return '<article class="card" data-id="'+esc(a.id)+'">'+
+  return '<article class="card'+(isRead(a.id)?' is-read':'')+'" data-id="'+esc(a.id)+'">'+
     '<div class="card-head">'+
       '<span class="badge cat">'+CAT_NAME[a.catKey]+'</span>'+
       (a.year?'<span class="badge year">'+a.year+'</span>':'')+
@@ -1347,9 +1359,10 @@ function cardHtml(a){
       (a.catKey==='company'?'<span class="badge kind">公司</span>':'')+
       (a.catKey==='person'?'<span class="badge kind">人物</span>':'')+
       (hasN?'<span class="card-note" title="有笔记/高亮">📝</span>':'')+
+      (isRead(a.id)?'<span class="card-read" title="已读">📖</span>':'')+
       '<span class="card-fav" title="收藏">'+(isFav(a.id)?'★':'☆')+'</span>'+
     '</div>'+
-    '<h3 class="card-title"><a href="#/a/'+esc(a.id)+'">'+esc(a.title)+'</a></h3>'+
+    '<h3 class="card-title"><a href="#/a/'+esc(a.id)+'">'+(isRead(a.id)?'<span class="rd-tick">✓ </span>':'')+esc(a.title)+'</a></h3>'+
     '<p class="card-excerpt">'+exHtml+'</p>'+
     (tags?'<div class="card-tags">'+tags+'</div>':'')+
   '</article>';
@@ -1360,7 +1373,7 @@ function rowHtml(a){
     '<span class="badge cat">'+CAT_NAME[a.catKey]+'</span>'+
     (a.year?'<span class="badge year">'+a.year+'</span>':'')+
     '<span class="r-title">'+esc(a.title)+'</span>'+
-    '<span class="r-meta">'+(tags?' '+tags+' ':'')+(isFav(a.id)?'★':'')+(hasNotes(a.id)?' 📝':'')+'</span>'+
+    '<span class="r-meta">'+(tags?' '+tags+' ':'')+(isRead(a.id)?'✓ ':'')+(isFav(a.id)?'★':'')+(hasNotes(a.id)?' 📝':'')+'</span>'+
   '</div>';
 }
 
@@ -1468,6 +1481,14 @@ function openArticle(id){
       if(e.target.closest('#rIdxYear')){ state.idxDim='year'; state.idxKey=yi.k; location.hash='#/library'; }
     };
   } else idxLine.innerHTML='';
+  $('#rRead').textContent = isRead(id)?'✅ 已读':'📖 未读';
+  $('#rRead').classList.toggle('active', isRead(id));
+  $('#rRead').onclick = ()=>{
+    const on=toggleRead(id);
+    $('#rRead').textContent=on?'✅ 已读':'📖 未读';
+    $('#rRead').classList.toggle('active', on);
+    toast(on?'已标记为已读':'已取消已读标记');
+  };
   $('#rFav').textContent = isFav(id)?'★':'☆';
   $('#rFav').onclick = ()=>{ const on=toggleFav(id); $('#rFav').textContent=on?'★':'☆'; toast(on?'已收藏':'已取消收藏'); };
 
@@ -1680,7 +1701,7 @@ function renderNotesPanel(){
   });
   if(!(n.hls||[]).length) hlEl.innerHTML='<div class="note-empty">还没有划线高亮。阅读时选中文字，即可高亮/下划线。</div>';
   ntEl.innerHTML='';
-  (n.notes||[]).slice().reverse().forEach(nt=>{
+  (n.notes||[]).forEach(nt=>{
     const d=document.createElement('div');
     d.className='nt-item'+(nt.source?' nt-src-'+nt.source:'');
     const srcLabel=nt.source==='ai'?'<span class="nt-tag nt-tag-ai">🤖 AI 答复</span>'
