@@ -544,6 +544,7 @@ a:hover{text-decoration:underline}
 .brand:hover{background:var(--line2)}
 .brand .logo{font-size:19px;font-weight:700;letter-spacing:.5px;color:var(--accent)}
 .brand .logo em{font-style:normal;color:var(--accent2)}
+.brand .brand-img{width:22px;height:22px;border-radius:6px;vertical-align:-4px;margin-right:6px}
 .brand .sub{font-size:12px;color:var(--ink3)}
 .search-wrap{flex:1;min-width:180px;max-width:560px;position:relative;display:flex;align-items:center}
 #q{width:100%;padding:8px 34px 8px 12px;border:1px solid var(--line);border-radius:9px;
@@ -3181,7 +3182,7 @@ __CSS__
 <body>
 <header id="topbar">
   <button class="tbtn" id="menuBtn" title="筛选面板">☰</button>
-  <div class="brand" id="brandBtn" title="回到主页"><span class="logo">🏛 巴菲特<em>投资智慧</em></span><span class="sub">致股东信知识库</span></div>
+  <div class="brand" id="brandBtn" title="回到主页"><span class="logo">__BRAND_ICON__巴菲特<em>投资智慧</em></span><span class="sub">致股东信知识库</span></div>
   <div class="search-wrap">
     <input id="q" type="search" placeholder="搜索文章、概念、公司、人物…（/ 聚焦）" autocomplete="off">
     <span id="qCount"></span>
@@ -3434,12 +3435,15 @@ __JS__
 
 # ---------------------------------------------------------------- 组装
 
-def build_html(data_json: str, css: str, js: str) -> str:
+def build_html(data_json: str, css: str, js: str, icon_b64: str = "") -> str:
+    brand_icon = ('<img class="brand-img" src="data:image/png;base64,' + icon_b64
+                  + '" alt="">' if icon_b64 else "🏛 ")
     return (
         HTML_TEMPLATE
         .replace("__DATA__", data_json)
         .replace("__CSS__", css)
         .replace("__JS__", js)
+        .replace("__BRAND_ICON__", brand_icon)
     )
 
 
@@ -3507,7 +3511,7 @@ def main():
     if icon_b64:
         js = "const APP_ICON_B64='" + icon_b64 + "';\n" + js
 
-    html = build_html(data_json, APP_CSS, js)
+    html = build_html(data_json, APP_CSS, js, icon_b64)
     with open(OUT_HTML, "w", encoding="utf-8") as f:
         f.write(html)
 
