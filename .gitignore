@@ -16,3 +16,7 @@ __pycache__/
 
 # macOS App 封装（含本机绝对路径，不入库）
 巴菲特投资智慧.app/
+
+# 打包产物（App / DMG）
+dist/
+*.dmg
