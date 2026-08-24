@@ -710,7 +710,7 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
 .r-tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
 .r-actions{display:flex;gap:6px;align-items:center}
 .reader-body{display:flex;gap:22px;align-items:flex-start;margin-top:18px}
-#article{flex:1;min-width:0;max-width:880px;background:var(--panel);border:1px solid var(--line);
+#article{flex:1 1 0%;min-width:0;max-width:none;background:var(--panel);border:1px solid var(--line);
   border-radius:14px;padding:34px 42px 44px;box-shadow:0 2px 10px rgba(90,70,30,.04)}
 #article>*+*{margin-top:1em}
 #article h1{font:700 22px/1.5 var(--serif);margin-top:.2em;padding-bottom:.35em;border-bottom:2px solid var(--line2)}
@@ -740,7 +740,7 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
 .reader-foot a{font-size:13px}
 
 /* ---------- 右侧面板 ---------- */
-#rpanel{width:320px;flex:0 0 320px;position:sticky;top:74px;max-height:calc(100vh - 92px);
+#rpanel{flex:0 1 32%;min-width:270px;max-width:440px;position:sticky;top:74px;max-height:calc(100vh - 92px);
   display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .rp-tabs{display:flex;border-bottom:1px solid var(--line);background:#faf7f0}
 .rp-tab{flex:1;padding:10px 4px;font-size:13.5px;color:var(--ink2);text-align:center;border-bottom:2px solid transparent}
@@ -1015,7 +1015,7 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
 
 /* ---------- 响应式 ---------- */
 @media (max-width:1100px){
-  #rpanel{width:280px;flex-basis:280px}
+  #rpanel{flex:0 1 34%;min-width:250px;max-width:400px}
   #article{padding:26px 28px}
 }
 @media (max-width:860px){
@@ -3144,7 +3144,6 @@ __CSS__
     <button class="tbtn" id="indexBtn" title="编辑风索引纵览">📖 索引</button>
     <button class="tbtn" id="notesExport" title="导出全部笔记">📥 导出笔记</button>
     <button class="tbtn" id="settingsBtn" title="LLM 设置">⚙ 设置</button>
-    <a class="tbtn" href="巴菲特投资智慧-v2.html" title="chian.io 风格新版" style="text-decoration:none">✨ 新版</a>
   </div>
 </header>
 <div id="sidebarBackdrop"></div>
