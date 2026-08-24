@@ -595,7 +595,7 @@ const settings = () => {
 const state = {
   cat:'all', decade:'all', tag:'', q:'', favOnly:false, notedOnly:false,
   sort:'year-desc', group:'none', view:'grid', cur:null, tab:'toc',
-  idxDim:null, idxKey:null, idxOpen:null,
+  idxDim:null, idxKey:null, idxOpenSet:{},
 };
 
 /* ================= Markdown 渲染 ================= */
@@ -869,7 +869,7 @@ function renderIdxSidebar(){
   ['topic','industry','event','method','year'].forEach(dim=>{
     const items=IDX[dim]||[];
     const g=document.createElement('div');
-    g.className='idx-group'+(state.idxOpen===dim?' open':'');
+    g.className='idx-group'+(state.idxOpenSet[dim]?' open':'');
     const body=document.createElement('div');
     body.className='idx-items';
     items.forEach(it=>{
@@ -887,7 +887,11 @@ function renderIdxSidebar(){
     });
     g.innerHTML='<button class="idx-gtitle"><span>'+IDX_DIM_NAME[dim]+'</span><span class="n">'+items.length+'</span></button>';
     g.appendChild(body);
-    g.querySelector('.idx-gtitle').onclick=()=>g.classList.toggle('open');
+    g.querySelector('.idx-gtitle').onclick=()=>{
+      // 展开状态记入 state，重渲染后保持（点击条目不再自动收回）
+      state.idxOpenSet[dim] = !state.idxOpenSet[dim];
+      g.classList.toggle('open', !!state.idxOpenSet[dim]);
+    };
     el.appendChild(g);
   });
 }
@@ -944,7 +948,7 @@ function goLibrary(patch){
     state.q=''; searchIdx=null; $('#q').value=''; $('#qCount').textContent='';
   } else if (patch.idxOpen!==undefined){
     state.cat='all'; state.tag=''; state.idxDim=null; state.idxKey=null; state.decade='all';
-    state.idxOpen=patch.idxOpen;
+    state.idxOpenSet = {}; state.idxOpenSet[patch.idxOpen] = true;   // 主页入口：仅展开所选维度并保持
     state.q=''; searchIdx=null; $('#q').value=''; $('#qCount').textContent='';
   } else if (patch.tag!==undefined){
     state.tag=patch.tag; state.idxDim=null; state.idxKey=null;
