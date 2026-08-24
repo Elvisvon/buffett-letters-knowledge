@@ -749,6 +749,60 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
 .ai-status{font-size:12px;color:var(--ink3);padding:0 14px 8px}
 .ai-welcome{padding:16px 14px;color:var(--ink3);font-size:13px;line-height:1.8}
 
+/* 背景解释 */
+#tab-bg{display:none;flex-direction:column;padding:0}
+#tab-bg.active{display:flex}
+.bg-head{padding:11px 12px 10px;border-bottom:1px solid var(--line);background:#faf7f0}
+.bg-term-row{display:flex;gap:6px;align-items:center}
+.bg-term-row label{font-size:12px;color:var(--ink3);white-space:nowrap}
+#bgTermInput{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;padding:6px 10px;
+  font-size:13px;background:var(--panel);outline:none}
+#bgTermInput:focus{border-color:var(--accent2)}
+#bgExplainBtn{padding:6px 14px;border-radius:8px;background:var(--accent2);color:#fff;font-size:13px;font-weight:600;white-space:nowrap}
+#bgExplainBtn:disabled{opacity:.5;cursor:not-allowed}
+.bg-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.bg-msg{max-width:96%;padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.75;word-break:break-word}
+.bg-msg.term{align-self:stretch;max-width:100%;background:#f3e6c8;border:1px solid #e3d5b8;
+  border-radius:10px;font-weight:600;color:var(--accent2);text-align:center}
+.bg-msg.assistant{align-self:flex-start;background:#f1ecdf;border-bottom-left-radius:4px}
+.bg-msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.bg-msg.err{align-self:flex-start;background:#fdecec;color:#9f1239;font-size:12.5px;border:1px solid #f5c2c2}
+.bg-msg p{margin:.4em 0}
+.bg-msg ul,.bg-msg ol{margin-left:1.3em}
+.bg-msg code{font:12px var(--mono);background:#e6dfd0;padding:1px 5px;border-radius:4px}
+.bg-note-btn{margin-top:8px;font-size:11.5px;color:var(--accent2);border:1px dashed #cbb78d;
+  border-radius:12px;padding:3px 12px;background:#fbf7ee;white-space:nowrap;align-self:flex-start}
+.bg-note-btn:hover{background:#f3e6c8}
+.bg-note-btn.saved{color:var(--green);border-color:#a7c08a;background:#f0f6e6}
+.bg-input{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:#faf7f0}
+.bg-input textarea{flex:1;border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:13.5px;
+  line-height:1.6;resize:none;max-height:100px;outline:none;background:var(--panel)}
+.bg-input textarea:focus{border-color:var(--accent2)}
+#bgSend{padding:8px 16px;border-radius:9px;background:var(--accent2);color:#fff;font-size:13.5px;font-weight:600}
+#bgSend:disabled{opacity:.5;cursor:not-allowed}
+.bg-status{font-size:12px;color:var(--ink3);padding:0 14px 8px;min-height:20px}
+.bg-welcome{padding:8px 4px;color:var(--ink3);font-size:13px;line-height:1.9}
+.bg-welcome .bg-tip{background:#faf6ea;border:1px solid var(--line2);border-radius:10px;
+  padding:11px 13px;margin-top:12px;font-size:12.5px;line-height:1.8}
+.bg-saved{border-top:1px solid var(--line);padding:8px 14px 10px;background:#fdfbf5;max-height:132px;overflow-y:auto}
+.bg-saved h4{font-size:11px;color:var(--ink3);font-weight:700;margin-bottom:5px;letter-spacing:.5px}
+.bg-saved-item{display:flex;align-items:center;gap:7px;padding:4px 8px;border-radius:6px;font-size:12.5px;
+  color:var(--ink2);cursor:pointer;width:100%;text-align:left}
+.bg-saved-item:hover{background:var(--line2);color:var(--accent2)}
+.bg-saved-item .bg-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);flex:0 0 6px}
+.bg-saved-item .bg-time{margin-left:auto;font-size:10.5px;color:var(--ink3);white-space:nowrap}
+/* 笔记中的背景解释条目 */
+.bg-item{border:1px solid var(--line2);border-radius:9px;padding:10px 12px;margin-bottom:8px;
+  background:var(--bg);font-size:13px}
+.bg-item-term{font-weight:700;color:var(--accent2);font-size:13.5px;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.bg-item-body{color:var(--ink);line-height:1.7;font-size:12.5px}
+.bg-item-body p{margin:.3em 0}
+.bg-item-body ul,.bg-item-body ol{margin-left:1.3em}
+.bg-item-qa{margin-top:7px;padding-top:7px;border-top:1px dashed var(--line);font-size:12px;color:var(--ink2)}
+.bg-qa-user,.bg-qa-assistant{margin:.35em 0;line-height:1.65}
+.bg-qa-user{color:var(--blue)}
+.bg-item-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
+
 /* ---------- 选择工具栏 / 弹窗 / toast ---------- */
 #selToolbar{position:fixed;z-index:80;display:flex;gap:2px;background:var(--ink);color:#fff;
   border-radius:9px;padding:4px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
@@ -798,6 +852,7 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
   .reader-body{flex-direction:column}
   #rpanel{position:static;width:100%;flex:none;max-height:none;order:2}
   #tab-ai{min-height:420px}
+  #tab-bg{min-height:420px}
   #article{max-width:none}
 }
 @media (min-width:861px){#menuBtn{display:none}}
@@ -851,7 +906,7 @@ ART.forEach(a => (a.links||[]).forEach(([tid])=>{ if(backlinks[tid]) backlinks[t
 
 /* ================= 本地存储 ================= */
 const notesDb = () => store.get(NOTES_KEY,{});
-const notesOf  = id => notesDb()[id] || {hls:[],notes:[],articleNote:null};
+const notesOf  = id => notesDb()[id] || {hls:[],notes:[],articleNote:null,bg:[]};
 const saveNotes = (id,obj) => { const db=notesDb(); db[id]=obj; store.set(NOTES_KEY,db); };
 const favs = () => store.get(FAVS_KEY,[]);
 const isFav = id => favs().includes(id);
@@ -860,7 +915,7 @@ const toggleFav = id => {
   f = f.includes(id) ? f.filter(x=>x!==id) : f.concat(id);
   store.set(FAVS_KEY,f); return f.includes(id);
 };
-const hasNotes = id => { const n=notesOf(id); return !!((n.hls&&n.hls.length)||(n.notes&&n.notes.length)||(n.articleNote&&n.articleNote.text)); };
+const hasNotes = id => { const n=notesOf(id); return !!((n.hls&&n.hls.length)||(n.notes&&n.notes.length)||(n.articleNote&&n.articleNote.text)||(n.bg&&n.bg.length)); };
 const chatOf = id => store.get(CHAT_KEY,{})[id] || [];
 const saveChat = (id,msgs) => { const db=store.get(CHAT_KEY,{}); db[id]=msgs; store.set(CHAT_KEY,db); };
 const settings = () => {
@@ -1231,6 +1286,7 @@ function goLibrary(patch){
   } else if (patch.idxOpen!==undefined){
     state.cat='all'; state.tag=''; state.idxDim=null; state.idxKey=null; state.decade='all';
     state.idxOpenSet = {}; state.idxOpenSet[patch.idxOpen] = true;   // 主页入口：仅展开所选维度并保持
+    state.sort='year-asc'; $('#sortSel').value='year-asc';           // 分类入口：文章按时间从旧到新
     state.q=''; searchIdx=null; $('#q').value=''; $('#qCount').textContent='';
   } else if (patch.tag!==undefined){
     state.tag=patch.tag; state.idxDim=null; state.idxKey=null;
@@ -1492,6 +1548,9 @@ function openArticle(id){
   buildToc(toc);
   renderNotesPanel();
   renderChatPanel();
+  bgState.term=''; bgState.ctx=''; bgState.msgs=[]; bgState.saved=false;
+  $('#bgTermInput').value='';
+  renderBgPanel();
   updateReaderNav();
   // 上一篇/下一篇
   $('#rPrev').onclick = ()=>navArticle(-1);
@@ -1575,6 +1634,18 @@ function currentSelection(){
   if(!$('#article').contains(sel.anchorNode)||!$('#article').contains(sel.focusNode)) return null;
   const text=sel.toString().replace(/\s+/g,' ').trim();
   return text?text:null;
+}
+function selectionContext(){
+  const sel=window.getSelection();
+  if(!sel||sel.isCollapsed) return null;
+  if(!$('#article').contains(sel.anchorNode)||!$('#article').contains(sel.focusNode)) return null;
+  const text=sel.toString().replace(/\s+/g,' ').trim();
+  if(!text) return null;
+  let node=sel.anchorNode;
+  while(node&&node.nodeType!==1) node=node.parentNode;
+  while(node&&node!==$('#article')&&!/^(P|LI|BLOCKQUOTE|TD|TH|H[1-6])$/.test(node.tagName)) node=node.parentNode;
+  const para=node?node.textContent.replace(/\s+/g,' ').trim().slice(0,500):'';
+  return {term:text,context:para};
 }
 function showSelToolbar(x,y){
   const tb=$('#selToolbar');
@@ -1688,6 +1759,40 @@ function renderNotesPanel(){
     '<button class="btn ghost" style="margin-top:8px;font-size:12.5px" id="newNoteBtn">+ 写一条笔记</button>';
   else ntEl.insertAdjacentHTML('beforeend','<button class="btn ghost" style="margin-top:8px;font-size:12.5px" id="newNoteBtn">+ 写一条笔记</button>');
   const nb=$('#newNoteBtn'); if(nb) nb.onclick=()=>openNoteModal('');
+  // 背景解释
+  const bgEl=$('#ntBg');
+  bgEl.innerHTML='';
+  (n.bg||[]).slice().sort((a,b)=>b.ts-a.ts).forEach(b=>{
+    const d=document.createElement('div');
+    d.className='bg-item';
+    let qaHtml='';
+    if(b.qa&&b.qa.length){
+      qaHtml='<div class="bg-item-qa">'+b.qa.map(m=>
+        '<div class="bg-qa-'+m.role+'">'+(m.role==='user'?'🙋 我：':'🤖 AI：')+esc(m.content.slice(0,400))+'</div>'
+      ).join('')+'</div>';
+    }
+    d.innerHTML='<div class="bg-item-term">🔍 '+esc(b.term)+'</div>'+
+      '<div class="bg-item-body">'+mdLight(b.explanation)+'</div>'+qaHtml+
+      '<div class="bg-item-actions"><button class="edit-btn" data-reopen="'+b.id+'">查看</button>'+
+      '<button class="x-btn" data-delbg="'+b.id+'">✕</button></div>';
+    bgEl.appendChild(d);
+  });
+  if(!(n.bg||[]).length) bgEl.innerHTML='<div class="note-empty">还没有保存背景解释。阅读时选中词语 →「🔍 背景解释」，可把解释保存到这里。</div>';
+  bgEl.onclick=e=>{
+    const del=e.target.closest('[data-delbg]');
+    if(del){ n.bg=n.bg.filter(x=>x.id!==del.dataset.delbg); saveNotes(id,n); renderNotesPanel(); renderBgPanel(); toast('已删除'); return; }
+    const reopen=e.target.closest('[data-reopen]');
+    if(reopen){
+      const b=(n.bg||[]).find(x=>x.id===reopen.dataset.reopen);
+      if(b){
+        bgState.term=b.term; bgState.ctx=''; bgState.saved=true;
+        bgState.msgs=[{role:'assistant',content:b.explanation,ts:b.ts}].concat(b.qa||[]);
+        $('#bgTermInput').value=b.term;
+        switchToBgTab();
+        renderBgPanel();
+      }
+    }
+  };
   // 文章笔记
   const an=$('#articleNote');
   an.value = (n.articleNote&&n.articleNote.text)||'';
@@ -1703,7 +1808,7 @@ function renderNotesPanel(){
     },600);
   };
   saved.textContent = n.articleNote&&n.articleNote.text ? '上次保存 '+new Date(n.articleNote.ts).toLocaleString('zh-CN',{hour:'2-digit',minute:'2-digit'}) : '自动保存';
-  const cnt=(n.hls||[]).length+(n.notes||[]).length+(n.articleNote&&n.articleNote.text?1:0);
+  const cnt=(n.hls||[]).length+(n.notes||[]).length+(n.bg||[]).length+(n.articleNote&&n.articleNote.text?1:0);
   $('#notesCnt').textContent=cnt?'('+cnt+')':'';
 }
 $('#nmCancel').onclick=closeModal;
@@ -1724,6 +1829,13 @@ $('#hlCopy').onclick=()=>{
   if(!text) return;
   if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(()=>toast('已复制'),()=>toast('复制失败')); }
   else toast('复制失败');
+};
+$('#hlBg').onclick=()=>{
+  const sel=selectionContext();
+  hideSelToolbar();
+  if(!sel){ toast('请先选中要解释的词语'); return; }
+  switchToBgTab();
+  explainBgTerm(sel.term, sel.context);
 };
 
 /* ================= 导出笔记 ================= */
@@ -1748,6 +1860,13 @@ function exportNotes(){
     (n.hls||[]).forEach(h=>lines.push('- 高亮：「'+h.text+'」'));
     (n.notes||[]).forEach(nt=>{
       lines.push('- 笔记：'+(nt.quote?'\n  > 「'+nt.quote+'」\n  ':'')+nt.text);
+    });
+    (n.bg||[]).forEach(b=>{
+      lines.push('- 背景解释：「'+b.term+'」');
+      lines.push('  '+b.explanation.replace(/\n/g,'\n  '));
+      (b.qa||[]).forEach(m=>{
+        lines.push('  - '+(m.role==='user'?'追问：':'回答：')+m.content.replace(/\n/g,'\n    '));
+      });
     });
     if(n.articleNote&&n.articleNote.text) lines.push('- 文章笔记：\n  '+n.articleNote.text.replace(/\n/g,'\n  '));
     lines.push('');
@@ -1913,6 +2032,212 @@ $('#aiInputBox').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendAi(); }
 });
 
+/* ================= 背景解释 ================= */
+const bgState = { term:'', ctx:'', msgs:[], busy:false, saved:false };
+
+function switchToBgTab(){
+  $$('.rp-tab').forEach(x=>x.classList.remove('active'));
+  const t=document.querySelector('.rp-tab[data-tab="bg"]');
+  if(t) t.classList.add('active');
+  state.tab='bg';
+  $$('.tabpane').forEach(p=>p.classList.remove('active'));
+  $('#tab-bg').classList.add('active');
+}
+
+function buildBgMessages(term, ctx, followUp){
+  const a=BYID[state.cur];
+  const plain=plainOf(a).slice(0,12000);
+  const yi=(IDX.year||[]).find(x=>x.y===a.year);
+  const yearBg = yi ? [
+    '写作年份：'+yi.y,
+    '市场/经济背景：'+(yi.bg||'（无详细记录）'),
+    '当年重大事件：'+(yi.e||'（无详细记录）'),
+    '当年核心主题摘要：'+(yi.s||'（无详细记录）'),
+  ].join('\n') : '（该文章无明确年份或无年度背景记录）';
+  const sys=[
+    '你是一位金融史与投资概念专家，服务于阅读巴菲特致股东信的投资者。',
+    '任务：解释用户选中的词语/概念。要求：',
+    '1. 给出该词语的金融/投资学定义（简明准确，2-3句）；',
+    '2. 结合【文章所在年份】的市场背景与历史事件，说明该概念在当时的含义、用法和市场语境；',
+    '3. 结合文章内容，说明巴菲特在文中如何使用该概念、想表达什么；',
+    '4. 如该概念在当代有新发展或理解差异，简要指出；',
+    '5. 若词语是公司名、人名、政策名等专有名词，介绍其背景及其与文章的关系；',
+    '6. 中文回答，用 Markdown 分点（**加粗**小标题），控制在400字以内，重点突出，不堆砌。',
+  ].join('\n');
+  const parts=[
+    '【当前文章】《'+a.title+'》'+(a.year?'（'+a.year+'年）':''),
+    '【年份背景】\n'+yearBg,
+    '【文章内容】\n'+plain,
+  ];
+  if(ctx) parts.push('【选中词语所在段落】\n'+ctx);
+  const base=parts.join('\n\n');
+  const msgs=[{role:'system',content:sys}];
+  if(followUp){
+    msgs.push({role:'user',content:base+'\n\n请解释：「'+term+'」'});
+    bgState.msgs.forEach(m=>{
+      if(m.role==='user'||m.role==='assistant') msgs.push({role:m.role,content:m.content.slice(0,3000)});
+    });
+    msgs.push({role:'user',content:followUp});
+  } else {
+    msgs.push({role:'user',content:base+'\n\n请解释：「'+term+'」'});
+  }
+  return msgs;
+}
+
+function renderBgPanel(){
+  const id=state.cur;
+  if(!id) return;
+  const a=BYID[id];
+  const box=$('#bgMsgs');
+  const savedBox=$('#bgSaved');
+  // 已保存列表
+  const n=notesOf(id);
+  const saved=(n.bg||[]).slice().sort((x,y)=>y.ts-x.ts);
+  if(saved.length){
+    savedBox.hidden=false;
+    const list=savedBox.querySelector('#bgSavedList');
+    list.innerHTML=saved.map(b=>
+      '<button class="bg-saved-item" data-bgid="'+b.id+'"><span class="bg-dot"></span>'+
+      '<span>'+esc(b.term)+'</span><span class="bg-time">'+new Date(b.ts).toLocaleDateString('zh-CN')+'</span></button>'
+    ).join('');
+    list.onclick=e=>{
+      const it=e.target.closest('[data-bgid]');
+      if(!it) return;
+      const b=(n.bg||[]).find(x=>x.id===it.dataset.bgid);
+      if(b){
+        bgState.term=b.term; bgState.ctx=''; bgState.saved=true;
+        bgState.msgs=[{role:'assistant',content:b.explanation,ts:b.ts}].concat(b.qa||[]);
+        $('#bgTermInput').value=b.term;
+        renderBgPanel();
+      }
+    };
+  } else {
+    savedBox.hidden=true;
+  }
+  // 消息区
+  box.innerHTML='';
+  if(!bgState.term&&!bgState.msgs.length){
+    box.innerHTML='<div class="bg-welcome">🔍 <b>背景解释</b><br><br>'+
+      '选中文章中的词语，点击浮动工具栏的「🔍 背景解释」，或在上方输入词语，AI 将结合文章内容与<b>写作年份的市场背景</b>解释其金融概念。<br><br>'+
+      '你可以就解释继续追问，并把满意的解释保存到笔记，随时回顾。'+
+      '<div class="bg-tip">💡 解释会结合该文写作年份'+(a.year?'（'+a.year+'年）':'')+'的市场环境、重大事件，以及巴菲特在文中的用法。追问同样基于这些上下文。</div></div>';
+    $('#bgInput').style.display='none';
+    $('#bgStatus').textContent='';
+    return;
+  }
+  $('#bgInput').style.display='flex';
+  // 词语条
+  const termEl=document.createElement('div');
+  termEl.className='bg-msg term';
+  termEl.textContent='📌 '+bgState.term;
+  box.appendChild(termEl);
+  // 消息
+  bgState.msgs.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='bg-msg '+m.role;
+    if(m.role==='assistant'){
+      d.innerHTML=mdLight(m.content);
+      const btn=document.createElement('button');
+      btn.className='bg-note-btn'+(bgState.saved?' saved':'');
+      btn.textContent=bgState.saved?'✓ 已保存到笔记':'📝 保存到笔记';
+      btn.onclick=()=>saveBgToNotes();
+      d.appendChild(btn);
+    } else {
+      d.textContent=m.content;
+    }
+    box.appendChild(d);
+  });
+  box.scrollTop=box.scrollHeight;
+  $('#bgSend').disabled=bgState.busy;
+  $('#bgExplainBtn').disabled=bgState.busy;
+}
+
+async function explainBgTerm(term, ctx){
+  term=(term||'').trim();
+  if(!term){ toast('请输入要解释的词语'); return; }
+  if(!settingsOk()){ openSettings(); return; }
+  const reqArticle=state.cur;
+  bgState.term=term;
+  bgState.ctx=ctx||'';
+  bgState.msgs=[];
+  bgState.busy=true;
+  bgState.saved=false;
+  $('#bgTermInput').value=term;
+  renderBgPanel();
+  $('#bgStatus').textContent='正在检索背景资料并解释…（'+(settings().model.split('/').pop()||'')+'）';
+  try{
+    const reply=await callLLM(buildBgMessages(term,ctx));
+    if(state.cur!==reqArticle) return;
+    bgState.msgs.push({role:'assistant',content:reply,ts:Date.now()});
+  }catch(err){
+    if(state.cur!==reqArticle) return;
+    bgState.msgs.push({role:'err',content:'解释失败：'+err.message,ts:Date.now()});
+  }
+  bgState.busy=false;
+  $('#bgStatus').textContent='';
+  renderBgPanel();
+}
+
+async function sendBgFollowUp(){
+  if(bgState.busy) return;
+  const input=$('#bgInputBox');
+  const text=input.value.trim();
+  if(!text) return;
+  if(!settingsOk()){ openSettings(); return; }
+  const reqArticle=state.cur;
+  bgState.msgs.push({role:'user',content:text,ts:Date.now()});
+  input.value='';
+  bgState.busy=true;
+  bgState.saved=false;
+  renderBgPanel();
+  $('#bgStatus').textContent='思考中…';
+  try{
+    const reply=await callLLM(buildBgMessages(bgState.term,bgState.ctx,text));
+    if(state.cur!==reqArticle) return;
+    bgState.msgs.push({role:'assistant',content:reply,ts:Date.now()});
+  }catch(err){
+    if(state.cur!==reqArticle) return;
+    bgState.msgs.push({role:'err',content:'追问失败：'+err.message,ts:Date.now()});
+  }
+  bgState.busy=false;
+  $('#bgStatus').textContent='';
+  renderBgPanel();
+}
+
+function saveBgToNotes(){
+  if(!bgState.term||!bgState.msgs.length){ toast('暂无可保存的解释'); return; }
+  const first=bgState.msgs.find(m=>m.role==='assistant');
+  if(!first){ toast('暂无可保存的解释'); return; }
+  const id=state.cur, n=notesOf(id);
+  n.bg=n.bg||[];
+  const qa=bgState.msgs.slice(bgState.msgs.indexOf(first)+1)
+    .filter(m=>m.role==='user'||m.role==='assistant')
+    .map(m=>({role:m.role,content:m.content,ts:m.ts}));
+  const existing=n.bg.find(b=>b.term===bgState.term);
+  if(existing){
+    existing.explanation=first.content;
+    existing.qa=qa;
+    existing.ts=Date.now();
+    toast('已更新背景解释笔记');
+  } else {
+    n.bg.push({id:uid(),term:bgState.term,explanation:first.content,qa,ts:Date.now()});
+    toast('已保存到笔记·背景解释');
+  }
+  bgState.saved=true;
+  saveNotes(id,n);
+  renderBgPanel();
+  renderNotesPanel();
+}
+
+$('#bgExplainBtn').onclick=()=>explainBgTerm($('#bgTermInput').value);
+$('#bgTermInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){ e.preventDefault(); explainBgTerm($('#bgTermInput').value); }
+});
+$('#bgSend').onclick=sendBgFollowUp;
+$('#bgInputBox').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendBgFollowUp(); }
+});
+
 /* ================= 设置 ================= */
 function openSettings(){
   const s=settings();
@@ -2002,6 +2327,7 @@ $$('.rp-tab').forEach(t=>{
     pane.classList.add('active');
     if(state.tab==='notes') renderNotesPanel();
     if(state.tab==='ai') renderChatPanel();
+    if(state.tab==='bg') renderBgPanel();
   };
 });
 
@@ -2041,7 +2367,8 @@ onHash();
 
 /* 测试钩子 */
 window.BUF={state,openArticle,doSearch,visibleList,mdToHtml,toPlain,plainOf,applyHighlights,
-  addHighlight,notesOf,saveNotes,settings,callLLM,exportNotes,store,BYID,ART};
+  addHighlight,notesOf,saveNotes,settings,callLLM,exportNotes,store,BYID,ART,
+  bgState,renderBgPanel,explainBgTerm,sendBgFollowUp,saveBgToNotes,buildBgMessages,switchToBgTab,selectionContext};
 """
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -2145,11 +2472,13 @@ __CSS__
             <button class="rp-tab active" data-tab="toc">目录</button>
             <button class="rp-tab" data-tab="notes">笔记<span class="cnt" id="notesCnt"></span></button>
             <button class="rp-tab" data-tab="ai">AI 讨论</button>
+            <button class="rp-tab" data-tab="bg">背景解释</button>
           </div>
           <div class="tabpane active" id="tab-toc"></div>
           <div class="tabpane" id="tab-notes">
             <div class="note-sec"><h4>划线高亮</h4><div id="ntHighlights"></div></div>
             <div class="note-sec"><h4>笔记</h4><div id="ntNotes"></div></div>
+            <div class="note-sec"><h4>背景解释</h4><div id="ntBg"></div></div>
             <div class="note-sec"><h4>文章笔记（自动保存）</h4>
               <textarea id="articleNote" placeholder="记录你对这篇文章的理解、与 A 股实践的关联…"></textarea>
               <div class="note-saved" id="noteSaved"></div>
@@ -2164,11 +2493,30 @@ __CSS__
               <button id="aiSend">发送</button>
             </div>
           </div>
+          <div class="tabpane" id="tab-bg">
+            <div class="bg-head">
+              <div class="bg-term-row">
+                <label>词语</label>
+                <input id="bgTermInput" type="text" placeholder="输入或选中词语后点「解释」">
+                <button id="bgExplainBtn">解释</button>
+              </div>
+            </div>
+            <div class="bg-msgs" id="bgMsgs"></div>
+            <div class="bg-saved" id="bgSaved" hidden>
+              <h4>📚 本文已保存的背景解释</h4>
+              <div id="bgSavedList"></div>
+            </div>
+            <div class="bg-status" id="bgStatus"></div>
+            <div class="bg-input" id="bgInput" style="display:none">
+              <textarea id="bgInputBox" rows="1" placeholder="就这个解释继续追问…（Enter 发送）"></textarea>
+              <button id="bgSend">发送</button>
+            </div>
+          </div>
         </aside>
       </div>
       <div class="reader-foot">
         <span class="tbtn" id="rNavInfo" style="border:none;background:none"></span>
-        <span style="font-size:12px;color:#9a917f" id="rFootInfo">选中文字可高亮 / 下划线 / 记笔记</span>
+        <span style="font-size:12px;color:#9a917f" id="rFootInfo">选中文字可高亮 / 下划线 / 背景解释 / 记笔记</span>
       </div>
     </div>
   </main>
@@ -2178,6 +2526,8 @@ __CSS__
   <button id="hlYellow" title="黄色高亮">🟡 高亮</button>
   <button id="hlBlue" title="蓝色高亮">🔵 高亮</button>
   <button id="hlUnderline" title="绿色下划线">🟢 划线</button>
+  <span class="sep"></span>
+  <button id="hlBg" title="用 AI 解释选中词语的金融概念与时代背景">🔍 背景解释</button>
   <span class="sep"></span>
   <button id="hlNote" title="基于选中文字写笔记">📝 笔记</button>
   <button id="hlCopy" title="复制选中文字">⧉ 复制</button>

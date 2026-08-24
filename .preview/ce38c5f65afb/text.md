@@ -1027,7 +1027,6 @@ function goLibrary(patch){
   } else if (patch.idxOpen!==undefined){
     state.cat='all'; state.tag=''; state.idxDim=null; state.idxKey=null; state.decade='all';
     state.idxOpenSet = {}; state.idxOpenSet[patch.idxOpen] = true;   // 主页入口：仅展开所选维度并保持
-    state.sort='year-asc'; $('#sortSel').value='year-asc';           // 分类入口：文章按时间从旧到新
     state.q=''; searchIdx=null; $('#q').value=''; $('#qCount').textContent='';
   } else if (patch.tag!==undefined){
     state.tag=patch.tag; state.idxDim=null; state.idxKey=null;
