@@ -13,3 +13,6 @@ __pycache__/
 
 # 预览工具产物
 .preview/
+
+# macOS App 封装（含本机绝对路径，不入库）
+巴菲特投资智慧.app/

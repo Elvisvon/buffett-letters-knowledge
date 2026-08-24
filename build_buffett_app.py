@@ -474,6 +474,8 @@ def load_buffett_persona():
     全部缺失时返回空串（应用内会显示提示）。
     """
     candidates = [
+        # 项目级副本优先（随项目打包移动，日后再构建也用它）
+        (os.path.join(HERE, "skills", "celebrity-buffett"), ["persona.md", "work.md"]),
         (os.path.expanduser("~/.agents/skills/celebrity/buffett"), ["persona.md", "work.md"]),
         (os.path.expanduser("~/.dsh/skills/celebrity-buffett"), ["SKILL.md"]),
     ]
@@ -2088,7 +2090,7 @@ function renderChatPanel(){
     d.className='ai-msg '+m.role;
     if(m.quote) d.innerHTML='<span class="qref">'+esc(m.quote.slice(0,200))+'</span>'+mdLight(m.content);
     else d.innerHTML=mdLight(m.content);
-    if(m.role==='assistant'){
+    if(m.role==='assistant'&&!m.pending){
       // 检查该条答复是否已保存到笔记（笔记可能在笔记面板被删除）
       const curNotes=notesOf(id);
       const stillSaved=m.noteId && (curNotes.notes||[]).some(x=>x.id===m.noteId);
@@ -2180,7 +2182,7 @@ function buildAiMessages(userText){
     {role:'system',content:sys},
     {role:'user',content:ctx},
   ];
-  (chatOf(a.id)||[]).filter(m=>m.role==='user'||m.role==='assistant').slice(-10)
+  (chatOf(a.id)||[]).filter(m=>(m.role==='user'||(m.role==='assistant'&&!m.pending))).slice(-10)
     .forEach(m=>msgs.push({role:m.role,content:m.content.slice(0,3000)}));
   msgs.push({role:'user',content:userText});
   return msgs;
@@ -2195,21 +2197,29 @@ async function sendAi(){
   const id=state.cur;
   const msgs=chatOf(id);
   msgs.push({role:'user',content:text,quote:currentSelection()||'',ts:Date.now()});
+  const aidMsg={role:'assistant',content:'',pending:true,ts:Date.now()};
+  msgs.push(aidMsg);
   saveChat(id,msgs);
   box.value='';
   renderChatPanel();
   aiBusy=true;
   const sendBtn=$('#aiSend'); sendBtn.disabled=true;
-  $('#aiStatus').textContent='思考中…（DeepSeek '+(settings().model.split('/').pop()||'')+'）';
-  const a=BYID[id];
+  $('#aiStatus').textContent='思考中…（'+(settings().model.split('/').pop()||'')+'）';
+  let saveTimer=null;
   try{
-    const reply=await callLLM(buildAiMessages(text));
-    const msgs2=chatOf(id);
-    msgs2.push({role:'assistant',content:reply,ts:Date.now()});
-    saveChat(id,msgs2);
+    const reply=await callLLMStream(buildAiMessages(text), acc=>{
+      aidMsg.content=acc;
+      const el=$('#aiMsgs .ai-msg.assistant:last-of-type');
+      if(el) el.innerHTML=mdLight(acc);
+      if(!saveTimer){ saveTimer=setTimeout(()=>{ saveChat(id,msgs); saveTimer=null; },500); }
+    });
+    aidMsg.content=reply; aidMsg.pending=false;
+    clearTimeout(saveTimer);
+    saveChat(id,msgs);
     renderChatPanel();
   }catch(err){
-    const msgs2=chatOf(id);
+    clearTimeout(saveTimer);
+    const msgs2=chatOf(id).filter(m=>!(m.role==='assistant'&&m.pending));
     msgs2.push({role:'err',content:'请求失败：'+err.message,ts:Date.now()});
     saveChat(id,msgs2);
     renderChatPanel();
@@ -2243,6 +2253,66 @@ async function callLLM(messages){
   if(!c) throw new Error('响应为空');
   return c;
 }
+/* 流式调用：SSE 解析，onDelta 持续回调累计文本 */
+async function callLLMStream(messages, onDelta){
+  const s=settings();
+  if(!s.key) throw new Error('未配置 API Key');
+  let model=s.model||'';
+  if((s.base||'').includes('deepseek')&&model.includes('/')) model=model.split('/').pop();
+  const url=(s.base||'').replace(/\/+$/,'')+'/chat/completions';
+  let resp;
+  try{
+    resp=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.key},
+      body:JSON.stringify({model, messages, temperature:0.4, stream:true}),
+    });
+  }catch(e){
+    throw new Error('网络/跨域错误：'+e.message+'（如持续失败，可尝试把 Key 配置到支持 CORS 的代理，或用本地服务器打开本页）');
+  }
+  if(!resp.ok){
+    let msg='HTTP '+resp.status;
+    try{ const j=await resp.json(); msg+='：'+((j.error&&(j.error.message||j.error.code))||JSON.stringify(j).slice(0,200)); }catch(e){}
+    throw new Error(msg);
+  }
+  const ct=(resp.headers.get('content-type')||'');
+  if(!ct.includes('text/event-stream')){
+    // 兼容非流式响应
+    const j=await resp.json();
+    const c=j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;
+    if(!c) throw new Error('响应为空');
+    if(onDelta) onDelta(c);
+    return c;
+  }
+  const reader=resp.body.getReader();
+  const dec=new TextDecoder();
+  let buf='', full='';
+  const flush=line=>{
+    if(!line.startsWith('data:')) return;
+    const data=line.slice(5).trim();
+    if(data==='[DONE]') return;
+    try{
+      const j=JSON.parse(data);
+      const delta=j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.content;
+      if(delta){ full+=delta; if(onDelta) onDelta(full); }
+    }catch(e){}
+  };
+  for(;;){
+    const {done,value}=await reader.read();
+    if(done) break;
+    buf+=dec.decode(value,{stream:true});
+    let idx;
+    while((idx=buf.indexOf('\n'))>=0){
+      flush(buf.slice(0,idx).trim());
+      buf=buf.slice(idx+1);
+    }
+  }
+  buf=buf.trim();
+  if(buf) flush(buf);
+  if(!full) throw new Error('响应为空');
+  return full;
+}
+
 $('#aiSend').onclick=sendAi;
 $('#aiInputBox').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendAi(); }
@@ -2308,7 +2378,7 @@ function buildBuffettMessages(userText){
     '5. 中文回答，结构清晰；用户说「退出」时简短告别。',
   ].join('\n');
   const msgs=[{role:'system',content:sys}];
-  buffettChat().filter(m=>m.role==='user'||m.role==='assistant').slice(-12)
+  buffettChat().filter(m=>(m.role==='user'||(m.role==='assistant'&&!m.pending))).slice(-12)
     .forEach(m=>msgs.push({role:m.role,content:m.content.slice(0,3000)}));
   msgs.push({role:'user',content:userText});
   return msgs;
@@ -2322,20 +2392,29 @@ async function sendBuffett(){
   if(!settingsOk()){ openSettings(); return; }
   const msgs=buffettChat();
   msgs.push({role:'user',content:text,ts:Date.now()});
+  const aidMsg={role:'assistant',content:'',pending:true,ts:Date.now()};
+  msgs.push(aidMsg);
   saveBuffettChat(msgs);
   box.value='';
   renderChatView();
   buffettBusy=true;
   $('#chatSend').disabled=true;
   $('#chatStatus').textContent='巴菲特思考中…（'+(settings().model.split('/').pop()||'')+'）';
+  let saveTimer=null;
   try{
-    const reply=await callLLM(buildBuffettMessages(text));
-    const msgs2=buffettChat();
-    msgs2.push({role:'assistant',content:reply,ts:Date.now()});
-    saveBuffettChat(msgs2);
+    const reply=await callLLMStream(buildBuffettMessages(text), acc=>{
+      aidMsg.content=acc;
+      const el=$('#chatMsgs .ai-msg.assistant:last-of-type');
+      if(el) el.innerHTML=mdLight(acc);
+      if(!saveTimer){ saveTimer=setTimeout(()=>{ saveBuffettChat(msgs); saveTimer=null; },500); }
+    });
+    aidMsg.content=reply; aidMsg.pending=false;
+    clearTimeout(saveTimer);
+    saveBuffettChat(msgs);
     renderChatView();
   }catch(err){
-    const msgs2=buffettChat();
+    clearTimeout(saveTimer);
+    const msgs2=buffettChat().filter(m=>!(m.role==='assistant'&&m.pending));
     msgs2.push({role:'err',content:'请求失败：'+err.message,ts:Date.now()});
     saveBuffettChat(msgs2);
     renderChatView();

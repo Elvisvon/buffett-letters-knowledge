@@ -1,0 +1,183 @@
+{
+  "name": "巴菲特",
+  "display_name": "巴菲特",
+  "character": "celebrity",
+  "research_profile": "budget-unfriendly",
+  "classification": {
+    "language": "zh-CN",
+    "gallery_category": "Celebrity",
+    "tags": [
+      "价值投资",
+      "投资决策",
+      "资本配置",
+      "护城河",
+      "安全边际",
+      "能力圈",
+      "长期主义"
+    ]
+  },
+  "profile": "投资决策与判断框架：护城河 / 安全边际 / 能力圈 / 基本面叙事驱动 / 复利时间机器 / 错误即系统补丁",
+  "summary": "巴菲特式投资决策与判断框架（celebrity，budget-unfriendly）",
+  "tags": [
+    "价值投资",
+    "投资决策",
+    "资本配置",
+    "护城河",
+    "安全边际",
+    "能力圈",
+    "长期主义"
+  ],
+  "knowledge_sources": [
+    "巴菲特致股东信知识库 1956-2025：81 封信件 + 35 概念 + 61 公司案例 + 分类索引（本地一手）",
+    "芒格《副董事长的思考》2014（一手近距离观察）",
+    "外部评价 3 篇（Forbes Gates 视角 / Business Insider 芒格论伯克希尔与论巴菲特，URL 已验证）"
+  ],
+  "type": "celebrity",
+  "lifecycle": {
+    "status": "active",
+    "created_at": "2026-08-24T14:44:34.822610+00:00",
+    "updated_at": "2026-08-24T14:44:34.822610+00:00",
+    "version": "v1"
+  },
+  "generation": {
+    "engine": "distilly",
+    "character": "celebrity",
+    "research_profile": "budget-unfriendly",
+    "preset": "distilly.celebrity.v1",
+    "prompt_bundle": {
+      "preset": "distilly.celebrity.v1",
+      "intake": "prompts/celebrity/intake.md",
+      "research": "prompts/celebrity/research.md",
+      "work_analyzer": "prompts/work_analyzer.md",
+      "persona_analyzer": "prompts/celebrity/persona_analyzer.md",
+      "work_builder": "prompts/work_builder.md",
+      "persona_builder": "prompts/celebrity/persona_builder.md",
+      "merger": "prompts/celebrity/merger.md",
+      "correction_handler": "prompts/correction_handler.md"
+    },
+    "research_profile_bundle": {
+      "research": "prompts/celebrity/budget_unfriendly/research.md",
+      "audit": "prompts/celebrity/budget_unfriendly/audit.md",
+      "synthesis": "prompts/celebrity/budget_unfriendly/synthesis.md",
+      "validation": "prompts/celebrity/budget_unfriendly/validation.md",
+      "persona_analyzer": "prompts/celebrity/budget_unfriendly/persona_analyzer.md",
+      "persona_builder": "prompts/celebrity/budget_unfriendly/persona_builder.md"
+    },
+    "research_profile_references": [
+      "references/celebrity_budget_unfriendly_framework.md",
+      "references/celebrity_budget_unfriendly_template.md"
+    ],
+    "merge_strategy": "deep",
+    "quality_profile": "budget-unfriendly",
+    "knowledge_dirs": [
+      "docs",
+      "messages",
+      "emails",
+      "research/raw",
+      "research/merged",
+      "research/reviews",
+      "transcripts",
+      "subtitles"
+    ],
+    "storage_root": "skills/celebrity",
+    "research_tools": {
+      "public_x_posts": "tools/research/xquik_public_posts.py",
+      "subtitle_downloader": "tools/research/download_subtitles.sh",
+      "subtitle_cleaner": "tools/research/srt_to_transcript.py",
+      "research_merger": "tools/research/merge_research.py",
+      "quality_check": "tools/research/quality_check.py"
+    },
+    "created_from": [
+      "巴菲特致股东信知识库 1956-2025：81 封信件 + 35 概念 + 61 公司案例 + 分类索引（本地一手）",
+      "芒格《副董事长的思考》2014（一手近距离观察）",
+      "外部评价 3 篇（Forbes Gates 视角 / Business Insider 芒格论伯克希尔与论巴菲特，URL 已验证）"
+    ],
+    "corrections_count": 0
+  },
+  "source_context": {
+    "domain": "public",
+    "relationship_to_user": "public_figure",
+    "is_real_person": true,
+    "is_public_figure": true,
+    "is_fictional": false
+  },
+  "engine": {
+    "name": "distilly",
+    "kind": "meta-skill",
+    "character": "celebrity",
+    "research_profile": "budget-unfriendly",
+    "preset": "distilly.celebrity.v1",
+    "prompt_bundle": {
+      "preset": "distilly.celebrity.v1",
+      "intake": "prompts/celebrity/intake.md",
+      "research": "prompts/celebrity/research.md",
+      "work_analyzer": "prompts/work_analyzer.md",
+      "persona_analyzer": "prompts/celebrity/persona_analyzer.md",
+      "work_builder": "prompts/work_builder.md",
+      "persona_builder": "prompts/celebrity/persona_builder.md",
+      "merger": "prompts/celebrity/merger.md",
+      "correction_handler": "prompts/correction_handler.md"
+    },
+    "research_profile_bundle": {
+      "research": "prompts/celebrity/budget_unfriendly/research.md",
+      "audit": "prompts/celebrity/budget_unfriendly/audit.md",
+      "synthesis": "prompts/celebrity/budget_unfriendly/synthesis.md",
+      "validation": "prompts/celebrity/budget_unfriendly/validation.md",
+      "persona_analyzer": "prompts/celebrity/budget_unfriendly/persona_analyzer.md",
+      "persona_builder": "prompts/celebrity/budget_unfriendly/persona_builder.md"
+    },
+    "research_profile_references": [
+      "references/celebrity_budget_unfriendly_framework.md",
+      "references/celebrity_budget_unfriendly_template.md"
+    ],
+    "merge_strategy": "deep",
+    "quality_profile": "budget-unfriendly",
+    "knowledge_dirs": [
+      "docs",
+      "messages",
+      "emails",
+      "research/raw",
+      "research/merged",
+      "research/reviews",
+      "transcripts",
+      "subtitles"
+    ],
+    "storage_root": "skills/celebrity",
+    "research_tools": {
+      "public_x_posts": "tools/research/xquik_public_posts.py",
+      "subtitle_downloader": "tools/research/download_subtitles.sh",
+      "subtitle_cleaner": "tools/research/srt_to_transcript.py",
+      "research_merger": "tools/research/merge_research.py",
+      "quality_check": "tools/research/quality_check.py"
+    }
+  },
+  "schema_version": "3",
+  "slug": "buffett",
+  "kind": "meta-skill",
+  "subtype": null,
+  "preset": "distilly.celebrity.v1",
+  "id": "meta-skill.celebrity.buffett",
+  "artifacts": {
+    "combined_skill": "SKILL.md",
+    "work_skill": "work_skill.md",
+    "persona_skill": "persona_skill.md",
+    "work_doc": "work.md",
+    "persona_doc": "persona.md",
+    "manifest": "manifest.json",
+    "combined_name": "celebrity-buffett",
+    "work_name": "celebrity-buffett-work",
+    "persona_name": "celebrity-buffett-persona",
+    "combined_command": "celebrity-buffett",
+    "work_command": "celebrity-buffett-work",
+    "persona_command": "celebrity-buffett-persona"
+  },
+  "compat": {
+    "legacy_command": "/create-icon",
+    "legacy_storage_root": "skills/celebrity",
+    "legacy_type": "celebrity"
+  },
+  "created_at": "2026-08-24T14:44:34.822610+00:00",
+  "updated_at": "2026-08-24T14:44:34.822610+00:00",
+  "version": "v1",
+  "corrections_count": 0
+}
