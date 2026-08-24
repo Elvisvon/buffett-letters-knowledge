@@ -19,6 +19,7 @@
 仅依赖 Python 标准库。
 """
 
+import base64
 import json
 import os
 import re
@@ -28,6 +29,19 @@ import xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 KB_ROOT = os.path.join(HERE, "巴菲特致股东信知识库")
+
+
+def load_icon_b64():
+    """主页标志：assets/buffett-128.png → base64（单文件内嵌，离线可用）。
+
+    缺失时返回空串，主页回退为原 🏛 emoji。
+    """
+    p = os.path.join(HERE, "assets", "buffett-128.png")
+    try:
+        with open(p, "rb") as f:
+            return base64.b64encode(f.read()).decode("ascii")
+    except OSError:
+        return ""
 OUT_HTML = os.path.join(HERE, "巴菲特投资智慧.html")
 OUT_LLM = os.path.join(HERE, "llm-config.js")
 XLSX_PATH = os.path.join(HERE, "巴菲特致股东信分类索引(1956-2025) .xlsx")
@@ -605,6 +619,7 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
 .home-hero{text-align:center;padding:36px 20px 30px;background:linear-gradient(180deg,#faf4e4,transparent);
   border-radius:16px;border:1px solid var(--line2)}
 .home-hero .hh-icon{font-size:46px;line-height:1}
+.home-hero .hh-img{width:96px;height:96px;border-radius:18px;box-shadow:0 4px 16px rgba(139,111,71,.28);margin-bottom:2px}
 .home-hero h1{font:700 34px/1.4 var(--serif);color:var(--accent);margin:10px 0 6px}
 .home-hero .hh-sub{color:var(--ink2);font-size:14px}
 .hh-stats{display:flex;justify-content:center;gap:38px;margin:24px 0 20px;flex-wrap:wrap}
@@ -1571,7 +1586,9 @@ function renderHome(){
   ];
   el.innerHTML =
     '<div class="home-hero">'+
-      '<div class="hh-icon">🏛</div>'+
+      (typeof APP_ICON_B64!=='undefined'
+        ? '<img class="hh-img" src="data:image/png;base64,'+APP_ICON_B64+'" alt="巴菲特">'
+        : '<div class="hh-icon">🏛</div>')+
       '<h1>巴菲特投资智慧</h1>'+
       '<div class="hh-sub">巴菲特致股东信知识库 · 1956–2025 · 完全离线 · 阅读 / 划线 / 笔记 / AI 讨论</div>'+
       '<div class="hh-stats">'+
@@ -3484,7 +3501,13 @@ def main():
     data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     data_json = data_json.replace("</", "<\\/")
 
-    html = build_html(data_json, APP_CSS, APP_JS)
+    # 主页标志：注入 buffett.png 的 base64（APP_ICON_B64 常量，前置到 APP_JS）
+    icon_b64 = load_icon_b64()
+    js = APP_JS
+    if icon_b64:
+        js = "const APP_ICON_B64='" + icon_b64 + "';\n" + js
+
+    html = build_html(data_json, APP_CSS, js)
     with open(OUT_HTML, "w", encoding="utf-8") as f:
         f.write(html)
 
