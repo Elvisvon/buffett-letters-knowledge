@@ -42,14 +42,16 @@ BUNDLED = [
     "巴菲特致股东信分类索引(1956-2025) .xlsx",
     "巴菲特致股东信知识库",
     "skills",
+    "启动服务.command",
 ]
 
 LAUNCHER = r"""#!/bin/bash
 # 巴菲特投资智慧 · 便携版启动器（随 .app 分发，不依赖安装位置）
 APP_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROJ="$APP_ROOT/Resources/project"
+CMD="$PROJ/启动服务.command"
 
-if [ ! -f "$PROJ/巴菲特投资智慧.html" ]; then
+if [ ! -f "$CMD" ]; then
   osascript -e 'display dialog "应用资源不完整，请重新安装。" with icon stop buttons {"好"} default button 1'
   exit 1
 fi
@@ -57,10 +59,17 @@ if ! command -v python3 >/dev/null 2>&1; then
   osascript -e 'display dialog "需要 Python 3 环境。\n\n请先安装 Command Line Tools：\n  xcode-select --install" with icon caution buttons {"知道了"} default button 1'
   exit 1
 fi
-# 在「终端」中启动本地服务（关闭终端窗口或 Ctrl+C 即停止服务）
-osascript -e 'tell application "Terminal" to activate' \
-          -e 'tell application "Terminal" to do script "cd '"'"'"$PROJ"'"'"' && python3 serve_buffett_app.py"'
+# 交给「终端」运行 bundle 内的服务脚本（open 为系统命令，无引号/权限问题）
+open -a Terminal "$CMD"
 exit 0
+"""
+
+SERVICE_COMMAND = r"""#!/bin/bash
+# 巴菲特投资智慧 · 服务启动脚本（由 .app 通过「终端」运行）
+cd "$(dirname "$0")"
+echo "🏛 巴菲特投资智慧 正在启动…"
+echo "   服务地址将在下方显示；关闭本窗口或按 Ctrl+C 停止服务。"
+exec python3 serve_buffett_app.py
 """
 
 INFO_PLIST = """<?xml version="1.0" encoding="UTF-8"?>
@@ -153,8 +162,12 @@ def build_app(version):
     os.chmod(launcher, 0o755)
     # 图标
     make_icon(os.path.join(contents, "Resources"))
-    # 项目资源
+    # bundle 内服务脚本（供「终端」运行）
     proj = os.path.join(contents, "Resources", "project")
+    with open(os.path.join(proj, "启动服务.command"), "w", encoding="utf-8") as f:
+        f.write(SERVICE_COMMAND)
+    os.chmod(os.path.join(proj, "启动服务.command"), 0o755)
+    # 项目资源
     for item in BUNDLED:
         src = os.path.join(HERE, item)
         if not os.path.exists(src):
