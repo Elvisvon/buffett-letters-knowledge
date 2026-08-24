@@ -273,7 +273,17 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
 .hl-item .qt::before{content:"“";color:var(--accent2)}
 .hl-item .qt::after{content:"”";color:var(--accent2)}
 .nt-item .qt{color:var(--ink2);font-size:12px;border-left:2px solid var(--line);padding-left:7px;margin-bottom:4px}
-.nt-item .body{white-space:pre-wrap}
+.nt-item .body{white-space:normal}
+.nt-item .body h4,.nt-item .body h5,.ai-msg h4,.ai-msg h5{font-weight:700;margin:.55em 0 .25em;font-size:14px}
+.nt-item .body p,.ai-msg p{margin:.35em 0}
+.nt-item .body ul,.nt-item .body ol,.ai-msg ul,.ai-msg ol{margin-left:1.3em;padding-left:0}
+.nt-item .body li,.ai-msg li{margin:.15em 0}
+.nt-item .body pre,.ai-msg pre{background:#f1ece0;border-radius:8px;padding:8px 12px;overflow-x:auto;
+  font:12.5px var(--mono);margin:.45em 0;white-space:pre-wrap;word-break:break-word}
+.nt-item .body blockquote,.ai-msg blockquote{border-left:3px solid var(--accent2);padding:3px 11px;
+  margin:.45em 0;background:#faf6ea;color:#4d4638;border-radius:0 8px 8px 0}
+.nt-item .body hr,.ai-msg hr{border:none;border-top:1px dashed var(--line);margin:.7em 0}
+.nt-item .body a,.ai-msg a{color:var(--accent2);text-decoration:underline;text-underline-offset:2px}
 .x-btn{flex:0 0 auto;color:var(--ink3);padding:1px 5px;border-radius:5px;font-size:13px}
 .x-btn:hover{color:#b91c1c;background:#fde8e8}
 .edit-btn{flex:0 0 auto;color:var(--ink3);padding:1px 5px;border-radius:5px;font-size:13px}
@@ -1678,7 +1688,7 @@ function renderNotesPanel(){
       :nt.source==='bg'?'<span class="nt-tag nt-tag-bg">🔍 背景解释</span>':'';
     d.innerHTML='<div style="flex:1">'+srcLabel+
       (nt.quote?'<div class="qt">'+esc(nt.quote.slice(0,180))+'</div>':'')+
-      '<div class="body">'+esc(nt.text||'')+'</div></div>'+
+      '<div class="body">'+mdRich(nt.text||'')+'</div></div>'+
       '<button class="edit-btn" title="编辑">✎</button>'+
       '<button class="x-btn" title="删除">✕</button>';
     d.querySelector('.edit-btn').onclick=()=>openNoteModal(null,nt.id);
@@ -1842,8 +1852,8 @@ function renderChatPanel(){
   msgs.forEach(m=>{
     const d=document.createElement('div');
     d.className='ai-msg '+m.role;
-    if(m.quote) d.innerHTML='<span class="qref">'+esc(m.quote.slice(0,200))+'</span>'+mdLight(m.content);
-    else d.innerHTML=mdLight(m.content);
+    if(m.quote) d.innerHTML='<span class="qref">'+esc(m.quote.slice(0,200))+'</span>'+mdRich(m.content);
+    else d.innerHTML=mdRich(m.content);
     if(m.role==='assistant'&&!m.pending){
       // 检查该条答复是否已保存到笔记（笔记可能在笔记面板被删除）
       const curNotes=notesOf(id);
@@ -1877,6 +1887,37 @@ function mdLight(t){
     .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>')
     .replace(/`([^`]+)`/g,'<code>$1</code>')
     .replace(/\n/g,'<br>');
+}
+/* 富 Markdown 渲染（笔记/对话消息）：标题/加粗/斜体/列表/引用/代码块/链接/分隔线 */
+function inlineMdNote(s){
+  let out=esc(s);
+  out=out.replace(/`([^`]+)`/g,'<code>$1</code>');
+  out=out.replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  out=out.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  out=out.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>');
+  return out;
+}
+function mdRich(s){
+  if(!s) return '';
+  const parts=[];
+  // 块级结构在“未转义”文本上识别，转义下沉到行内渲染（避免 > # - 被 &gt; 干扰）
+  let out=s;
+  out=out.replace(/```([\s\S]*?)```/g,(m,c)=>{ parts.push('<pre><code>'+esc(c)+'</code></pre>'); return '\u0000'+(parts.length-1)+'\u0000'; });
+  const lines=out.split('\n');
+  let html='', inUl=false, inOl=false, inBq=false;
+  const closeAll=()=>{ if(inUl){html+='</ul>';inUl=false;} if(inOl){html+='</ol>';inOl=false;} if(inBq){html+='</blockquote>';inBq=false;} };
+  for(const line of lines){
+    const m=line.match(/^(#{1,4})\s+(.*)$/);
+    if(m){ closeAll(); const lv=Math.min(6,m[1].length+2); html+='<h'+lv+'>'+inlineMdNote(m[2])+'</h'+lv+'>'; continue; }
+    if(/^\s*---+\s*$/.test(line)){ closeAll(); html+='<hr>'; continue; }
+    if(/^>\s?/.test(line)){ if(!inBq){html+='<blockquote>';inBq=true;} html+=inlineMdNote(line.replace(/^>\s?/,''))+'<br>'; continue; }
+    if(/^\s*[-*+]\s+/.test(line)){ if(inOl){ closeAll(); } if(!inUl){html+='<ul>';inUl=true;} html+='<li>'+inlineMdNote(line.replace(/^\s*[-*+]\s+/,''))+'</li>'; continue; }
+    if(/^\s*\d+\.\s+/.test(line)){ if(inUl){ closeAll(); } if(!inOl){html+='<ol>';inOl=true;} html+='<li>'+inlineMdNote(line.replace(/^\s*\d+\.\s+/,''))+'</li>'; continue; }
+    closeAll();
+    if(line.trim()) html+='<p>'+inlineMdNote(line)+'</p>';
+  }
+  closeAll();
+  return html.replace(/\u0000(\d+)\u0000/g,(m,i)=>parts[+i]);
 }
 function toggleAiNote(m,btn,id){
   const n=notesOf(id);
@@ -1964,7 +2005,7 @@ async function sendAi(){
     const reply=await callLLMStream(buildAiMessages(text), acc=>{
       aidMsg.content=acc;
       const el=$('#aiMsgs .ai-msg.assistant:last-of-type');
-      if(el) el.innerHTML=mdLight(acc);
+      if(el) el.innerHTML=mdRich(acc);
       if(!saveTimer){ saveTimer=setTimeout(()=>{ saveChat(id,msgs); saveTimer=null; },500); }
     });
     aidMsg.content=reply; aidMsg.pending=false;
@@ -2103,7 +2144,7 @@ function renderChatView(){
   msgs.forEach(m=>{
     const d=document.createElement('div');
     d.className='ai-msg '+m.role;
-    d.innerHTML=mdLight(m.content);
+    d.innerHTML=mdRich(m.content);
     box.appendChild(d);
   });
   if(!msgs.length){
@@ -2159,7 +2200,7 @@ async function sendBuffett(){
     const reply=await callLLMStream(buildBuffettMessages(text), acc=>{
       aidMsg.content=acc;
       const el=$('#chatMsgs .ai-msg.assistant:last-of-type');
-      if(el) el.innerHTML=mdLight(acc);
+      if(el) el.innerHTML=mdRich(acc);
       if(!saveTimer){ saveTimer=setTimeout(()=>{ saveBuffettChat(msgs); saveTimer=null; },500); }
     });
     aidMsg.content=reply; aidMsg.pending=false;
