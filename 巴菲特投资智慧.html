@@ -32,7 +32,8 @@ a:hover{text-decoration:underline}
 #topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
   padding:10px 18px;background:rgba(246,243,236,.94);backdrop-filter:blur(8px);
   border-bottom:1px solid var(--line);flex-wrap:wrap}
-.brand{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.brand{display:flex;align-items:baseline;gap:8px;white-space:nowrap;cursor:pointer;border-radius:8px;padding:2px 6px;margin-left:-6px}
+.brand:hover{background:var(--line2)}
 .brand .logo{font-size:19px;font-weight:700;letter-spacing:.5px;color:var(--accent)}
 .brand .logo em{font-style:normal;color:var(--accent2)}
 .brand .sub{font-size:12px;color:var(--ink3)}
@@ -104,6 +105,48 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
 .r-idx .idx-ev{color:var(--ink2)}
 .r-idx b{color:var(--accent2)}
 .r-idx .mini-tag{cursor:pointer}
+
+/* ---------- 主页 ---------- */
+#home{padding-top:8px}
+.home-hero{text-align:center;padding:36px 20px 30px;background:linear-gradient(180deg,#faf4e4,transparent);
+  border-radius:16px;border:1px solid var(--line2)}
+.home-hero .hh-icon{font-size:46px;line-height:1}
+.home-hero h1{font:700 34px/1.4 var(--serif);color:var(--accent);margin:10px 0 6px}
+.home-hero .hh-sub{color:var(--ink2);font-size:14px}
+.hh-stats{display:flex;justify-content:center;gap:38px;margin:24px 0 20px;flex-wrap:wrap}
+.hh-stats b{display:block;font:700 25px/1.2 var(--serif);color:var(--accent2)}
+.hh-stats span{font-size:12px;color:var(--ink3)}
+.hh-search{display:flex;gap:8px;justify-content:center;max-width:540px;margin:0 auto}
+.hh-search input{flex:1;padding:11px 15px;border:1px solid var(--line);border-radius:10px;
+  background:var(--panel);font-size:14.5px;outline:none;min-width:0}
+.hh-search input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(180,83,9,.12)}
+.hh-search button{padding:11px 24px;border-radius:10px;background:var(--accent2);color:#fff;font-weight:600;flex:0 0 auto}
+.hh-search button:hover{background:#92400e}
+.home-sec{margin-top:28px}
+.home-sec>h2{font:700 17.5px var(--serif);margin-bottom:13px;display:flex;align-items:center;gap:9px}
+.home-sec>h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.home-tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 17px;
+  cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s;text-align:left}
+.home-tile:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(90,70,30,.09);border-color:#d8c9a8}
+.home-tile .ht-ic{font-size:24px;line-height:1}
+.home-tile .ht-name{font-weight:700;margin-top:8px;font-size:15px}
+.home-tile .ht-desc{font-size:12px;color:var(--ink3);margin-top:4px;line-height:1.65}
+.home-list{display:flex;flex-direction:column;gap:8px}
+.home-row{display:flex;align-items:baseline;gap:12px;padding:11px 15px;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.home-row:hover{border-color:#d8c9a8;background:#fffdf8;transform:translateY(-1px)}
+.home-row .hr-year{font-weight:700;color:var(--accent2);flex:0 0 74px;font-size:13.5px}
+.home-row .hr-title{font-weight:600;font-size:14.5px}
+.home-row .hr-why{font-size:12px;color:var(--ink3);margin-left:auto;text-align:right;max-width:48%;line-height:1.6}
+.home-chips{display:flex;flex-wrap:wrap;gap:8px}
+.home-chips .tag-chip{font-size:13px;padding:5px 14px}
+.home-last{display:flex;align-items:center;gap:14px;background:#faf6ea;border:1px solid #e3d5b8;
+  border-radius:12px;padding:15px 19px;cursor:pointer;margin-top:28px;transition:border-color .12s}
+.home-last:hover{border-color:var(--accent2)}
+.home-last .hl-ic{font-size:26px}
+.home-last .hl-title{font-weight:700;font-size:15px}
+.home-last .hl-time{font-size:12px;color:var(--ink3);margin-left:auto;white-space:nowrap}
 
 /* ---------- 主区 ---------- */
 #main{flex:1;min-width:0;padding:22px 26px 80px}
@@ -306,7 +349,7 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
 <body>
 <header id="topbar">
   <button class="tbtn" id="menuBtn" title="筛选面板">☰</button>
-  <div class="brand"><span class="logo">🏛 巴菲特<em>投资智慧</em></span><span class="sub">致股东信知识库</span></div>
+  <div class="brand" id="brandBtn" title="回到主页"><span class="logo">🏛 巴菲特<em>投资智慧</em></span><span class="sub">致股东信知识库</span></div>
   <div class="search-wrap">
     <input id="q" type="search" placeholder="搜索文章、概念、公司、人物…（/ 聚焦）" autocomplete="off">
     <span id="qCount"></span>
@@ -361,12 +404,13 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
     <div class="sb-foot" id="sbFootInfo"></div>
   </aside>
   <main id="main">
-    <div id="libHead">
-      <span id="libTitle">全部文章</span>
-      <span id="libCount"></span>
-    </div>
-    <div id="idxBanner"></div>
-    <div id="library">
+    <div id="home" hidden></div>
+    <div id="library" hidden>
+      <div id="libHead">
+        <span id="libTitle">全部文章</span>
+        <span id="libCount"></span>
+      </div>
+      <div id="idxBanner"></div>
       <div id="libList"></div>
     </div>
     <div id="reader" hidden>
@@ -551,7 +595,7 @@ const settings = () => {
 const state = {
   cat:'all', decade:'all', tag:'', q:'', favOnly:false, notedOnly:false,
   sort:'year-desc', group:'none', view:'grid', cur:null, tab:'toc',
-  idxDim:null, idxKey:null,
+  idxDim:null, idxKey:null, idxOpen:null,
 };
 
 /* ================= Markdown 渲染 ================= */
@@ -825,7 +869,7 @@ function renderIdxSidebar(){
   ['topic','industry','event','method','year'].forEach(dim=>{
     const items=IDX[dim]||[];
     const g=document.createElement('div');
-    g.className='idx-group';
+    g.className='idx-group'+(state.idxOpen===dim?' open':'');
     const body=document.createElement('div');
     body.className='idx-items';
     items.forEach(it=>{
@@ -891,6 +935,124 @@ function setIdxByCanonTopic(tok){
   return false;
 }
 
+/* ================= 主页 ================= */
+const homeEl = $('#home');
+function goLibrary(patch){
+  // 主页入口 = 全新起点：按入口语义重置其余筛选
+  if (patch.cat!==undefined){
+    state.cat=patch.cat; state.tag=''; state.idxDim=null; state.idxKey=null; state.decade='all';
+    state.q=''; searchIdx=null; $('#q').value=''; $('#qCount').textContent='';
+  } else if (patch.idxOpen!==undefined){
+    state.cat='all'; state.tag=''; state.idxDim=null; state.idxKey=null; state.decade='all';
+    state.idxOpen=patch.idxOpen;
+    state.q=''; searchIdx=null; $('#q').value=''; $('#qCount').textContent='';
+  } else if (patch.tag!==undefined){
+    state.tag=patch.tag; state.idxDim=null; state.idxKey=null;
+    state.q=''; searchIdx=null; $('#q').value=''; $('#qCount').textContent='';
+  }
+  if (patch.q!==undefined){
+    state.q=patch.q||'';
+    doSearch(state.q);
+    $('#q').value=state.q;
+    $('#qCount').textContent = state.q && searchIdx ? Object.keys(searchIdx).length+' 条' : '';
+  }
+  location.hash = '#/library';
+}
+function fmtAgo(ts){
+  const d=Date.now()-ts, m=Math.floor(d/60000);
+  if(m<1) return '刚刚';
+  if(m<60) return m+' 分钟前';
+  const h=Math.floor(m/60);
+  if(h<24) return h+' 小时前';
+  return Math.floor(h/24)+' 天前';
+}
+function renderHome(){
+  const el=homeEl;
+  const yearItems=IDX.year||[];
+  const years=yearItems.map(x=>x.y).filter(Boolean);
+  const yMin=years.length?Math.min.apply(null,years):'';
+  const yMax=years.length?Math.max.apply(null,years):'';
+  const nLetters=ART.filter(a=>['berkshire','partnership','special'].includes(a.catKey)).length;
+  const nTags=new Set();
+  ART.forEach(a=>(a.tags||[]).forEach(t=>nTags.add(t)));
+  const catCount=k=>{ const c=(DATA.cats||[]).find(x=>x.key===k); return c?c.count:0; };
+  const recent=ART.filter(a=>a.catKey==='berkshire'&&a.year&&a.year>=2020).sort((a,b)=>b.year-a.year);
+  const tagCounts={};
+  ART.forEach(a=>(a.tags||[]).forEach(t=>tagCounts[t]=(tagCounts[t]||0)+1));
+  const hotTags=Object.entries(tagCounts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const last=store.get('bf_last',null);
+  const lastArt=last&&BYID[last.id]?BYID[last.id]:null;
+  const classics=[
+    ['berkshire-1983-巴菲特致股东信','1983','商誉与所有者收益','收购标准、经济商誉、回购的系统论述'],
+    ['berkshire-1984-巴菲特致股东信','1984','超级投资者','九位价值投资者业绩反驳有效市场假说'],
+    ['berkshire-1987-巴菲特致股东信','1987','市场先生','黑色星期一：波动是机会而非风险'],
+    ['berkshire-1994-巴菲特致股东信','1994','大师级框架','理解伯克希尔哲学的最佳单封信'],
+    ['berkshire-2008-巴菲特致股东信','2008','买入美国','金融危机中的行动逻辑'],
+    ['berkshire-2016-巴菲特致股东信','2016','苹果','能力圈扩展到科技平台'],
+    ['berkshire-2021-巴菲特致股东信','2021','美国顺风','长期主义与反对投机'],
+    ['berkshire-2023-巴菲特致股东信','2023','纪念芒格','思想伙伴关系的回顾'],
+  ].filter(x=>BYID[x[0]]);
+  const tiles=[
+    ['全部文章','📚',ART.length+' 篇','cat:all'],
+    ['合伙人信','📜',catCount('partnership')+' 篇','cat:partnership'],
+    ['伯克希尔股东信','🏛',catCount('berkshire')+' 篇','cat:berkshire'],
+    ['概念词条','💡',catCount('concept')+' 个','cat:concept'],
+    ['公司案例','🏢',catCount('company')+' 家','cat:company'],
+    ['人物','👤',catCount('person')+' 位','cat:person'],
+  ];
+  const dims=[
+    ['主题分类','🏷',(IDX.topic||[]).length+' 类','主题：投资/估值/并购…','topic'],
+    ['行业分类','🏭',(IDX.industry||[]).length+' 类','保险/铁路/消费/金融…','industry'],
+    ['事件时期','🌪',(IDX.event||[]).length+' 段','泡沫、危机、疫情…','event'],
+    ['选股方法','🧭',(IDX.method||[]).length+' 期','烟蒂→特许权→护城河…','method'],
+    ['年度索引','📅',yearItems.length+' 年',''+yMin+'–'+yMax+' 逐年','year'],
+  ];
+  el.innerHTML =
+    '<div class="home-hero">'+
+      '<div class="hh-icon">🏛</div>'+
+      '<h1>巴菲特投资智慧</h1>'+
+      '<div class="hh-sub">巴菲特致股东信知识库 · 1956–2025 · 完全离线 · 阅读 / 划线 / 笔记 / AI 讨论</div>'+
+      '<div class="hh-stats">'+
+        '<div><b>'+ART.length+'</b><span>篇文章</span></div>'+
+        '<div><b>'+(yMax-yMin+1)+'</b><span>年跨度</span></div>'+
+        '<div><b>'+nLetters+'</b><span>封信件</span></div>'+
+        '<div><b>'+nTags.size+'</b><span>主题标签</span></div>'+
+      '</div>'+
+      '<div class="hh-search"><input id="homeQ" placeholder="搜索文章、概念、公司、人物…" autocomplete="off"><button id="homeQGo">搜索</button></div>'+
+    '</div>'+
+    '<section class="home-sec"><h2>📚 快速浏览</h2><div class="home-grid">'+
+      tiles.map(t=>'<button class="home-tile" data-go=\''+JSON.stringify({cat:t[3].split(':')[1]})+'\'><div class="ht-ic">'+t[1]+'</div><div class="ht-name">'+t[0]+'</div><div class="ht-desc">'+t[2]+'</div></button>').join('')+
+    '</div></section>'+
+    '<section class="home-sec"><h2>🗂 分类索引 <span class="n" style="font-size:12px;color:var(--ink3);font-weight:400">'+yMin+'–'+yMax+'</span></h2><div class="home-grid">'+
+      dims.map(d=>'<button class="home-tile" data-go=\''+JSON.stringify({idxOpen:d[4]})+'\'><div class="ht-ic">'+d[1]+'</div><div class="ht-name">'+d[0]+'</div><div class="ht-desc">'+d[2]+' · '+d[3]+'</div></button>').join('')+
+    '</div></section>'+
+    '<section class="home-sec"><h2>⭐ 必读经典</h2><div class="home-list">'+
+      classics.map(c=>'<div class="home-row" data-art="'+c[0]+'"><span class="hr-year">'+c[1]+'</span><span class="hr-title">'+esc(c[2])+'</span><span class="hr-why">'+esc(c[3])+'</span></div>').join('')+
+    '</div></section>'+
+    '<section class="home-sec"><h2>🕘 最新信件</h2><div class="home-list">'+
+      recent.map(a=>'<div class="home-row" data-art="'+a.id+'"><span class="hr-year">'+a.year+'</span><span class="hr-title">'+esc(a.title)+'</span><span class="hr-why">'+(a.tags||[]).slice(0,3).map(esc).join(' · ')+'</span></div>').join('')+
+    '</div></section>'+
+    '<section class="home-sec"><h2>🔥 热门主题</h2><div class="home-chips">'+
+      hotTags.map(t=>'<button class="tag-chip" data-tag="'+esc(t[0])+'">'+esc(t[0])+' · '+t[1]+'</button>').join('')+
+    '</div></section>'+
+    (lastArt?'<div class="home-last" data-art="'+lastArt.id+'"><span class="hl-ic">📖</span><div><div class="hl-title">继续阅读：'+esc(lastArt.title)+'</div><div class="hl-time">上次读到 '+fmtAgo(last.ts||Date.now())+'</div></div><span class="hl-time">→</span></div>':'');
+  // 主页搜索
+  const hq=$('#homeQ');
+  if(hq){
+    hq.addEventListener('keydown',e=>{ if(e.key==='Enter'){ goLibrary({q:hq.value.trim()}); } });
+    const go=$('#homeQGo');
+    if(go) go.onclick=()=>goLibrary({q:hq.value.trim()});
+  }
+}
+homeEl.addEventListener('click',e=>{
+  const art=e.target.closest('[data-art]');
+  if(art){ location.hash='#/a/'+art.dataset.art; return; }
+  const tg=e.target.closest('[data-tag]');
+  if(tg){ goLibrary({tag:tg.dataset.tag}); return; }
+  const go=e.target.closest('[data-go]');
+  if(go){ try{ goLibrary(JSON.parse(go.dataset.go)); }catch(err){} }
+});
+
 function cardHtml(a){
   const n = notesOf(a.id);
   const hasN = hasNotes(a.id);
@@ -923,7 +1085,7 @@ function rowHtml(a){
 }
 
 function renderLibrary(){
-  readerEl.hidden = true; libEl.hidden = false;
+  readerEl.hidden = true; libEl.hidden = false; homeEl.hidden = true;
   const list = visibleList();
   const it = idxActiveItem();
   $('#libTitle').textContent = it
@@ -994,7 +1156,8 @@ function openArticle(id){
   const a = BYID[id];
   if (!a) return;
   state.cur = id;
-  libEl.hidden = true; readerEl.hidden = false;
+  libEl.hidden = true; readerEl.hidden = false; homeEl.hidden = true;
+  store.set('bf_last', {id, ts: Date.now()});
   $('#rTitle').textContent = a.title;
   $('#rMeta').innerHTML =
     '<span class="badge cat">'+CAT_NAME[a.catKey]+'</span>'+
@@ -1006,8 +1169,8 @@ function openArticle(id){
   $('#rTags').onclick = e=>{
     const b=e.target.closest('[data-tag]');
     if(!b) return;
-    state.tag=b.dataset.tag; state.q=''; $('#q').value='';
-    location.hash='#/'; renderAll();
+    state.tag=b.dataset.tag; state.q=''; $('#q').value=''; $('#qCount').textContent='';
+    location.hash='#/library';
   };
   // 年度索引行（信件类文章且有年度总索引条目时显示）
   const yi = (IDX.year||[]).find(x=>x.y===a.year);
@@ -1019,8 +1182,8 @@ function openArticle(id){
       '<button class="mini-tag" id="rIdxYear" title="查看年度摘要">年度摘要 →</button>';
     idxLine.onclick = e=>{
       const ct=e.target.closest('[data-ct]');
-      if(ct){ if(setIdxByCanonTopic(ct.dataset.ct)){ state.q=''; $('#q').value=''; location.hash='#/'; renderAll(); } return; }
-      if(e.target.closest('#rIdxYear')){ state.idxDim='year'; state.idxKey=yi.k; location.hash='#/'; renderAll(); }
+      if(ct){ if(setIdxByCanonTopic(ct.dataset.ct)){ state.q=''; $('#q').value=''; $('#qCount').textContent=''; location.hash='#/library'; } return; }
+      if(e.target.closest('#rIdxYear')){ state.idxDim='year'; state.idxKey=yi.k; location.hash='#/library'; }
     };
   } else idxLine.innerHTML='';
   $('#rFav').textContent = isFav(id)?'★':'☆';
@@ -1047,7 +1210,7 @@ function openArticle(id){
   // 上一篇/下一篇
   $('#rPrev').onclick = ()=>navArticle(-1);
   $('#rNext').onclick = ()=>navArticle(1);
-  $('#backBtn').onclick = ()=>{ location.hash='#/'; };
+  $('#backBtn').onclick = ()=>{ location.hash='#/library'; };
   document.title = a.title+' · 巴菲特投资智慧';
   window.scrollTo(0,0);
 }
@@ -1528,6 +1691,7 @@ $('#sbNoted').onchange=e=>{ state.notedOnly=e.target.checked; renderAll(); };
 $('#menuBtn').onclick=()=>{ $('#sidebar').classList.toggle('open'); $('#sidebarBackdrop').classList.toggle('show'); };
 $('#sidebarBackdrop').onclick=()=>{ $('#sidebar').classList.remove('open'); $('#sidebarBackdrop').classList.remove('show'); };
 $('#notesExport').onclick=exportNotes;
+$('#brandBtn').onclick=()=>{ if(location.hash!=='#/') location.hash='#/'; else showHome(); };
 document.addEventListener('keydown',e=>{
   if(e.key==='/'&&document.activeElement!==$('#q')&&!e.target.closest('input,textarea')){ e.preventDefault(); $('#q').focus(); }
 });
@@ -1556,12 +1720,26 @@ $$('.rp-tab').forEach(t=>{
 });
 
 /* ================= 路由 / 启动 ================= */
-function renderAll(){ renderSidebar(); renderLibrary(); }
+function showHome(){
+  if (state.cur) state.cur=null;
+  readerEl.hidden = true; libEl.hidden = true; homeEl.hidden = false;
+  document.title = DATA.title+' · 致股东信知识库';
+  renderHome();
+  window.scrollTo(0,0);
+}
+function renderAllNoHash(){
+  renderSidebar(); renderLibrary();
+}
+function renderAll(){
+  if (location.hash !== '#/library') location.hash = '#/library';
+  renderAllNoHash();
+}
 function onHash(){
   const m=location.hash.match(/^#\/a\/(.+)$/);
   const id=m?decodeURIComponent(m[1]):null;
   if(id&&BYID[id]) openArticle(id);
-  else renderAll();
+  else if(location.hash==='#/library') renderAllNoHash();
+  else showHome();
 }
 window.addEventListener('hashchange',onHash);
 let toastTimer=null;
