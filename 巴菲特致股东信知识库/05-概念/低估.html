@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>低估 — 巴菲特知识库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header"><a href="../index.html" class="logo">巴菲特知识库</a></div>
+<div class="sidebar-nav">
+<a href="../index.html" class="nav-link nav-home">🏠 首页</a>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('00_索引')"><span class="caret"></span>索引<span class="badge">4</span></div>
+<div class="nav-group-items" id="00_索引">
+<a href="../index-pages/人物索引.html" class="nav-link" title="人物索引">人物索引</a>
+<a href="../index-pages/公司索引.html" class="nav-link" title="公司索引">公司索引</a>
+<a href="../index-pages/巴菲特致股东信总览.html" class="nav-link" title="巴菲特致股东信总览">巴菲特致股东信总览</a>
+<a href="../index-pages/核心思想图谱.html" class="nav-link" title="核心思想图谱">核心思想图谱</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('01_合伙人信')"><span class="caret"></span>合伙人信<span class="badge">17</span></div>
+<div class="nav-group-items" id="01_合伙人信">
+<a href="../partnership/1956-有限合伙协议.html" class="nav-link" title="1956 有限合伙协议">1956 有限合伙协议</a>
+<a href="../partnership/1957-巴菲特致合伙人信.html" class="nav-link" title="1957 巴菲特致合伙人信">1957 巴菲特致合伙人信</a>
+<a href="../partnership/1958-巴菲特致合伙人信.html" class="nav-link" title="1958 巴菲特致合伙人信">1958 巴菲特致合伙人信</a>
+<a href="../partnership/1959-巴菲特致合伙人信.html" class="nav-link" title="1959 巴菲特致合伙人信">1959 巴菲特致合伙人信</a>
+<a href="../partnership/1960-巴菲特致合伙人信.html" class="nav-link" title="1960 巴菲特致合伙人信">1960 巴菲特致合伙人信</a>
+<a href="../partnership/1961-巴菲特致合伙人信.html" class="nav-link" title="1961 巴菲特致合伙人信">1961 巴菲特致合伙人信</a>
+<a href="../partnership/1961年中-巴菲特致合伙人信.html" class="nav-link" title="1961年中 巴菲特致合伙人信">1961年中 巴菲特致合伙人信</a>
+<a href="../partnership/1962-巴菲特致合伙人信.html" class="nav-link" title="1962 巴菲特致合伙人信">1962 巴菲特致合伙人信</a>
+<a href="../partnership/1962年11月-巴菲特致合伙人信.html" class="nav-link" title="1962年11月 巴菲特致合伙人信">1962年11月 巴菲特致合伙人信</a>
+<a href="../partnership/1962年12月-巴菲特致合伙人信.html" class="nav-link" title="1962年12月 巴菲特致合伙人信">1962年12月 巴菲特致合伙人信</a>
+<a href="../partnership/1962年中-巴菲特致合伙人信.html" class="nav-link" title="1962年中 巴菲特致合伙人信">1962年中 巴菲特致合伙人信</a>
+<a href="../partnership/1963-巴菲特致合伙人信.html" class="nav-link" title="1963 巴菲特致合伙人信">1963 巴菲特致合伙人信</a>
+<a href="../partnership/1963年11月-巴菲特致合伙人信.html" class="nav-link" title="1963年11月 巴菲特致合伙人信">1963年11月 巴菲特致合伙人信</a>
+<a href="../partnership/1963年12月-巴菲特致合伙人信.html" class="nav-link" title="1963年12月 巴菲特致合伙人信">1963年12月 巴菲特致合伙人信</a>
+<a href="../partnership/1963年中-巴菲特致合伙人信.html" class="nav-link" title="1963年中 巴菲特致合伙人信">1963年中 巴菲特致合伙人信</a>
+<a href="../partnership/1964-巴菲特致合伙人信.html" class="nav-link" title="1964 巴菲特致合伙人信">1964 巴菲特致合伙人信</a>
+<a href="../partnership/1964年中-巴菲特致合伙人信.html" class="nav-link" title="1964年中 巴菲特致合伙人信">1964年中 巴菲特致合伙人信</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('02_伯克希尔股东信')"><span class="caret"></span>伯克希尔股东信<span class="badge">60</span></div>
+<div class="nav-group-items" id="02_伯克希尔股东信">
+<a href="../berkshire/1965-巴菲特致股东信.html" class="nav-link" title="1965 巴菲特致股东信">1965 巴菲特致股东信</a>
+<a href="../berkshire/1966-巴菲特致股东信.html" class="nav-link" title="1966 巴菲特致股东信">1966 巴菲特致股东信</a>
+<a href="../berkshire/1967-巴菲特致股东信.html" class="nav-link" title="1967 巴菲特致股东信">1967 巴菲特致股东信</a>
+<a href="../berkshire/1968-巴菲特致股东信.html" class="nav-link" title="1968 巴菲特致股东信">1968 巴菲特致股东信</a>
+<a href="../berkshire/1969-巴菲特致股东信.html" class="nav-link" title="1969 巴菲特致股东信">1969 巴菲特致股东信</a>
+<a href="../berkshire/1970-巴菲特致股东信.html" class="nav-link" title="1970 巴菲特致股东信">1970 巴菲特致股东信</a>
+<a href="../berkshire/1971-巴菲特致股东信.html" class="nav-link" title="1971 巴菲特致股东信">1971 巴菲特致股东信</a>
+<a href="../berkshire/1972-巴菲特致股东信.html" class="nav-link" title="1972 巴菲特致股东信">1972 巴菲特致股东信</a>
+<a href="../berkshire/1973-巴菲特致股东信.html" class="nav-link" title="1973 巴菲特致股东信">1973 巴菲特致股东信</a>
+<a href="../berkshire/1974-巴菲特致股东信.html" class="nav-link" title="1974 巴菲特致股东信">1974 巴菲特致股东信</a>
+<a href="../berkshire/1975-巴菲特致股东信.html" class="nav-link" title="1975 巴菲特致股东信">1975 巴菲特致股东信</a>
+<a href="../berkshire/1976-巴菲特致股东信.html" class="nav-link" title="1976 巴菲特致股东信">1976 巴菲特致股东信</a>
+<a href="../berkshire/1977-巴菲特致股东信.html" class="nav-link" title="1977 巴菲特致股东信">1977 巴菲特致股东信</a>
+<a href="../berkshire/1978-巴菲特致股东信.html" class="nav-link" title="1978 巴菲特致股东信">1978 巴菲特致股东信</a>
+<a href="../berkshire/1979-巴菲特致股东信.html" class="nav-link" title="1979 巴菲特致股东信">1979 巴菲特致股东信</a>
+<a href="../berkshire/1980-巴菲特致股东信.html" class="nav-link" title="1980 巴菲特致股东信">1980 巴菲特致股东信</a>
+<a href="../berkshire/1981-巴菲特致股东信.html" class="nav-link" title="1981 巴菲特致股东信">1981 巴菲特致股东信</a>
+<a href="../berkshire/1982-巴菲特致股东信.html" class="nav-link" title="1982 巴菲特致股东信">1982 巴菲特致股东信</a>
+<a href="../berkshire/1983-巴菲特致股东信.html" class="nav-link" title="1983 巴菲特致股东信">1983 巴菲特致股东信</a>
+<a href="../berkshire/1984-巴菲特致股东信.html" class="nav-link" title="1984 巴菲特致股东信">1984 巴菲特致股东信</a>
+<a href="../berkshire/1985-巴菲特致股东信.html" class="nav-link" title="1985 巴菲特致股东信">1985 巴菲特致股东信</a>
+<a href="../berkshire/1986-巴菲特致股东信.html" class="nav-link" title="1986 巴菲特致股东信">1986 巴菲特致股东信</a>
+<a href="../berkshire/1987-巴菲特致股东信.html" class="nav-link" title="1987 巴菲特致股东信">1987 巴菲特致股东信</a>
+<a href="../berkshire/1988-巴菲特致股东信.html" class="nav-link" title="1988 巴菲特致股东信">1988 巴菲特致股东信</a>
+<a href="../berkshire/1989-巴菲特致股东信.html" class="nav-link" title="1989 巴菲特致股东信">1989 巴菲特致股东信</a>
+<a href="../berkshire/1990-巴菲特致股东信.html" class="nav-link" title="1990 巴菲特致股东信">1990 巴菲特致股东信</a>
+<a href="../berkshire/1991-巴菲特致股东信.html" class="nav-link" title="1991 巴菲特致股东信">1991 巴菲特致股东信</a>
+<a href="../berkshire/1992-巴菲特致股东信.html" class="nav-link" title="1992 巴菲特致股东信">1992 巴菲特致股东信</a>
+<a href="../berkshire/1993-巴菲特致股东信.html" class="nav-link" title="1993 巴菲特致股东信">1993 巴菲特致股东信</a>
+<a href="../berkshire/1994-巴菲特致股东信.html" class="nav-link" title="1994 巴菲特致股东信">1994 巴菲特致股东信</a>
+<a href="../berkshire/1995-巴菲特致股东信.html" class="nav-link" title="1995 巴菲特致股东信">1995 巴菲特致股东信</a>
+<a href="../berkshire/1996-巴菲特致股东信.html" class="nav-link" title="1996 巴菲特致股东信">1996 巴菲特致股东信</a>
+<a href="../berkshire/1997-巴菲特致股东信.html" class="nav-link" title="1997 巴菲特致股东信">1997 巴菲特致股东信</a>
+<a href="../berkshire/1998-巴菲特致股东信.html" class="nav-link" title="1998 巴菲特致股东信">1998 巴菲特致股东信</a>
+<a href="../berkshire/1999-巴菲特致股东信.html" class="nav-link" title="1999 巴菲特致股东信">1999 巴菲特致股东信</a>
+<a href="../berkshire/2000-巴菲特致股东信.html" class="nav-link" title="2000 巴菲特致股东信">2000 巴菲特致股东信</a>
+<a href="../berkshire/2001-巴菲特致股东信.html" class="nav-link" title="2001 巴菲特致股东信">2001 巴菲特致股东信</a>
+<a href="../berkshire/2002-巴菲特致股东信.html" class="nav-link" title="2002 巴菲特致股东信">2002 巴菲特致股东信</a>
+<a href="../berkshire/2003-巴菲特致股东信.html" class="nav-link" title="2003 巴菲特致股东信">2003 巴菲特致股东信</a>
+<a href="../berkshire/2004-巴菲特致股东信.html" class="nav-link" title="2004 巴菲特致股东信">2004 巴菲特致股东信</a>
+<a href="../berkshire/2005-巴菲特致股东信.html" class="nav-link" title="2005 巴菲特致股东信">2005 巴菲特致股东信</a>
+<a href="../berkshire/2006-巴菲特致股东信.html" class="nav-link" title="2006 巴菲特致股东信">2006 巴菲特致股东信</a>
+<a href="../berkshire/2007-巴菲特致股东信.html" class="nav-link" title="2007 巴菲特致股东信">2007 巴菲特致股东信</a>
+<a href="../berkshire/2008-巴菲特致股东信.html" class="nav-link" title="2008 巴菲特致股东信">2008 巴菲特致股东信</a>
+<a href="../berkshire/2009-巴菲特致股东信.html" class="nav-link" title="2009 巴菲特致股东信">2009 巴菲特致股东信</a>
+<a href="../berkshire/2010-巴菲特致股东信.html" class="nav-link" title="2010 巴菲特致股东信">2010 巴菲特致股东信</a>
+<a href="../berkshire/2011-巴菲特致股东信.html" class="nav-link" title="2011 巴菲特致股东信">2011 巴菲特致股东信</a>
+<a href="../berkshire/2012-巴菲特致股东信.html" class="nav-link" title="2012 巴菲特致股东信">2012 巴菲特致股东信</a>
+<a href="../berkshire/2013-巴菲特致股东信.html" class="nav-link" title="2013 巴菲特致股东信">2013 巴菲特致股东信</a>
+<a href="../berkshire/2014-巴菲特致股东信.html" class="nav-link" title="2014 巴菲特致股东信">2014 巴菲特致股东信</a>
+<a href="../berkshire/2015-巴菲特致股东信.html" class="nav-link" title="2015 巴菲特致股东信">2015 巴菲特致股东信</a>
+<a href="../berkshire/2016-巴菲特致股东信.html" class="nav-link" title="2016 巴菲特致股东信">2016 巴菲特致股东信</a>
+<a href="../berkshire/2017-巴菲特致股东信.html" class="nav-link" title="2017 巴菲特致股东信">2017 巴菲特致股东信</a>
+<a href="../berkshire/2018-巴菲特致股东信.html" class="nav-link" title="2018 巴菲特致股东信">2018 巴菲特致股东信</a>
+<a href="../berkshire/2019-巴菲特致股东信.html" class="nav-link" title="2019 巴菲特致股东信">2019 巴菲特致股东信</a>
+<a href="../berkshire/2020-巴菲特致股东信.html" class="nav-link" title="2020 巴菲特致股东信">2020 巴菲特致股东信</a>
+<a href="../berkshire/2021-巴菲特致股东信.html" class="nav-link" title="2021 巴菲特致股东信">2021 巴菲特致股东信</a>
+<a href="../berkshire/2022-巴菲特致股东信.html" class="nav-link" title="2022 巴菲特致股东信">2022 巴菲特致股东信</a>
+<a href="../berkshire/2023-巴菲特致股东信.html" class="nav-link" title="2023 巴菲特致股东信">2023 巴菲特致股东信</a>
+<a href="../berkshire/2024-巴菲特致股东信.html" class="nav-link" title="2024 巴菲特致股东信">2024 巴菲特致股东信</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('03_特别信件')"><span class="caret"></span>特别信件<span class="badge">4</span></div>
+<div class="nav-group-items" id="03_特别信件">
+<a href="../special/2014-伯克希尔的过去现在与未来.html" class="nav-link" title="2014 伯克希尔的过去现在与未来">2014 伯克希尔的过去现在与未来</a>
+<a href="../special/2014-副董事长的思考.html" class="nav-link" title="2014 副董事长的思考">2014 副董事长的思考</a>
+<a href="../special/2025-感恩节致辞.html" class="nav-link" title="2025 感恩节致辞">2025 感恩节致辞</a>
+<a href="../special/2025-感恩节致辞_2.html" class="nav-link" title="2025 感恩节致辞_2">2025 感恩节致辞_2</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title open" onclick="toggle('概念')"><span class="caret"></span>概念<span class="badge">35</span></div>
+<div class="nav-group-items open" id="概念">
+<a href="买入价格.html" class="nav-link" title="买入价格">买入价格</a>
+<a href="企业文化.html" class="nav-link" title="企业文化">企业文化</a>
+<a href="低估.html" class="nav-link active" title="低估">低估</a>
+<a href="保险浮存金.html" class="nav-link" title="保险浮存金">保险浮存金</a>
+<a href="内在价值.html" class="nav-link" title="内在价值">内在价值</a>
+<a href="分散投资.html" class="nav-link" title="分散投资">分散投资</a>
+<a href="品牌.html" class="nav-link" title="品牌">品牌</a>
+<a href="商业模式.html" class="nav-link" title="商业模式">商业模式</a>
+<a href="商誉.html" class="nav-link" title="商誉">商誉</a>
+<a href="回购.html" class="nav-link" title="回购">回购</a>
+<a href="复利.html" class="nav-link" title="复利">复利</a>
+<a href="安全边际.html" class="nav-link" title="安全边际">安全边际</a>
+<a href="市场先生.html" class="nav-link" title="市场先生">市场先生</a>
+<a href="市场预测.html" class="nav-link" title="市场预测">市场预测</a>
+<a href="市盈率.html" class="nav-link" title="市盈率">市盈率</a>
+<a href="承保纪律.html" class="nav-link" title="承保纪律">承保纪律</a>
+<a href="护城河.html" class="nav-link" title="护城河">护城河</a>
+<a href="收购.html" class="nav-link" title="收购">收购</a>
+<a href="有效市场.html" class="nav-link" title="有效市场">有效市场</a>
+<a href="杠杆.html" class="nav-link" title="杠杆">杠杆</a>
+<a href="特许经营权.html" class="nav-link" title="特许经营权">特许经营权</a>
+<a href="留存收益.html" class="nav-link" title="留存收益">留存收益</a>
+<a href="竞争优势.html" class="nav-link" title="竞争优势">竞争优势</a>
+<a href="管理层.html" class="nav-link" title="管理层">管理层</a>
+<a href="纺织业务.html" class="nav-link" title="纺织业务">纺织业务</a>
+<a href="股东导向.html" class="nav-link" title="股东导向">股东导向</a>
+<a href="股息.html" class="nav-link" title="股息">股息</a>
+<a href="能力圈.html" class="nav-link" title="能力圈">能力圈</a>
+<a href="衍生品.html" class="nav-link" title="衍生品">衍生品</a>
+<a href="账面价值.html" class="nav-link" title="账面价值">账面价值</a>
+<a href="资本配置.html" class="nav-link" title="资本配置">资本配置</a>
+<a href="透视盈余.html" class="nav-link" title="透视盈余">透视盈余</a>
+<a href="通货膨胀.html" class="nav-link" title="通货膨胀">通货膨胀</a>
+<a href="长期持有.html" class="nav-link" title="长期持有">长期持有</a>
+<a href="集中投资.html" class="nav-link" title="集中投资">集中投资</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('公司')"><span class="caret"></span>公司<span class="badge">61</span></div>
+<div class="nav-group-items" id="公司">
+<a href="../companies/BNSF铁路.html" class="nav-link" title="BNSF铁路">BNSF铁路</a>
+<a href="../companies/IBM.html" class="nav-link" title="IBM">IBM</a>
+<a href="../companies/三井物产.html" class="nav-link" title="三井物产">三井物产</a>
+<a href="../companies/三菱商事.html" class="nav-link" title="三菱商事">三菱商事</a>
+<a href="../companies/世界图书百科全书.html" class="nav-link" title="世界图书百科全书">世界图书百科全书</a>
+<a href="../companies/中国石油.html" class="nav-link" title="中国石油">中国石油</a>
+<a href="../companies/中美能源.html" class="nav-link" title="中美能源">中美能源</a>
+<a href="../companies/伊斯卡.html" class="nav-link" title="伊斯卡">伊斯卡</a>
+<a href="../companies/伊藤忠商事.html" class="nav-link" title="伊藤忠商事">伊藤忠商事</a>
+<a href="../companies/伯克希尔哈撒韦.html" class="nav-link" title="伯克希尔哈撒韦">伯克希尔哈撒韦</a>
+<a href="../companies/伯克希尔哈撒韦能源.html" class="nav-link" title="伯克希尔哈撒韦能源">伯克希尔哈撒韦能源</a>
+<a href="../companies/克莱顿房屋.html" class="nav-link" title="克莱顿房屋">克莱顿房屋</a>
+<a href="../companies/内布拉斯加家具店.html" class="nav-link" title="内布拉斯加家具店">内布拉斯加家具店</a>
+<a href="../companies/冰雪皇后.html" class="nav-link" title="冰雪皇后">冰雪皇后</a>
+<a href="../companies/利捷航空.html" class="nav-link" title="利捷航空">利捷航空</a>
+<a href="../companies/华盛顿邮报.html" class="nav-link" title="华盛顿邮报">华盛顿邮报</a>
+<a href="../companies/卡夫亨氏.html" class="nav-link" title="卡夫亨氏">卡夫亨氏</a>
+<a href="../companies/可口可乐.html" class="nav-link" title="可口可乐">可口可乐</a>
+<a href="../companies/吉列.html" class="nav-link" title="吉列">吉列</a>
+<a href="../companies/喜诗糖果.html" class="nav-link" title="喜诗糖果">喜诗糖果</a>
+<a href="../companies/国民保险公司.html" class="nav-link" title="国民保险公司">国民保险公司</a>
+<a href="../companies/大都会通信.html" class="nav-link" title="大都会通信">大都会通信</a>
+<a href="../companies/威利家居.html" class="nav-link" title="威利家居">威利家居</a>
+<a href="../companies/威瑞森通讯.html" class="nav-link" title="威瑞森通讯">威瑞森通讯</a>
+<a href="../companies/富国银行.html" class="nav-link" title="富国银行">富国银行</a>
+<a href="../companies/州立农业保险.html" class="nav-link" title="州立农业保险">州立农业保险</a>
+<a href="../companies/布法罗新闻报.html" class="nav-link" title="布法罗新闻报">布法罗新闻报</a>
+<a href="../companies/康菲石油.html" class="nav-link" title="康菲石油">康菲石油</a>
+<a href="../companies/德克斯特鞋业.html" class="nav-link" title="德克斯特鞋业">德克斯特鞋业</a>
+<a href="../companies/房地美.html" class="nav-link" title="房地美">房地美</a>
+<a href="../companies/所罗门.html" class="nav-link" title="所罗门">所罗门</a>
+<a href="../companies/斯科特费泽.html" class="nav-link" title="斯科特费泽">斯科特费泽</a>
+<a href="../companies/森林河公司.html" class="nav-link" title="森林河公司">森林河公司</a>
+<a href="../companies/比亚迪.html" class="nav-link" title="比亚迪">比亚迪</a>
+<a href="../companies/波仙珠宝.html" class="nav-link" title="波仙珠宝">波仙珠宝</a>
+<a href="../companies/特许通讯.html" class="nav-link" title="特许通讯">特许通讯</a>
+<a href="../companies/盖可保险.html" class="nav-link" title="盖可保险">盖可保险</a>
+<a href="../companies/科比吸尘器.html" class="nav-link" title="科比吸尘器">科比吸尘器</a>
+<a href="../companies/穆迪.html" class="nav-link" title="穆迪">穆迪</a>
+<a href="../companies/精密铸件.html" class="nav-link" title="精密铸件">精密铸件</a>
+<a href="../companies/约翰斯曼维尔.html" class="nav-link" title="约翰斯曼维尔">约翰斯曼维尔</a>
+<a href="../companies/纽约梅隆银行.html" class="nav-link" title="纽约梅隆银行">纽约梅隆银行</a>
+<a href="../companies/美国合众银行.html" class="nav-link" title="美国合众银行">美国合众银行</a>
+<a href="../companies/美国家庭服务.html" class="nav-link" title="美国家庭服务">美国家庭服务</a>
+<a href="../companies/美国运通.html" class="nav-link" title="美国运通">美国运通</a>
+<a href="../companies/美国银行.html" class="nav-link" title="美国银行">美国银行</a>
+<a href="../companies/苹果.html" class="nav-link" title="苹果">苹果</a>
+<a href="../companies/蓝筹印花.html" class="nav-link" title="蓝筹印花">蓝筹印花</a>
+<a href="../companies/西方石油.html" class="nav-link" title="西方石油">西方石油</a>
+<a href="../companies/费希海默制服.html" class="nav-link" title="费希海默制服">费希海默制服</a>
+<a href="../companies/路博润.html" class="nav-link" title="路博润">路博润</a>
+<a href="../companies/通用再保险.html" class="nav-link" title="通用再保险">通用再保险</a>
+<a href="../companies/通用汽车.html" class="nav-link" title="通用汽车">通用汽车</a>
+<a href="../companies/通用电气.html" class="nav-link" title="通用电气">通用电气</a>
+<a href="../companies/雪佛龙.html" class="nav-link" title="雪佛龙">雪佛龙</a>
+<a href="../companies/韦斯科.html" class="nav-link" title="韦斯科">韦斯科</a>
+<a href="../companies/飞安公司.html" class="nav-link" title="飞安公司">飞安公司</a>
+<a href="../companies/马蒙集团.html" class="nav-link" title="马蒙集团">马蒙集团</a>
+<a href="../companies/高盛.html" class="nav-link" title="高盛">高盛</a>
+<a href="../companies/鲜果布衣.html" class="nav-link" title="鲜果布衣">鲜果布衣</a>
+<a href="../companies/麦克莱恩.html" class="nav-link" title="麦克莱恩">麦克莱恩</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('人物')"><span class="caret"></span>人物<span class="badge">7</span></div>
+<div class="nav-group-items" id="人物">
+<a href="../people/B夫人.html" class="nav-link" title="B夫人">B夫人</a>
+<a href="../people/托德·库姆斯.html" class="nav-link" title="托德·库姆斯">托德·库姆斯</a>
+<a href="../people/格雷厄姆.html" class="nav-link" title="格雷厄姆">格雷厄姆</a>
+<a href="../people/格雷格·阿贝尔.html" class="nav-link" title="格雷格·阿贝尔">格雷格·阿贝尔</a>
+<a href="../people/泰德·韦施勒.html" class="nav-link" title="泰德·韦施勒">泰德·韦施勒</a>
+<a href="../people/芒格.html" class="nav-link" title="芒格">芒格</a>
+<a href="../people/阿吉特·贾恩.html" class="nav-link" title="阿吉特·贾恩">阿吉特·贾恩</a>
+</div></div>
+</div></aside>
+<main class="main">
+<article class="article">
+<div class="meta"><span class="english-name">Undervalued</span> <span class="type-badge type-概念">概念</span></div>
+<h1>低估（Undervalued）</h1>
+<h2>概念解析</h2>
+<h3>定义与起源</h3>
+<p>"低估"是巴菲特投资生涯中最持久、最根本的概念。从1957年第一封合伙人信到2018年的致股东信，这个词贯穿了超过60年的投资实践。简单来说，低估是指市场价格显著低于内在价值的状态。当这种状态出现时，投资者就获得了一个以折扣价买入资产的机会。</p>
+<p>这个概念直接源自本杰明·格雷厄姆的"安全边际"思想。格雷厄姆认为，聪明的投资者应该像精明的购物者一样，只在价格远低于价值时才出手。巴菲特在合伙人时期将这一理念发展成了一套完整的投资分类体系——他把投资机会分为"低估类"（Generals）、"套利类"（Work-outs）和"控制类"（Controls），其中"低估类"始终是资金配置最多、赚钱最多的类别。</p>
+<p>值得注意的是，"低估"在巴菲特的语境中有多层含义。在合伙人时期，它主要指股价低于清算价值或资产价值；在伯克希尔时期，它扩展为股价低于企业的内在商业价值——这个商业价值是基于未来自由现金流折现计算的。此外，巴菲特也用"低估"来描述会计账面价值对真实经济价值的低估（如账面价值低估内在价值），以及企业对自身成本的低估（如保险准备金不足）。本文主要聚焦于投资意义上的低估。</p>
+<h3>核心要义</h3>
+<p><strong>第一，低估是一种客观状态，寻找低估是投资者的首要任务。</strong></p>
+<p>巴菲特在投资生涯的最早期就确立了这个原则。在<a href="../partnership/1958-巴菲特致合伙人信.html" class="wikilink">1958 巴菲特致合伙人信</a>中，他明确表态：</p>
+<blockquote>
+<p>"我从不试图预测大盘走势——我的精力全放在寻找被低估的股票上。"</p>
+</blockquote>
+<p>这句话的重要性怎么强调都不为过。它划定了巴菲特投资方法论的根本边界：不预测宏观、不猜测市场、不追逐趋势，只做一件事——寻找价格低于价值的标的。在<a href="../berkshire/1978-巴菲特致股东信.html" class="wikilink">1978 巴菲特致股东信</a>中，他进一步阐述了发现低估后的态度：</p>
+<blockquote>
+<p>"我们并不在意市场是否会迅速重新估值我们认为价格被低估的证券。事实上，我们宁可不要这样，因为在大多数年份里，我们预期会有资金净流入来买进证券。持续以有吸引力的价格买入，最终给我们带来的好处，很可能超过股价短期飙升到我们不愿继续买入的水平所提供的卖出机会。"</p>
+</blockquote>
+<p>这段话揭示了一个反直觉的逻辑：低估持续得越久，对长期投资者越有利——因为他可以在低估状态下持续买入更多份额。</p>
+<p><strong>第二，低估的判断需要多维度的分析框架。</strong></p>
+<p>在合伙人时期，巴菲特对低估类投资建立了一套系统性的分析方法。在<a href="../partnership/1963-巴菲特致合伙人信.html" class="wikilink">1963 巴菲特致合伙人信</a>中，他如此定义：</p>
+<blockquote>
+<p>"低估类（Generals）——这类投资是低估的股票，判断标准以定量分析为主，但定性因素同样受到高度重视。通常来说，这类投资几乎看不出近期股价上涨的具体催化剂。这些股票既不光鲜，也没有市场追捧。它们唯一的优势就是价格低廉。"</p>
+</blockquote>
+<p>到了1964年，他进一步将低估类细分为两个子类别：绝对低估（Generals - Private Owner）和相对低估（Generals - Relatively Undervalued）。他在<a href="../partnership/1964-巴菲特致合伙人信.html" class="wikilink">1964 巴菲特致合伙人信</a>中解释道：</p>
+<blockquote>
+<p>"新增的类别是'低估类（相对低估）'。其一，我们的'低估类'投资中一直存在这个细微差别，只是一直没有单独体现；其二，这个小类别已经成长为整体投资组合中越来越重要的一部分。"</p>
+</blockquote>
+<p>绝对低估是指股价远低于产业资本给予的估值（即如果整体收购这家企业，应该值多少钱）；相对低估则是指一只股票相对于同类公司或市场整体来说更为便宜。这种分类法的进化反映出巴菲特的分析框架日益成熟和精细。</p>
+<p><strong>第三，低估终将被市场修正，但时间不可预测。</strong></p>
+<p>巴菲特对低估的信心建立在一个核心信念上：价格终将回归价值。但他同时承认这个过程在时间上是不可预测的。在<a href="../partnership/1961-巴菲特致合伙人信.html" class="wikilink">1961 巴菲特致合伙人信</a>中，他坦率地描述了这种不确定性：</p>
+<blockquote>
+<p>"这类投资有时很快获利，很多时候需要好几年。买入的时候，往往说不清楚这只股票为什么会涨。但也正因为这些股票黯淡无光、短期没有任何显而易见的催化剂，才有那么便宜的价格。"</p>
+</blockquote>
+<p>在<a href="../berkshire/1987-巴菲特致股东信.html" class="wikilink">1987 巴菲特致股东信</a>中，他再次强调了耐心的重要性：</p>
+<blockquote>
+<p>"一家企业的成功被市场认可的速度其实并不那么重要——只要其内在价值在以令人满意的速度增长就行。事实上，被市场发现得晚一些反而是好事：这给了我们更多机会以便宜的价格买进好东西。"</p>
+</blockquote>
+<h3>实践应用</h3>
+<p><strong>合伙人时期：低估类投资的系统化操作</strong></p>
+<p>在合伙人基金的十三年中，低估类始终是最核心的投资类别。巴菲特在<a href="../partnership/1962-巴菲特致合伙人信.html" class="wikilink">1962 巴菲特致合伙人信</a>中透露了具体的持仓结构："我们通常以较大仓位（每只占总资产的5%至10%）持有五六只低估的股票，另外还以较小仓位持有其余十至十五只。"</p>
+<p>他还描述了一种独特的"搭便车"策略：判断大股东有计划将效益不佳的资产转化为更好的用途，于是跟着买入。在桑伯恩地图和登普斯特农具机械这两笔投资中，巴菲特亲自操刀改造——将低估类投资转化为控制类投资。</p>
+<p>低估类投资的业绩令人印象深刻。在<a href="../partnership/1963年中-巴菲特致合伙人信.html" class="wikilink">1963年中 巴菲特致合伙人信</a>中，他报告了上半年的成绩："低估类的净投资约为527.5万美元。这部分净投资带来的整体收益约为110万美元，低估类收益率约21%。"</p>
+<p>但他也坦然承认低估类的波动性。在<a href="../partnership/1962-巴菲特致合伙人信.html" class="wikilink">1962 巴菲特致合伙人信</a>中："低估类的涨跌走势与道指高度相关，便宜不代表不会继续跌。市场急跌时，这类仓位的跌幅可能不亚于道指本身。"</p>
+<p><strong>伯克希尔时期：从个股低估到市场低估的视野扩展</strong></p>
+<p>进入伯克希尔时代后，巴菲特对低估的应用从个股层面扩展到了更广阔的视野。他不仅寻找被低估的股票，也关注被低估的债券（如WPPSS市政债）、被低估的行业（如保险业的周期性低估），以及整体市场偶尔出现的系统性低估。</p>
+<p>在<a href="../berkshire/1985-巴菲特致股东信.html" class="wikilink">1985 巴菲特致股东信</a>中，他感慨当时的市场缺乏低估机会："我们很难找到价值被明显低估的股票来充实保险公司的投资组合。目前的情况与大约十年前截然相反——那时候唯一的问题是该挑哪个便宜货，而现在是根本没有便宜货。"</p>
+<p>在<a href="../berkshire/1986-巴菲特致股东信.html" class="wikilink">1986 巴菲特致股东信</a>中，他对GEICO投资经理辛普森的评价揭示了成功的低估投资所需要的品质："辛普森始终投资于价值被低估的普通股，这些股票单个来看不太可能造成永久性损失，而作为组合整体来看则接近于无风险。"</p>
+<p><strong>回购中的低估应用</strong></p>
+<p>巴菲特将低估概念应用于公司回购决策，这是他对企业资本配置理论的重要贡献。在<a href="../berkshire/1999-巴菲特致股东信.html" class="wikilink">1999 巴菲特致股东信</a>中，他指出："在整个70年代（以及此后断断续续好几年），我们专门寻找大量回购自家股份的公司。这往往是一个信号：公司被低估了，而且有一个以股东利益为导向的管理层。"</p>
+<p>在<a href="../berkshire/2016-巴菲特致股东信.html" class="wikilink">2016 巴菲特致股东信</a>中，他更系统地阐述了回购与低估的关系："即使公司股价被低估，也有两种情况下不应该进行回购。第一种情况是，企业需要所有可用资金来保护或扩展自身运营，同时又不愿意进一步增加负债。"</p>
+<h3>常见误区</h3>
+<p><strong>误区一：把"便宜"等同于"低估"。</strong> 股价低不代表低估，市盈率低也不代表低估。低估的判断必须建立在对内在价值的独立评估之上。一家经营恶化的企业，即使股价跌了90%也可能不算低估。巴菲特的低估判断从来不是简单的比率分析，而是对企业完整商业价值的深度评估。</p>
+<p><strong>误区二：认为低估的股票不会继续下跌。</strong> 巴菲特在合伙人信中明确警告过："便宜不代表不会继续跌。"他在<a href="../partnership/1958-巴菲特致合伙人信.html" class="wikilink">1958 巴菲特致合伙人信</a>中预见性地指出："一旦麻烦来临，就连被低估的股票，股价也难免大幅受牵连——尽管它们的内在价值不会因此减损。"低估提供的是长期的保护，不是短期的支撑。</p>
+<p><strong>误区三：混淆"会计低估"与"市场低估"。</strong> 巴菲特在多封信中讨论了账面价值对内在价值的低估，这是会计层面的问题，与股票是否被市场低估是完全不同的维度。在<a href="../berkshire/2009-巴菲特致股东信.html" class="wikilink">2009 巴菲特致股东信</a>中他解释："大多数公司的账面价值都低估了内在价值，伯克希尔当然也不例外。"但他同时也说过，伯克希尔在某些价位上并没有被市场低估。</p>
+<p><strong>误区四：过度依赖"低估"而忽视企业质量。</strong> 这正是巴菲特从"捡烟蒂"向"好公司合理价格"转变的原因。纯粹的低估投资（烟蒂股）虽然每笔交易有安全边际，但如果企业质量太差，最终回报可能很有限。巴菲特在<a href="../berkshire/1989-巴菲特致股东信.html" class="wikilink">1989 巴菲特致股东信</a>中的反思——伯克希尔纺织业务就是"捡烟蒂"的典型教训——清楚地说明了这一点。</p>
+<h2>巴菲特原话精选</h2>
+<blockquote>
+<p>"我从不试图预测大盘走势——我的精力全放在寻找被低估的股票上。"
+—— <a href="../partnership/1958-巴菲特致合伙人信.html" class="wikilink">1958 巴菲特致合伙人信</a></p>
+<p>"我们并不在意市场是否会迅速重新估值我们认为价格被低估的证券。事实上，我们宁可不要这样，因为在大多数年份里，我们预期会有资金净流入来买进证券。"
+—— <a href="../berkshire/1978-巴菲特致股东信.html" class="wikilink">1978 巴菲特致股东信</a></p>
+<p>"辛普森始终投资于价值被低估的普通股，这些股票单个来看不太可能造成永久性损失，而作为组合整体来看则接近于无风险。"
+—— <a href="../berkshire/1986-巴菲特致股东信.html" class="wikilink">1986 巴菲特致股东信</a></p>
+<p>"付出的价格低，得到的价值高。每一笔低估类投资的价值都远超价格，自带可观的安全边际。每只单独有安全边际，分散持有多只，便形成了一个既安全又有上涨潜力的投资组合。"
+—— <a href="../partnership/1961-巴菲特致合伙人信.html" class="wikilink">1961 巴菲特致合伙人信</a></p>
+<p>"一家企业的成功被市场认可的速度其实并不那么重要——只要其内在价值在以令人满意的速度增长就行。事实上，被市场发现得晚一些反而是好事：这给了我们更多机会以便宜的价格买进好东西。"
+—— <a href="../berkshire/1987-巴菲特致股东信.html" class="wikilink">1987 巴菲特致股东信</a></p>
+</blockquote>
+<h2>思想演变</h2>
+<h3>合伙人时期（1956-1969）：低估投资的黄金年代</h3>
+<p>这是巴菲特对"低估"概念实践最密集、论述最详细的时期。1957年他首次提出，如果市场回归低估状态，会把全部资金都押在低估类上。1958年他确立了"不预测大盘，只找低估股"的基本原则。1959-1960年他持续在低估类和特殊情况之间配置资金。1961-1962年他系统性地阐述了低估类投资的特征：价值远超价格、安全边际充足、但与大盘关联度高。1963年他将低估类的分析方法定义为"定量为主、定性为辅"，并在年中信中报告了21%的半年收益率。1964年他创造性地将低估类细分为"绝对低估"和"相对低估"两个子类别，标志着分析框架的成熟。</p>
+<h3>早期伯克希尔（1970-1989）：从个股到体系</h3>
+<p>进入伯克希尔时代后，"低估"的应用场景大大拓展。1977-1979年他开始将低估概念应用于整体市场判断和债券投资。1982年他讨论了以低估的股价进行收购的困境。1984年他用账面价值作为"有些低估的"内在价值替代指标。1985年他感慨市场上已经"根本没有便宜货"。1986年他将辛普森的投资方法概括为"投资于价值被低估的普通股"。1987年他提出了经典的"被市场发现得晚反而是好事"的论断。1988年他在WPPSS债券上实践了非股票领域的低估投资。1989年他观察到，曾经"被不合理地低估"的持股，如今已获得市场的广泛认可。</p>
+<h3>成熟期（1990-2009）：规模压力下的坚持</h3>
+<p>这一时期的主旋律是机会的减少和标准的坚持。1992年他讨论了发行市场中买方几乎不可能以低估价格买入的现实。1995年他坦承伯克希尔的股价在36,000美元时并未被低估。1997年他将低估概念应用于石油期货。1999年他将回购与低估联系起来。2002年他指出主要持股"估值在下降"但仍未到低估的程度。2003年他感慨越来越难找到被明显低估的股票，并将此归因于资金规模的膨胀。2004年他自我批评在泡沫期间"低估了高估的严重程度"。2009年他系统性地讨论了账面价值作为内在价值低估替代指标的方法论。</p>
+<h3>近期（2010-2025）：回归基本面</h3>
+<p>2011-2012年他继续完善"账面价值作为明显被低估的替代指标"的分析框架。2013年他将低估概念应用于政府养老金问题的分析。2014年他借吉米·林的故事重申了在市场疯狂时保持冷静、等待低估的智慧。2016年他系统性地讨论了低估与回购的关系。2017-2018年他反复强调财务报表中的某些数字（如折旧费用、股息收入）低估了伯克希尔的真实经济状况。这一时期的"低估"更多地成为一种分析工具和思维方式，而非单纯的投资策略标签。</p>
+<h2>相关概念</h2>
+<ul>
+<li><a href="内在价值.html" class="wikilink">内在价值</a></li>
+<li><a href="安全边际.html" class="wikilink">安全边际</a></li>
+<li><a href="市场先生.html" class="wikilink">市场先生</a></li>
+<li><a href="买入价格.html" class="wikilink">买入价格</a></li>
+<li><a href="能力圈.html" class="wikilink">能力圈</a></li>
+<li><a href="分散投资.html" class="wikilink">分散投资</a></li>
+</ul>
+<h2>典型案例公司</h2>
+<ul>
+<li><span class="broken-link">登普斯特农具机械</span> —— 合伙人时期以远低于产业资本估值买入的经典低估案例</li>
+<li><span class="broken-link">桑伯恩地图</span> —— 因持有大量被忽视的投资组合而被严重低估</li>
+<li><a href="../companies/华盛顿邮报.html" class="wikilink">华盛顿邮报</a> —— 1973年市场恐慌中以内在价值四分之一的价格买入</li>
+<li><a href="../companies/盖可保险.html" class="wikilink">盖可保险</a> —— 1976年因暂时性经营困难而被严重低估</li>
+<li><a href="../companies/可口可乐.html" class="wikilink">可口可乐</a> —— 1988年被低估时大量买入，此后数十年回报惊人</li>
+<li><span class="broken-link">通用食品</span> —— 以低估价格买入，最终被菲利普·莫里斯以全价收购</li>
+</ul>
+</article>
+<section class="backlinks">
+<h2>🔗 链接到本页的文章（51）</h2><div class="bl-grid">
+<a href="../partnership/1957-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1957 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1958-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1958 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1959-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1959 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1960-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1960 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1961-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1961 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1962-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1962 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1962年11月-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1962年11月 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1963-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1963 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1963年11月-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1963年11月 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1963年12月-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1963年12月 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1963年中-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1963年中 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1964-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1964 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../partnership/1964年中-巴菲特致合伙人信.html" class="bl-card"><span class="bl-name">1964年中 巴菲特致合伙人信</span><span class="bl-type">合伙人信</span></a>
+<a href="../berkshire/1974-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1974 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1977-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1977 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1978-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1978 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1979-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1979 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1982-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1982 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1984-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1984 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1985-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1985 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1986-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1986 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1987-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1987 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1988-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1988 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1989-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1989 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1990-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1990 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1991-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1991 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1992-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1992 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1994-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1994 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1995-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1995 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1996-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1996 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1997-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1997 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1999-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1999 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2001-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2001 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2002-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2002 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2003-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2003 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2004-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2004 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2007-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2007 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2008-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2008 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2009-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2009 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2010-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2010 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2011-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2011 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2012-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2012 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2013-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2013 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../special/2014-伯克希尔的过去现在与未来.html" class="bl-card"><span class="bl-name">2014 伯克希尔的过去现在与未来</span><span class="bl-type">特别信件</span></a>
+<a href="../berkshire/2016-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2016 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2017-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2017 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2018-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2018 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="买入价格.html" class="bl-card"><span class="bl-name">买入价格</span><span class="bl-type">概念</span></a>
+<a href="安全边际.html" class="bl-card"><span class="bl-name">安全边际</span><span class="bl-type">概念</span></a>
+<a href="市场先生.html" class="bl-card"><span class="bl-name">市场先生</span><span class="bl-type">概念</span></a>
+<a href="../index-pages/核心思想图谱.html" class="bl-card"><span class="bl-name">核心思想图谱</span><span class="bl-type">索引</span></a>
+</div></section>
+</main>
+<script src="../nav.js"></script>
+</body>
+</html>

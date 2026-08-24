@@ -1,0 +1,2032 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+巴菲特致股东信知识库 → 单文件阅读研究应用 构建器
+==================================================
+
+功能：
+  1. 递归扫描「巴菲特致股东信知识库/」下全部 .md 文章（索引/合伙人信/伯克希尔股东信/特别信件/概念/公司/人物）
+  2. 提取元数据：分类、年份、标题、关联主题标签（解析文中交叉链接）
+  3. 把原站失效的相对链接（../concepts/xx.html 等）重写为应用内锚点 (#a/<article-id>)
+  4. 生成完全自包含的单文件应用「巴菲特投资智慧.html」（无 CDN、无外部依赖，双击即用）
+  5. 可选：从项目根 .env 生成 llm-config.js（预填 DeepSeek API Key，供应用内 LLM 讨论）
+
+用法：
+  python3 build_buffett_app.py            # 构建 html（默认同时生成 llm-config.js）
+  python3 build_buffett_app.py --no-llm-config   # 跳过 llm-config.js
+  python3 build_buffett_app.py --debug    # 打印数据统计
+
+仅依赖 Python 标准库。
+"""
+
+import json
+import os
+import re
+import sys
+import zipfile
+import xml.etree.ElementTree as ET
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+KB_ROOT = os.path.join(HERE, "巴菲特致股东信知识库")
+OUT_HTML = os.path.join(HERE, "巴菲特投资智慧.html")
+OUT_LLM = os.path.join(HERE, "llm-config.js")
+XLSX_PATH = os.path.join(HERE, "巴菲特致股东信分类索引(1977-2025).xlsx")
+
+_XLSX_NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+_XLSX_REL = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
+
+
+def read_xlsx_grids(path):
+    """纯标准库读取 xlsx → {sheet名: [[单元格值, ...], ...]}（空单元格为 ''）。"""
+    def col_to_idx(ref):
+        m = re.match(r"([A-Z]+)", ref or "")
+        if not m:
+            return 0
+        n = 0
+        for ch in m.group(1):
+            n = n * 26 + (ord(ch) - ord("A") + 1)
+        return n - 1
+
+    with zipfile.ZipFile(path) as z:
+        names = z.namelist()
+        shared = []
+        if "xl/sharedStrings.xml" in names:
+            root = ET.fromstring(z.read("xl/sharedStrings.xml"))
+            for si in root.findall(_XLSX_NS + "si"):
+                shared.append("".join(t.text or "" for t in si.iter(_XLSX_NS + "t")))
+        rels = {}
+        if "xl/_rels/workbook.xml.rels" in names:
+            for rel in ET.fromstring(z.read("xl/_rels/workbook.xml.rels")):
+                rels[rel.get("Id")] = rel.get("Target")
+        sheets = [(sh.get("name"), sh.get(_XLSX_REL + "id"))
+                  for sh in ET.fromstring(z.read("xl/workbook.xml")).iter(_XLSX_NS + "sheet")]
+        out = {}
+        for idx, (name, rid) in enumerate(sheets, 1):
+            target = rels.get(rid, "worksheets/sheet%d.xml" % idx)
+            if not target.startswith("xl/"):
+                target = "xl/" + target
+            target = target.replace("../", "")
+            if target not in names:
+                continue
+            grid = []
+            for row in ET.fromstring(z.read(target)).iter(_XLSX_NS + "row"):
+                cells, maxcol = {}, -1
+                for c in row.findall(_XLSX_NS + "c"):
+                    col = col_to_idx(c.get("r"))
+                    t = c.get("t")
+                    v = c.find(_XLSX_NS + "v")
+                    if t == "s":
+                        val = shared[int(v.text)] if v is not None and v.text else ""
+                    elif t == "inlineStr":
+                        val = "".join(x.text or "" for x in c.iter(_XLSX_NS + "t"))
+                    else:
+                        val = v.text if v is not None and v.text else ""
+                        if re.fullmatch(r"-?\d+(\.\d+)?", str(val)):
+                            val = int(float(val))
+                    cells[col] = val
+                    maxcol = max(maxcol, col)
+                if cells:
+                    grid.append([cells.get(i, "") for i in range(maxcol + 1)])
+            out[name] = grid
+    return out
+
+
+def parse_years(text):
+    """解析 “1977, 1986, 1995-1998” → [1977, 1986, 1995..1998]（含区间展开）。"""
+    years = set()
+    for m in re.finditer(r"(\d{4})\s*(?:-\s*(\d{4}))?", text or ""):
+        a, b = int(m.group(1)), int(m.group(2)) if m.group(2) else int(m.group(1))
+        if b >= a and b - a <= 70:
+            years.update(range(a, b + 1))
+    return sorted(years)
+
+
+def split_terms(text):
+    return [t.strip() for t in re.split(r"[;；,，]+", text or "") if t.strip()]
+
+
+def parse_classification_index():
+    """解析「巴菲特致股东信分类索引(1977-2025).xlsx」→ 5 个维度（缺失时返回 None）。"""
+    if not os.path.isfile(XLSX_PATH):
+        print("[skip] 未找到分类索引 xlsx，跳过", file=sys.stderr)
+        return None
+    grids = read_xlsx_grids(XLSX_PATH)
+
+    def cell(row, i):
+        return row[i] if i < len(row) else ""
+
+    # ---- 主题分类索引（坎宁安主题）----
+    topics, tmap = [], {}
+    for i, row in enumerate(grids.get("主题分类索引", [])[1:], 1):
+        name = str(cell(row, 0)).strip()
+        canon = re.sub(r"^[ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ]+\s*", "", name)
+        if not name:
+            continue
+        k = "T%d" % i
+        topics.append({"k": k, "n": name, "c": canon,
+                       "d": str(cell(row, 1)).strip(),
+                       "y": parse_years(cell(row, 2)),
+                       "rep": str(cell(row, 3)).strip(),
+                       "con": split_terms(cell(row, 4))})
+        tmap[canon] = k
+
+    def canon_to_k(tok):
+        tok = tok.strip()
+        if tok in tmap:
+            return tmap[tok]
+        for canon, k in tmap.items():      # 前缀匹配（如 “美国经验” → “美国经验/美国顺风”）
+            if canon.startswith(tok):
+                return k
+        return None
+
+    # ---- 行业分类索引 ----
+    industries = []
+    for i, row in enumerate(grids.get("行业分类索引", [])[1:], 1):
+        name = str(cell(row, 0)).strip()
+        if not name:
+            continue
+        industries.append({"k": "I%d" % i, "n": name,
+                           "co": str(cell(row, 1)).strip(),
+                           "y": parse_years(cell(row, 2)),
+                           "d": str(cell(row, 3)).strip()})
+
+    # ---- 事件时期索引 ----
+    events = []
+    for i, row in enumerate(grids.get("事件时期索引", [])[1:], 1):
+        name = str(cell(row, 0)).strip()
+        if not name:
+            continue
+        events.append({"k": "E%d" % i, "n": name,
+                       "rng": str(cell(row, 1)).strip(),
+                       "y": parse_years(cell(row, 2)),
+                       "bg": str(cell(row, 3)).strip(),
+                       "act": str(cell(row, 4)).strip(),
+                       "les": str(cell(row, 5)).strip()})
+
+    # ---- 选股方法演进 ----
+    methods = []
+    for i, row in enumerate(grids.get("选股方法演进", [])[1:], 1):
+        name = str(cell(row, 0)).strip()
+        if not name:
+            continue
+        methods.append({"k": "M%d" % i, "n": name,
+                        "m": str(cell(row, 1)).strip(),
+                        "y": parse_years(cell(row, 2)),
+                        "view": str(cell(row, 3)).strip(),
+                        "cases": str(cell(row, 4)).strip(),
+                        "shift": str(cell(row, 5)).strip()})
+
+    # ---- 年度总索引 ----
+    years = []
+    for i, row in enumerate(grids.get("年度总索引", [])[1:], 1):
+        yv = cell(row, 0)
+        if not str(yv).strip():
+            continue
+        try:
+            y = int(yv)
+        except (TypeError, ValueError):
+            continue
+        years.append({"k": "Y%d" % y, "y": y,
+                      "a": str(cell(row, 1)).strip(),
+                      "s": str(cell(row, 2)).strip(),
+                      "t": [tok for tok in split_terms(cell(row, 3)) if canon_to_k(tok)],
+                      "i": split_terms(cell(row, 4)),
+                      "bg": str(cell(row, 5)).strip(),
+                      "e": str(cell(row, 6)).strip()})
+
+    print("[ok] 已解析分类索引：主题%d / 行业%d / 事件%d / 方法%d / 年度%d"
+          % (len(topics), len(industries), len(events), len(methods), len(years)))
+    return {"topic": topics, "industry": industries,
+            "event": events, "method": methods, "year": years}
+
+# 目录 → (catKey, 显示名, 排序权重)
+CATS = [
+    ("01-索引", "index", "索引", 0),
+    ("02-合伙人信", "partnership", "合伙人信", 1),
+    ("03-伯克希尔股东信", "berkshire", "伯克希尔股东信", 2),
+    ("04-特别信件", "special", "特别信件", 3),
+    ("05-概念", "concept", "概念", 4),
+    ("06-公司", "company", "公司", 5),
+    ("07-人物", "person", "人物", 6),
+]
+CAT_KEY2NAME = {k: name for _, k, name, _ in CATS}
+
+# 原站链接前缀 → 本地分类（用于链接重写时的目标定位）
+PREFIX2CAT = {
+    "../index-pages/": "index",
+    "../partnership/": "partnership",
+    "../berkshire/": "berkshire",
+    "../special/": "special",
+    "../concepts/": "concept",
+    "../companies/": "company",
+    "../people/": "person",
+}
+
+YEAR_RE = re.compile(r"(19|20)\d{2}")
+LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]*)\)")
+FN_INLINE_RE = re.compile(r"\[\^([^\]]+)\]\(([^)]*)\)")   # 行内脚注 [^1](定义)
+FN_REF_RE = re.compile(r"^\[\^([^\]]+)\]:\s*(.+)$")        # 文末引用式脚注 [^1]: 定义
+
+
+# ---------------------------------------------------------------- 扫描与元数据
+
+def scan_articles():
+    """第一遍：收集所有 md 文件 → 建立 stem→id 映射 + 原始内容。"""
+    stem2id, raw = {}, []
+    for folder, cat_key, name, order in CATS:
+        d = os.path.join(KB_ROOT, folder)
+        if not os.path.isdir(d):
+            print(f"[warn] 缺少目录: {d}", file=sys.stderr)
+            continue
+        for fn in sorted(os.listdir(d)):
+            if not fn.endswith(".md"):
+                continue
+            stem = fn[:-3]
+            aid = f"{cat_key}-{stem}"
+            stem2id[stem] = aid
+            with open(os.path.join(d, fn), encoding="utf-8") as f:
+                raw.append({"id": aid, "catKey": cat_key, "stem": stem, "md": f.read()})
+    return stem2id, raw
+
+
+def extract_meta(article, stem2id):
+    """第二遍：元数据 + 链接重写。"""
+    md = article["md"]
+
+    # 标题：第一个 # 一级标题
+    m = re.search(r"^# (.+)$", md, re.M)
+    title = m.group(1).strip() if m else article["stem"]
+    # 丢弃首个标题之前的分类标签行（如 “Economic Moat 概念” / “合伙人信”）
+    if m:
+        md = md[m.end():].lstrip("\n")
+
+    # 年份：文件名中第一个四位年份
+    ym = YEAR_RE.search(article["stem"])
+    year = int(ym.group(0)) if ym else None
+
+    # ---- 脚注抽取（必须在链接重写之前，否则行内脚注 [^X](定义) 会被误判为链接）----
+    fns, seen = [], set()
+    def _reg_fn(key, text):
+        t = text.strip()
+        if t and (key, t) not in seen:
+            seen.add((key, t))
+            fns.append([key, t])
+    md = FN_INLINE_RE.sub(lambda m: (_reg_fn(m.group(1), m.group(2)), "[%s]" % m.group(1))[1], md)
+    md = re.sub(r"^\[\^([^\]]+)\]:\s*.+$", lambda m: (_reg_fn(m.group(1), m.group(0).split(":", 1)[1]), "")[1], md, flags=re.M)
+
+    # 链接重写（md 与脚注定义共用）：收集内部链接
+    links, tags = [], set()
+    def _rewrite_links(text):
+        def _rep(mm):
+            label, href = mm.group(1), mm.group(2).strip()
+            if mm.group(0).startswith("!"):
+                return mm.group(0)  # 图片，保持原样
+            if href.startswith("#"):
+                return mm.group(0)
+            path = href.split("#")[0]
+            if path.startswith(("http://", "https://", "mailto:")):
+                return mm.group(0)
+            stem = os.path.splitext(os.path.basename(path))[0]
+            target = stem2id.get(stem)
+            if target:
+                links.append([target, label])
+                tcat = target.split("-", 1)[0]
+                if tcat in ("concept", "company", "person"):
+                    tags.add(target)
+                return f"[{label}](#/a/{target})"
+            return f"[{label}]"  # 无法解析的目标：降级为纯文本
+        return LINK_RE.sub(_rep, text)
+
+    md = _rewrite_links(md)
+    fns = [[k, _rewrite_links(t)] for k, t in fns]
+
+    # 标签去重、去自身
+    tags.discard(article["id"])
+    return {
+        "id": article["id"],
+        "catKey": article["catKey"],
+        "year": year,
+        "title": title,
+        "md": md,
+        "len": len(md),
+        "links": links,
+        "tags": sorted(tags),
+        "fns": fns,
+    }
+
+
+def build():
+    stem2id, raw = scan_articles()
+    by_id = {}
+    for art in raw:
+        meta = extract_meta(art, stem2id)
+        by_id[meta["id"]] = meta
+
+    # 标签用目标文章标题（干净名称），并统计标签频次
+    tag_count = {}
+    for art in by_id.values():
+        named = []
+        for tid in art["tags"]:
+            t = by_id.get(tid)
+            name = t["title"] if t else tid
+            # 去掉标题中的英文括号后缀，如 “可口可乐（Coca-Cola）” → “可口可乐”
+            m2 = re.match(r"^(.*?)（[^（）]*）$", name)
+            if m2:
+                name = m2.group(1).strip()
+            named.append(name)
+            tag_count[name] = tag_count.get(name, 0) + 1
+        # 去重保序
+        art["tags"] = list(dict.fromkeys(named))
+
+    articles = [by_id[k] for k in sorted(by_id)]
+    cats = []
+    for folder, cat_key, name, order in CATS:
+        n = sum(1 for a in articles if a["catKey"] == cat_key)
+        if n:
+            cats.append({"key": cat_key, "name": name, "count": n, "order": order})
+
+    years = sorted({a["year"] for a in articles if a["year"]})
+    idx = parse_classification_index()
+    data = {
+        "title": "巴菲特投资智慧",
+        "subtitle": "巴菲特致股东信知识库 · 阅读研究",
+        "built": __import__("datetime").date.today().isoformat(),
+        "cats": cats,
+        "yearRange": [years[0], years[-1]] if years else [],
+        "articles": articles,
+        "idx": idx,
+    }
+    return data, tag_count
+
+
+# ---------------------------------------------------------------- 应用模板
+
+APP_CSS = r"""
+:root{
+  --bg:#f6f3ec; --panel:#fffdf8; --ink:#2a2620; --ink2:#6f675a; --ink3:#9a917f;
+  --line:#e6dfd1; --line2:#efe9dd;
+  --accent:#a16207; --accent2:#b45309; --green:#3f6212; --blue:#1e4f9e;
+  --hl:#ffebb3; --hl2:#bfe3ff; --hl3:#ffe1d8;
+  --serif:Georgia,"Songti SC","STSong","SimSun",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none !important}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:15px/1.65 var(--sans);}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+select,input,textarea{font:inherit;color:inherit}
+a{color:var(--accent2);text-decoration:none}
+a:hover{text-decoration:underline}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d8cfbc;border-radius:6px;border:2px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- 顶栏 ---------- */
+#topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
+  padding:10px 18px;background:rgba(246,243,236,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.brand .logo{font-size:19px;font-weight:700;letter-spacing:.5px;color:var(--accent)}
+.brand .logo em{font-style:normal;color:var(--accent2)}
+.brand .sub{font-size:12px;color:var(--ink3)}
+.search-wrap{flex:1;min-width:180px;max-width:560px;position:relative;display:flex;align-items:center}
+#q{width:100%;padding:8px 34px 8px 12px;border:1px solid var(--line);border-radius:9px;
+  background:var(--panel);font-size:14px;outline:none;transition:border-color .15s,box-shadow .15s}
+#q:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(180,83,9,.12)}
+#qCount{position:absolute;right:10px;font-size:12px;color:var(--ink3);pointer-events:none}
+.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tbtn{padding:7px 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  font-size:13px;color:var(--ink2);display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.tbtn:hover{border-color:var(--accent2);color:var(--accent2)}
+.tbtn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.tbtn svg{width:14px;height:14px;fill:currentColor}
+select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236f675a'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center}
+
+/* ---------- 布局 ---------- */
+#layout{display:flex;align-items:flex-start;gap:0}
+#sidebar{width:236px;flex:0 0 236px;position:sticky;top:57px;height:calc(100vh - 57px);
+  overflow-y:auto;padding:16px 14px 40px;border-right:1px solid var(--line);background:var(--panel)}
+.sb-sec{margin-bottom:18px}
+.sb-title{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:1px;margin-bottom:8px;
+  display:flex;justify-content:space-between;align-items:center}
+.sb-item{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;
+  padding:5px 8px;border-radius:7px;font-size:13.5px;color:var(--ink2);text-align:left}
+.sb-item:hover{background:var(--line2);color:var(--ink)}
+.sb-item.active{background:#f3e6c8;color:var(--accent2);font-weight:600}
+.sb-item .n{font-size:11px;color:var(--ink3)}
+.sb-item.active .n{color:var(--accent2)}
+.tag-cloud{display:flex;flex-wrap:wrap;gap:5px}
+.tag-chip{font-size:12px;padding:3px 9px;border-radius:20px;border:1px solid var(--line);
+  background:var(--bg);color:var(--ink2);cursor:pointer;white-space:nowrap}
+.tag-chip:hover{border-color:var(--accent2);color:var(--accent2)}
+.tag-chip.active{background:var(--green);border-color:var(--green);color:#fff}
+.sb-check{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.sb-check input{accent-color:var(--accent2)}
+.sb-foot{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--ink3);line-height:1.7}
+
+/* 分类索引（xlsx 五维） */
+.idx-group{margin-bottom:6px}
+.idx-gtitle{display:flex;justify-content:space-between;align-items:center;width:100%;
+  padding:6px 9px;border-radius:7px;font-size:12.5px;font-weight:700;color:var(--ink2);
+  background:var(--line2);cursor:pointer;text-align:left}
+.idx-gtitle:hover{color:var(--accent2)}
+.idx-gtitle .n{font-size:11px;font-weight:400;color:var(--ink3)}
+.idx-items{display:none;padding:3px 0}
+.idx-group.open .idx-items{display:block}
+.idx-items .sb-item{font-size:12.5px;padding:4px 8px;border-radius:6px}
+.idx-items .sb-item.active{background:#f3e6c8;color:var(--accent2);font-weight:600}
+.idx-items .sb-item .n{font-size:10.5px}
+.idx-banner{background:#faf6ea;border:1px solid #e3d5b8;border-left:4px solid var(--accent2);
+  border-radius:10px;padding:14px 44px 14px 18px;margin-bottom:16px;position:relative}
+.idx-banner h3{font:700 16px/1.5 var(--serif);margin-bottom:8px}
+.idx-banner .idx-rng{font-size:12px;color:var(--ink3);font-weight:400;margin-left:6px}
+.idx-banner p{font-size:13px;color:#4d4638;line-height:1.8;margin:.35em 0;text-align:justify}
+.idx-banner p b{color:var(--accent2)}
+.idx-banner .idx-rep{color:var(--ink2);font-size:12.5px}
+.idx-banner .idx-sum{font-size:13.5px}
+.idx-banner .idx-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:9px}
+.idx-banner .idx-lbl{font-size:12px;color:var(--ink2);font-weight:600}
+.idx-banner .mini-tag{cursor:pointer}
+.idx-close{position:absolute;top:10px;right:12px;color:var(--ink3);font-size:15px;padding:2px 7px;border-radius:6px}
+.idx-close:hover{color:#b91c1c;background:#fde8e8}
+.r-idx{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:7px;font-size:12px;
+  color:var(--ink2);background:#faf6ea;border:1px solid var(--line2);border-radius:8px;padding:5px 10px}
+.r-idx .idx-ev{color:var(--ink2)}
+.r-idx b{color:var(--accent2)}
+.r-idx .mini-tag{cursor:pointer}
+
+/* ---------- 主区 ---------- */
+#main{flex:1;min-width:0;padding:22px 26px 80px}
+#libHead{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+#libTitle{font-size:20px;font-weight:700}
+#libCount{font-size:13px;color:var(--ink3)}
+.group-title{margin:22px 0 10px;font-size:14px;font-weight:700;color:var(--ink2);
+  display:flex;align-items:center;gap:8px}
+.group-title::before{content:"";width:4px;height:14px;background:var(--accent2);border-radius:2px}
+.group-title .n{font-weight:400;color:var(--ink3);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s;display:flex;flex-direction:column;gap:8px}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(90,70,30,.09);border-color:#d8c9a8}
+.card-head{display:flex;align-items:center;gap:6px}
+.badge{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.badge.cat{background:#f3e6c8;color:var(--accent2)}
+.badge.year{background:#e8e4d8;color:var(--ink2)}
+.badge.kind{background:#e3ecf7;color:var(--blue)}
+.card-fav{margin-left:auto;font-size:15px;color:#d9b64e;cursor:pointer;padding:0 2px}
+.card-note{font-size:12px;color:var(--green)}
+.card-title{font-size:15.5px;font-weight:700;line-height:1.45}
+.card-title a{color:var(--ink)}
+.card-title a:hover{color:var(--accent2);text-decoration:none}
+.card-excerpt{font-size:13px;color:var(--ink2);line-height:1.6;display:-webkit-box;
+  -webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-excerpt mark{background:var(--hl);color:inherit;border-radius:2px;padding:0 1px}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto}
+.mini-tag{font-size:11px;color:var(--ink3);border:1px solid var(--line2);padding:1px 7px;border-radius:12px}
+.rows{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line2);
+  cursor:pointer;border-radius:8px}
+.row:hover{background:var(--panel)}
+.row .r-title{font-weight:600;font-size:14.5px}
+.row .r-meta{font-size:12px;color:var(--ink3);margin-left:auto;white-space:nowrap}
+.empty{padding:60px 20px;text-align:center;color:var(--ink3)}
+.empty .big{font-size:40px;margin-bottom:10px}
+
+/* ---------- 阅读视图 ---------- */
+#reader{display:flex;flex-direction:column;min-height:calc(100vh - 140px)}
+#progress{position:fixed;top:57px;left:0;height:3px;background:linear-gradient(90deg,var(--accent2),#d97706);
+  width:0;z-index:49;transition:width .1s linear}
+.reader-top{display:flex;gap:14px;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.reader-title{flex:1;min-width:240px}
+.reader-title h1{font:700 24px/1.4 var(--serif);margin-bottom:6px}
+.r-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--ink3)}
+.r-tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.r-actions{display:flex;gap:6px;align-items:center}
+.reader-body{display:flex;gap:22px;align-items:flex-start;margin-top:18px}
+#article{flex:1;min-width:0;max-width:880px;background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:34px 42px 44px;box-shadow:0 2px 10px rgba(90,70,30,.04)}
+#article>*+*{margin-top:1em}
+#article h1{font:700 22px/1.5 var(--serif);margin-top:.2em;padding-bottom:.35em;border-bottom:2px solid var(--line2)}
+#article h2{font:700 19px/1.5 var(--serif);margin-top:1.4em;padding-bottom:.3em;border-bottom:1px solid var(--line2)}
+#article h3{font:700 16.5px/1.5 var(--serif);margin-top:1.2em}
+#article h4{font-weight:700;margin-top:1.1em;font-size:15px}
+#article p{line-height:1.95;text-align:justify}
+#article ul,#article ol{margin-left:1.6em;line-height:1.9}
+#article li{margin:.25em 0}
+#article blockquote{margin:.6em 0;padding:.5em 1.1em;border-left:3px solid var(--accent2);
+  background:#faf6ea;border-radius:0 8px 8px 0;color:#4d4638}
+#article blockquote p{margin:.35em 0}
+#article table{border-collapse:collapse;width:100%;font-size:13.5px;margin:.5em 0;display:block;overflow-x:auto}
+#article th,#article td{border:1px solid var(--line);padding:6px 10px;text-align:left;white-space:nowrap}
+#article th{background:#f4efe3;font-weight:600}
+#article tr:nth-child(even) td{background:#fbf9f3}
+#article hr{border:none;border-top:1px dashed var(--line);margin:1.6em 0}
+#article code{font:13px/1.5 var(--mono);background:#f1ece0;padding:1px 6px;border-radius:5px;color:#7c2d12}
+#article img{max-width:100%;border-radius:8px}
+#article a{color:var(--accent2);text-decoration:underline;text-underline-offset:3px;text-decoration-color:#d9c9a8}
+#article a:hover{color:#7c2d12}
+mark.hl{background:var(--hl);color:inherit;border-radius:2px;padding:0 1px;cursor:pointer}
+mark.hl.blue{background:var(--hl2)}
+mark.hl.underline{background:transparent;text-decoration:underline;text-decoration-color:#15803d;text-decoration-thickness:2px;text-underline-offset:3px}
+#article .fnref{font-size:11px;color:var(--blue);cursor:help;padding:0 1px}
+.reader-foot{margin-top:26px;padding-top:16px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.reader-foot a{font-size:13px}
+
+/* ---------- 右侧面板 ---------- */
+#rpanel{width:320px;flex:0 0 320px;position:sticky;top:74px;max-height:calc(100vh - 92px);
+  display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.rp-tabs{display:flex;border-bottom:1px solid var(--line);background:#faf7f0}
+.rp-tab{flex:1;padding:10px 4px;font-size:13.5px;color:var(--ink2);text-align:center;border-bottom:2px solid transparent}
+.rp-tab.active{color:var(--accent2);font-weight:700;border-bottom-color:var(--accent2)}
+.rp-tab .cnt{font-size:11px;color:var(--ink3);margin-left:2px}
+.tabpane{display:none;flex:1;overflow-y:auto;padding:14px}
+.tabpane.active{display:block}
+#tab-toc .toc-item{display:block;padding:5px 8px;border-radius:6px;font-size:13px;color:var(--ink2);cursor:pointer}
+#tab-toc .toc-item:hover{background:var(--line2);color:var(--ink)}
+#tab-toc .toc-item.l2{padding-left:20px;font-size:12.5px}
+#tab-toc .toc-item.l3{padding-left:32px;font-size:12px;color:var(--ink3)}
+.toc-empty{color:var(--ink3);font-size:13px;padding:8px}
+
+/* 笔记 */
+.note-sec{margin-bottom:16px}
+.note-sec>h4{font-size:12.5px;color:var(--ink3);letter-spacing:.5px;margin-bottom:8px;font-weight:700}
+.hl-item,.nt-item{display:flex;gap:8px;align-items:flex-start;padding:8px 9px;border:1px solid var(--line2);
+  border-radius:9px;margin-bottom:7px;background:var(--bg);font-size:13px}
+.hl-item .sw{width:10px;height:10px;border-radius:3px;margin-top:5px;flex:0 0 10px}
+.hl-item .sw.yellow{background:var(--hl)}
+.hl-item .sw.blue{background:var(--hl2)}
+.hl-item .sw.underline{background:#15803d}
+.hl-item .qt,.nt-item .qt{flex:1;color:var(--ink);line-height:1.6}
+.hl-item .qt::before{content:"“";color:var(--accent2)}
+.hl-item .qt::after{content:"”";color:var(--accent2)}
+.nt-item .qt{color:var(--ink2);font-size:12px;border-left:2px solid var(--line);padding-left:7px;margin-bottom:4px}
+.nt-item .body{white-space:pre-wrap}
+.x-btn{flex:0 0 auto;color:var(--ink3);padding:1px 5px;border-radius:5px;font-size:13px}
+.x-btn:hover{color:#b91c1c;background:#fde8e8}
+.edit-btn{flex:0 0 auto;color:var(--ink3);padding:1px 5px;border-radius:5px;font-size:13px}
+.edit-btn:hover{color:var(--blue);background:#e8f0fb}
+#articleNote{width:100%;min-height:110px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;
+  font-size:13px;line-height:1.7;resize:vertical;background:var(--panel);outline:none}
+#articleNote:focus{border-color:var(--accent2)}
+.note-saved{font-size:11px;color:var(--ink3);margin-top:4px}
+.note-empty{color:var(--ink3);font-size:12.5px;line-height:1.8}
+
+/* AI 讨论 */
+#tab-ai{display:none;flex-direction:column;padding:0}
+#tab-ai.active{display:flex}
+.ai-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ai-msg{max-width:92%;padding:9px 12px;border-radius:12px;font-size:13.5px;line-height:1.75;white-space:pre-wrap;word-break:break-word}
+.ai-msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.ai-msg.assistant{align-self:flex-start;background:#f1ecdf;border-bottom-left-radius:4px}
+.ai-msg.err{align-self:flex-start;background:#fdecec;color:#9f1239;font-size:12.5px;border:1px solid #f5c2c2}
+.ai-note-btn{margin-top:7px;font-size:11.5px;color:var(--accent2);border:1px dashed #cbb78d;
+  border-radius:12px;padding:2px 10px;background:#fbf7ee;white-space:nowrap;align-self:flex-start}
+.ai-note-btn:hover{background:#f3e6c8}
+.ai-msg .qref{display:block;font-size:11.5px;color:var(--ink3);margin-bottom:5px;border-left:2px solid var(--line);padding-left:7px}
+.ai-msg p{margin:.4em 0}
+.ai-msg ul,.ai-msg ol{margin-left:1.3em}
+.ai-msg code{font:12px var(--mono);background:#e6dfd0;padding:1px 5px;border-radius:4px}
+.ai-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px}
+.ai-chip{font-size:12px;padding:5px 10px;border-radius:16px;border:1px dashed #cbb78d;color:var(--accent2);background:#fbf7ee}
+.ai-chip:hover{background:#f3e6c8}
+.ai-input{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:#faf7f0}
+.ai-input textarea{flex:1;border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:13.5px;
+  line-height:1.6;resize:none;max-height:120px;outline:none;background:var(--panel)}
+.ai-input textarea:focus{border-color:var(--accent2)}
+#aiSend{padding:8px 16px;border-radius:9px;background:var(--accent2);color:#fff;font-size:13.5px;font-weight:600}
+#aiSend:disabled{opacity:.5;cursor:not-allowed}
+.ai-status{font-size:12px;color:var(--ink3);padding:0 14px 8px}
+.ai-welcome{padding:16px 14px;color:var(--ink3);font-size:13px;line-height:1.8}
+
+/* ---------- 选择工具栏 / 弹窗 / toast ---------- */
+#selToolbar{position:fixed;z-index:80;display:flex;gap:2px;background:var(--ink);color:#fff;
+  border-radius:9px;padding:4px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#selToolbar button{padding:5px 10px;border-radius:6px;font-size:12.5px;color:#fff}
+#selToolbar button:hover{background:rgba(255,255,255,.18)}
+#selToolbar .sep{width:1px;background:rgba(255,255,255,.25);margin:3px 2px}
+#modalBackdrop{position:fixed;inset:0;background:rgba(42,38,32,.45);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px}
+#modalBackdrop[hidden]{display:none}
+#settingsModal{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;
+  background:rgba(42,38,32,.45);padding:20px}
+#settingsModal[hidden]{display:none}
+.modal{background:var(--panel);border-radius:14px;width:100%;max-width:560px;max-height:86vh;overflow-y:auto;
+  padding:22px 24px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.modal h3{font-size:16.5px;margin-bottom:12px}
+.modal .field{margin-bottom:14px}
+.modal label{display:block;font-size:12.5px;color:var(--ink2);margin-bottom:5px;font-weight:600}
+.modal input[type=text],.modal input[type=password],.modal textarea{width:100%;border:1px solid var(--line);
+  border-radius:9px;padding:9px 11px;font-size:14px;outline:none;background:var(--bg)}
+.modal input:focus,.modal textarea:focus{border-color:var(--accent2)}
+.modal .quote-box{background:#faf6ea;border:1px solid var(--line2);border-radius:9px;padding:9px 11px;
+  font-size:12.5px;color:var(--ink2);max-height:120px;overflow-y:auto;margin-bottom:10px;line-height:1.7}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.btn{padding:8px 18px;border-radius:9px;font-size:14px;font-weight:600}
+.btn.primary{background:var(--accent2);color:#fff}
+.btn.primary:hover{background:#92400e}
+.btn.ghost{border:1px solid var(--line);color:var(--ink2)}
+.btn.ghost:hover{border-color:var(--accent2);color:var(--accent2)}
+.btn.danger{background:#fee2e2;color:#b91c1c}
+.hint{font-size:12px;color:var(--ink3);line-height:1.7;margin-top:4px}
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);z-index:100;
+  background:var(--ink);color:#fff;padding:10px 20px;border-radius:10px;font-size:13.5px;opacity:0;
+  transition:transform .25s,opacity .25s;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:80vw}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:1100px){
+  #rpanel{width:280px;flex-basis:280px}
+  #article{padding:26px 28px}
+}
+@media (max-width:860px){
+  #sidebar{position:fixed;left:0;top:57px;bottom:0;z-index:60;transform:translateX(-100%);
+    transition:transform .2s;box-shadow:8px 0 24px rgba(0,0,0,.12);height:auto}
+  #sidebar.open{transform:none}
+  #sidebarBackdrop{position:fixed;inset:57px 0 0 0;background:rgba(42,38,32,.35);z-index:55;display:none}
+  #sidebarBackdrop.show{display:block}
+  #menuBtn{display:inline-flex}
+  .reader-body{flex-direction:column}
+  #rpanel{position:static;width:100%;flex:none;max-height:none;order:2}
+  #tab-ai{min-height:420px}
+  #article{max-width:none}
+}
+@media (min-width:861px){#menuBtn{display:none}}
+"""
+
+APP_JS = r"""
+'use strict';
+/* ================= 工具 ================= */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+const NOTES_KEY='bf_notes', FAVS_KEY='bf_favs', SETTINGS_KEY='bf_settings', CHAT_KEY='bf_chat';
+const CAT_NAME = {index:'索引',partnership:'合伙人信',berkshire:'伯克希尔股东信',special:'特别信件',concept:'概念',company:'公司',person:'人物'};
+
+/* ================= 数据 ================= */
+const DATA = window.BUFFETT_DATA;
+const ART = DATA.articles;
+const BYID = {};
+ART.forEach(a => BYID[a.id]=a);
+const IDX = DATA.idx || {topic:[],industry:[],event:[],method:[],year:[]};
+const IDX_DIM_NAME = {topic:'主题分类', industry:'行业分类', event:'事件时期', method:'选股方法', year:'年度索引'};
+const IDX_DIM_DESC = {topic:'坎宁安主题分类', industry:'涉及行业', event:'市场事件/时期', method:'投资方法演进', year:'1977–2025 逐年索引'};
+const plainCache = {};
+function toPlain(md){
+  let s = md
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g,'$1')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g,'$1')
+    .replace(/\[\^[^\]]*\]\([^)]*\)/g,'')
+    .replace(/\[\^[^\]]*\]/g,'')
+    .replace(/^#{1,6}\s+/gm,'')
+    .replace(/^\s*>\s?/gm,'')
+    .replace(/^\s*([-*+]|\d+\.)\s+/gm,'')
+    .replace(/^---+$/gm,'')
+    .replace(/\|/g,' ')
+    .replace(/[*_`~]/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+  return s;
+}
+function plainOf(a){ return plainCache[a.id] || (plainCache[a.id]=toPlain(a.md)); }
+function decadeOf(a){ return a.year ? Math.floor(a.year/10)*10 + '年代' : '其他'; }
+const backlinks = {};
+ART.forEach(a => backlinks[a.id]=[]);
+ART.forEach(a => (a.links||[]).forEach(([tid])=>{ if(backlinks[tid]) backlinks[tid].push(a.id); }));
+
+/* ================= 本地存储 ================= */
+const notesDb = () => store.get(NOTES_KEY,{});
+const notesOf  = id => notesDb()[id] || {hls:[],notes:[],articleNote:null};
+const saveNotes = (id,obj) => { const db=notesDb(); db[id]=obj; store.set(NOTES_KEY,db); };
+const favs = () => store.get(FAVS_KEY,[]);
+const isFav = id => favs().includes(id);
+const toggleFav = id => {
+  let f=favs();
+  f = f.includes(id) ? f.filter(x=>x!==id) : f.concat(id);
+  store.set(FAVS_KEY,f); return f.includes(id);
+};
+const hasNotes = id => { const n=notesOf(id); return !!((n.hls&&n.hls.length)||(n.notes&&n.notes.length)||(n.articleNote&&n.articleNote.text)); };
+const chatOf = id => store.get(CHAT_KEY,{})[id] || [];
+const saveChat = (id,msgs) => { const db=store.get(CHAT_KEY,{}); db[id]=msgs; store.set(CHAT_KEY,db); };
+const settings = () => {
+  const s = store.get(SETTINGS_KEY,{});
+  const c = window.BUFFETT_LLM_CONFIG || {};
+  return {
+    base: s.base || c.base || 'https://api.deepseek.com/v1',
+    key:  s.key  || c.key  || '',
+    model:s.model|| c.model|| 'deepseek-v4-flash',
+  };
+};
+
+/* ================= 状态 ================= */
+const state = {
+  cat:'all', decade:'all', tag:'', q:'', favOnly:false, notedOnly:false,
+  sort:'year-desc', group:'none', view:'grid', cur:null, tab:'toc',
+  idxDim:null, idxKey:null,
+};
+
+/* ================= Markdown 渲染 ================= */
+let _fns = new Map();   // 当前文章的脚注 key → 首个定义（用于角标 tooltip）
+let _fnList = [];       // 当前文章的脚注全量列表（用于文末脚注区）
+function inlineMd(s){
+  let out = esc(s);
+  out = out.replace(/`([^`]+)`/g,(m,c)=>{ return '<code>'+c+'</code>'; });
+  out = out.replace(/\[\^([^\]]+)\]\(([^)]*)\)/g,(m,k,t)=>{
+    if(!_fns.has(k)) _fns.set(k,t);
+    _fnList.push([k,t]);
+    return '<sup class="fnref" title="'+esc(t)+'">['+esc(k)+']</sup>';
+  });
+  out = out.replace(/\[\^([^\]]+)\]/g,(m,k)=>{
+    const t=_fns.get(k);
+    return '<sup class="fnref"'+(t?' title="'+esc(t)+'"':'')+'>['+esc(k)+']</sup>';
+  });
+  out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,(m,alt,src)=>{
+    return '<img alt="'+esc(alt)+'" src="'+esc(src)+'" loading="lazy">';
+  });
+  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,txt,href)=>{
+    const h = href.trim();
+    if (h.startsWith('#/a/')) return '<a href="'+esc(h)+'" data-nav="1">'+txt+'</a>';
+    if (/^(https?:|mailto:)/.test(h)) return '<a href="'+esc(h)+'" target="_blank" rel="noopener">'+txt+'</a>';
+    return txt;
+  });
+  out = out.replace(/\*\*\*([^*]+)\*\*\*/g,'<strong><em>$1</em></strong>')
+           .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+           .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>')
+           .replace(/__([^_\n]+)__/g,'<strong>$1</strong>')
+           .replace(/(^|[^_])_([^_\n]+)_(?!_)/g,'$1<em>$2</em>');
+  return out;
+}
+
+function parseListBlock(lines){
+  const items = [];
+  for (const ln of lines){
+    const m = ln.match(/^(\s*)([-*+]|\d+\.)\s+(.*)$/);
+    if (!m){
+      if (items.length) items[items.length-1].rest.push(ln.trim());
+      continue;
+    }
+    items.push({ind: m[1].replace(/\t/g,'  ').length, ordered:/^\d/.test(m[2]), text:m[3], rest:[]});
+  }
+  let html='', curInd=-1;
+  for (const it of items){
+    if (it.ind > curInd){ html += it.ordered?'<ol>':'<ul>'; }
+    else if (it.ind < curInd){
+      const diff = curInd - it.ind;
+      for (let i=0;i<diff;i++) html += it.ordered?'</ol>':'</ul>';
+    }
+    const body = it.rest.length ? it.text + '<br>' + it.rest.join('<br>') : it.text;
+    html += '<li>'+inlineMd(body)+'</li>';
+    curInd = it.ind;
+  }
+  for (let i=0;i<=curInd;i++) html += '</ul>';
+  html = html.replace(/<\/ul><\/ul>$/,'</ul>').replace(/<\/ol><\/ol>$/,'</ol>');
+  return html;
+}
+
+function mdToHtml(md, fns){
+  _fns = new Map();
+  _fnList = [];
+  if (fns) fns.forEach(([k,t])=>{ if(!_fns.has(k)) _fns.set(k,t); _fnList.push([k,t]); });
+  const toc = [];
+  let secN = 0;
+  const blocks = md.replace(/\r\n?/g,'\n').split(/\n{2,}/);
+  let html = '';
+  for (let blk of blocks){
+    blk = blk.replace(/\n+$/,'');
+    if (!blk.trim()) continue;
+    const lines = blk.split('\n');
+
+    // 标题
+    let m = blk.match(/^(#{1,6})\s+(.*)$/);
+    if (m){
+      const level = m[1].length, text = m[2];
+      secN++;
+      const id = 'sec-'+secN;
+      if (level>=2 && level<=4) toc.push({l:level, t:text.replace(/[*_`]/g,''), id});
+      html += '<h'+level+' id="'+id+'">'+inlineMd(text)+'</h'+level+'>';
+      continue;
+    }
+    // 分隔线
+    if (/^\s{0,3}(---|\*\*\*|___)\s*$/.test(blk)){ html += '<hr>'; continue; }
+    // 表格
+    if (/^\s*\|/.test(lines[0])){
+      const rows = lines.map(l=>l.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(c=>c.trim()));
+      let header=null, body=rows;
+      if (rows.length>1 && rows[1].every(c=>/^:?-{2,}:?$/.test(c))){ header=rows[0]; body=rows.slice(2); }
+      let t='<table>';
+      if (header) t += '<thead><tr>'+header.map(c=>'<th>'+inlineMd(c)+'</th>').join('')+'</tr></thead>';
+      t += '<tbody>'+body.map(r=>'<tr>'+r.map(c=>'<td>'+inlineMd(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+      html += t; continue;
+    }
+    // 引用
+    if (lines.every(l=>/^\s*>/.test(l))){
+      const inner = lines.map(l=>l.replace(/^\s*>\s?/,'')).filter(x=>x.trim());
+      if (inner.length) html += '<blockquote>'+inner.map(x=>'<p>'+inlineMd(x)+'</p>').join('')+'</blockquote>';
+      continue;
+    }
+    // 列表
+    if (/^\s{0,4}([-*+]|\d+\.)\s+/.test(lines[0])){
+      html += parseListBlock(lines); continue;
+    }
+    // 段落
+    html += '<p>'+inlineMd(lines.join(' '))+'</p>';
+  }
+  // 文末脚注区
+  if (_fnList.length){
+    const seen = new Set();
+    const items = _fnList.filter(([k,t])=>{ const s=k+'|'+t; if(seen.has(s)) return false; seen.add(s); return true; });
+    html += '<section class="footnotes"><hr><h3>脚注</h3><ol>'+
+      items.map(([k,t])=>'<li id="fn-'+esc(k)+'"><sup>['+esc(k)+']</sup> '+inlineMd(t)+'</li>').join('')+
+      '</ol></section>';
+  }
+  return {html, toc};
+}
+
+/* ================= 搜索 ================= */
+let searchIdx = null; // {id: {score, pos}}
+function doSearch(q){
+  q = q.trim().toLowerCase();
+  searchIdx = null;
+  if (!q) return;
+  searchIdx = {};
+  const qlen = q.length;
+  for (const a of ART){
+    const title = a.title.toLowerCase();
+    const tags  = (a.tags||[]).join(' ').toLowerCase();
+    const plain = plainOf(a).toLowerCase();
+    let score = 0, pos = -1;
+    if (title.includes(q)){ score += 100; pos = title.indexOf(q); }
+    else if (tags.includes(q)){ score += 40; pos = 0; }
+    const p = plain.indexOf(q);
+    if (p >= 0){
+      score += Math.max(0, 30 - Math.floor(p/2000));
+      if (pos < 0) pos = p;
+    }
+    if (score > 0) searchIdx[a.id] = {score, pos, len:qlen};
+  }
+}
+function snippet(a){
+  const q = state.q.trim();
+  const plain = plainOf(a);
+  const p = plain.toLowerCase().indexOf(q.toLowerCase());
+  if (p < 0) return plain.slice(0,130);
+  const s = Math.max(0, p-48);
+  const e = Math.min(plain.length, p+q.length+90);
+  return (s>0?'…':'') + plain.slice(s,e) + (e<plain.length?'…':'');
+}
+
+/* ================= 过滤 / 排序 / 分组 ================= */
+function visibleList(){
+  let list = ART.filter(a=>{
+    if (state.cat!=='all' && a.catKey!==state.cat) return false;
+    if (state.decade!=='all' && decadeOf(a)!==state.decade) return false;
+    if (state.tag && !(a.tags||[]).includes(state.tag)) return false;
+    if (state.favOnly && !isFav(a.id)) return false;
+    if (state.notedOnly && !hasNotes(a.id)) return false;
+    if (state.q && !(searchIdx && searchIdx[a.id])) return false;
+    if (state.idxDim && state.idxKey){
+      const item=(IDX[state.idxDim]||[]).find(x=>x.k===state.idxKey);
+      if (!item) return false;
+      const ys = state.idxDim==='year' ? [item.y] : (item.y||[]);
+      if (!ys.includes(a.year)) return false;
+    }
+    return true;
+  });
+  const s = state.sort;
+  const cmp = (x,y) => {
+    if (s==='year-desc' || s==='year-asc'){
+      const xv = x.year, yv = y.year;
+      if (xv !== yv){
+        if (xv === null) return 1;      // 无年份文章始终排最后
+        if (yv === null) return -1;
+        return s==='year-desc' ? yv-xv : xv-yv;
+      }
+      return x.title.localeCompare(y.title,'zh');
+    }
+    if (s==='title') return x.title.localeCompare(y.title,'zh');
+    if (s==='len') return y.len - x.len;
+    if (s==='fav'){ const fx=isFav(x.id)?1:0, fy=isFav(y.id)?1:0; if(fx!==fy) return fy-fx; return (y.year||-1)-(x.year||-1); }
+    if (s==='cat'){
+      const cx=CAT_ORDER.indexOf(x.catKey), cy=CAT_ORDER.indexOf(y.catKey);
+      if (cx!==cy) return cx-cy;
+      return (y.year||-1)-(x.year||-1);
+    }
+    return 0;
+  };
+  list.sort(cmp);
+  if (state.q && searchIdx){
+    list.sort((a,b)=> searchIdx[b.id].score - searchIdx[a.id].score);
+  }
+  return list;
+}
+const CAT_ORDER = DATA.cats.map(c=>c.key);
+function groupKey(a){
+  if (state.group==='cat') return CAT_NAME[a.catKey];
+  if (state.group==='decade') return decadeOf(a);
+  if (state.group==='tag') return (a.tags&&a.tags[0]) || '未标注主题';
+  return '';
+}
+const GROUP_ORDER = {cat:['索引','合伙人信','伯克希尔股东信','特别信件','概念','公司','人物'],
+  decade:['1950年代','1960年代','1970年代','1980年代','1990年代','2000年代','2010年代','2020年代','其他'],
+  tag:[]};
+
+/* ================= 渲染：库视图 ================= */
+const libEl = $('#library'), readerEl = $('#reader');
+function renderSidebar(){
+  // 分类
+  const catEl = $('#sbCats');
+  catEl.innerHTML = '';
+  const mk = (key,name,n) => {
+    const b=document.createElement('button');
+    b.className='sb-item'+(state.cat===key?' active':'');
+    b.innerHTML='<span>'+name+'</span><span class="n">'+n+'</span>';
+    b.onclick=()=>{ state.cat=key; state.tag=''; state.idxDim=null; state.idxKey=null; renderAll(); };
+    catEl.appendChild(b);
+  };
+  mk('all','全部', ART.length);
+  DATA.cats.forEach(c=>mk(c.key,c.name,c.count));
+  // 年代
+  const decEl = $('#sbDecades');
+  decEl.innerHTML='';
+  const decades=[];
+  ART.forEach(a=>{ const d=decadeOf(a); const f=decades.find(x=>x.d===d); if(f) f.n++; else decades.push({d,n:1}); });
+  decades.sort((a,b)=>{ const na=parseInt(a.d), nb=parseInt(b.d); if(isNaN(na))return 1; if(isNaN(nb))return -1; return na-nb; });
+  const mkd=(d,n)=>{ const b=document.createElement('button'); b.className='sb-item'+(state.decade===d?' active':'');
+    b.innerHTML='<span>'+d+'</span><span class="n">'+n+'</span>';
+    b.onclick=()=>{ state.decade=(state.decade===d?'all':d); renderAll(); }; decEl.appendChild(b); };
+  mkd('all', ART.length);
+  decades.forEach(x=>mkd(x.d,x.n));
+  // 标签云
+  const tagEl = $('#sbTags');
+  tagEl.innerHTML='';
+  const counts={};
+  ART.forEach(a=>(a.tags||[]).forEach(t=>counts[t]=(counts[t]||0)+1));
+  const top = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,40);
+  top.forEach(([t,n])=>{
+    const c=document.createElement('button');
+    c.className='tag-chip'+(state.tag===t?' active':'');
+    c.textContent=t+' '+n;
+    c.onclick=()=>{ state.tag=(state.tag===t?'':t); renderAll(); };
+    tagEl.appendChild(c);
+  });
+  if(!top.length){ const d=document.createElement('div'); d.className='hint'; d.textContent='（暂无可选主题）'; tagEl.appendChild(d); }
+  // 复选框
+  $('#sbFav').checked=state.favOnly; $('#sbNoted').checked=state.notedOnly;
+  $('#sbFootInfo').textContent = ART.length+' 篇文章 · '+DATA.yearRange[0]+'–'+DATA.yearRange[1]+' · 构建于 '+DATA.built;
+  renderIdxSidebar();
+}
+
+/* ---------- 分类索引（xlsx 五维）---------- */
+function idxYearsOf(it, dim){ return dim==='year' ? [it.y] : (it.y||[]); }
+function idxItemCount(it, dim){
+  const ys = idxYearsOf(it, dim);
+  if(!ys.length) return 0;
+  return ART.filter(a=>a.year && ys.includes(a.year)).length;
+}
+function renderIdxSidebar(){
+  const el=$('#sbIdx');
+  if(!el) return;
+  el.innerHTML='';
+  ['topic','industry','event','method','year'].forEach(dim=>{
+    const items=IDX[dim]||[];
+    const g=document.createElement('div');
+    g.className='idx-group';
+    const body=document.createElement('div');
+    body.className='idx-items';
+    items.forEach(it=>{
+      const b=document.createElement('button');
+      b.className='sb-item idx-item'+(state.idxDim===dim&&state.idxKey===it.k?' active':'');
+      const label = dim==='year' ? (it.y+' 年'+(it.e?' · '+it.e:'')) : it.n;
+      b.innerHTML='<span>'+esc(label)+'</span><span class="n">'+idxItemCount(it, dim)+'</span>';
+      b.title = IDX_DIM_DESC[dim]+'：'+it.n;
+      b.onclick=()=>{
+        if(state.idxDim===dim&&state.idxKey===it.k){ state.idxDim=null; state.idxKey=null; }
+        else { state.idxDim=dim; state.idxKey=it.k; }
+        renderAll();
+      };
+      body.appendChild(b);
+    });
+    g.innerHTML='<button class="idx-gtitle"><span>'+IDX_DIM_NAME[dim]+'</span><span class="n">'+items.length+'</span></button>';
+    g.appendChild(body);
+    g.querySelector('.idx-gtitle').onclick=()=>g.classList.toggle('open');
+    el.appendChild(g);
+  });
+}
+function idxActiveItem(){
+  if(!state.idxDim||!state.idxKey) return null;
+  return (IDX[state.idxDim]||[]).find(x=>x.k===state.idxKey)||null;
+}
+function idxChips(terms, cls){
+  return terms.map(t=>'<button class="mini-tag '+(cls||'')+'" data-it="'+esc(t)+'">'+esc(t)+'</button>').join(' ');
+}
+function idxBannerHtml(it){
+  if(!it) return '';
+  const close='<button class="idx-close" title="清除分类">✕</button>';
+  let inner='';
+  if(state.idxDim==='topic'){
+    inner='<h3>'+esc(it.n)+'</h3><p>'+esc(it.d||'')+'</p>'+
+      (it.con&&it.con.length?'<div class="idx-chips">'+idxChips(it.con)+'</div>':'')+
+      (it.rep?'<p class="idx-rep">代表信件/段落：'+esc(it.rep)+'</p>':'');
+  } else if(state.idxDim==='industry'){
+    inner='<h3>'+esc(it.n)+'</h3><p>'+esc(it.d||'')+'</p>'+
+      (it.co?'<p class="idx-rep">核心公司/标的：'+esc(it.co)+'</p>':'');
+  } else if(state.idxDim==='event'){
+    inner='<h3>'+esc(it.n)+(it.rng?' <span class="idx-rng">'+esc(it.rng)+'</span>':'')+'</h3>'+
+      (it.bg?'<p><b>市场背景：</b>'+esc(it.bg)+'</p>':'')+
+      (it.act?'<p><b>巴菲特的观点与行动：</b>'+esc(it.act)+'</p>':'')+
+      (it.les?'<p><b>经验教训：</b>'+esc(it.les)+'</p>':'');
+  } else if(state.idxDim==='method'){
+    inner='<h3>'+esc(it.n)+'</h3>'+(it.m?'<p><b>方法论：</b>'+esc(it.m)+'</p>':'')+
+      (it.view?'<p><b>核心观点：</b>'+esc(it.view)+'</p>':'')+
+      (it.cases?'<p><b>代表案例：</b>'+esc(it.cases)+'</p>':'')+
+      (it.shift?'<p><b>关键转变：</b>'+esc(it.shift)+'</p>':'');
+  } else if(state.idxDim==='year'){
+    inner='<h3>'+it.y+' 年'+(it.a?' · 撰写人：'+esc(it.a):'')+'</h3>'+
+      (it.e?'<p><b>事件标签：</b>'+esc(it.e)+'</p>':'')+
+      (it.bg?'<p><b>市场/经济背景：</b>'+esc(it.bg)+'</p>':'')+
+      (it.s?'<p class="idx-sum">'+esc(it.s)+'</p>':'')+
+      (it.t&&it.t.length?'<div class="idx-chips"><span class="idx-lbl">坎宁安主题：</span>'+idxChips(it.t)+'</div>':'');
+  }
+  return '<div class="idx-banner">'+inner+close+'</div>';
+}
+function setIdxByCanonTopic(tok){
+  for(const t of (IDX.topic||[])){
+    if(t.c===tok || t.c.startsWith(tok)){ state.idxDim='topic'; state.idxKey=t.k; return true; }
+  }
+  return false;
+}
+
+function cardHtml(a){
+  const n = notesOf(a.id);
+  const hasN = hasNotes(a.id);
+  const excerpt = state.q ? snippet(a) : plainOf(a).slice(0,130);
+  const exHtml = state.q ? esc(excerpt).replace(new RegExp('('+state.q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>') : esc(excerpt);
+  const tags=(a.tags||[]).slice(0,6).map(t=>'<span class="mini-tag">'+esc(t)+'</span>').join('');
+  return '<article class="card" data-id="'+esc(a.id)+'">'+
+    '<div class="card-head">'+
+      '<span class="badge cat">'+CAT_NAME[a.catKey]+'</span>'+
+      (a.year?'<span class="badge year">'+a.year+'</span>':'')+
+      (a.catKey==='concept'?'<span class="badge kind">概念</span>':'')+
+      (a.catKey==='company'?'<span class="badge kind">公司</span>':'')+
+      (a.catKey==='person'?'<span class="badge kind">人物</span>':'')+
+      (hasN?'<span class="card-note" title="有笔记/高亮">📝</span>':'')+
+      '<span class="card-fav" title="收藏">'+(isFav(a.id)?'★':'☆')+'</span>'+
+    '</div>'+
+    '<h3 class="card-title"><a href="#/a/'+esc(a.id)+'">'+esc(a.title)+'</a></h3>'+
+    '<p class="card-excerpt">'+exHtml+'</p>'+
+    (tags?'<div class="card-tags">'+tags+'</div>':'')+
+  '</article>';
+}
+function rowHtml(a){
+  const tags=(a.tags||[]).slice(0,4).map(t=>'<span class="mini-tag">'+esc(t)+'</span>').join(' ');
+  return '<div class="row" data-id="'+esc(a.id)+'">'+
+    '<span class="badge cat">'+CAT_NAME[a.catKey]+'</span>'+
+    (a.year?'<span class="badge year">'+a.year+'</span>':'')+
+    '<span class="r-title">'+esc(a.title)+'</span>'+
+    '<span class="r-meta">'+(tags?' '+tags+' ':'')+(isFav(a.id)?'★':'')+(hasNotes(a.id)?' 📝':'')+'</span>'+
+  '</div>';
+}
+
+function renderLibrary(){
+  readerEl.hidden = true; libEl.hidden = false;
+  const list = visibleList();
+  const it = idxActiveItem();
+  $('#libTitle').textContent = it
+    ? (IDX_DIM_NAME[state.idxDim]||'')+'：'+(it.n||it.y)
+    : (state.cat==='all'?'全部文章':CAT_NAME[state.cat]);
+  const parts=[];
+  if (state.decade!=='all') parts.push(state.decade);
+  if (state.tag) parts.push('主题：'+state.tag);
+  if (it) parts.push(IDX_DIM_NAME[state.idxDim]);
+  if (state.favOnly) parts.push('仅收藏');
+  if (state.notedOnly) parts.push('有笔记');
+  $('#libCount').textContent = [list.length+' 篇', parts.join(' · ')].filter(Boolean).join(' — ');
+  // 分类索引详解横幅
+  const banner = $('#idxBanner');
+  banner.innerHTML = it ? idxBannerHtml(it) : '';
+  banner.onclick = e=>{
+    const c=e.target.closest('.idx-close');
+    if(c){ state.idxDim=null; state.idxKey=null; renderAll(); return; }
+    const chip=e.target.closest('[data-it]');
+    if(chip && state.idxDim==='year'){
+      if(setIdxByCanonTopic(chip.dataset.it)) renderAll();
+    }
+  };
+  const wrap = $('#libList');
+  if (!list.length){
+    wrap.innerHTML = '<div class="empty"><div class="big">🔍</div>没有符合条件的文章<br><button class="btn ghost" id="resetFilters" style="margin-top:14px">重置筛选</button></div>';
+    const r = $('#resetFilters'); if (r) r.onclick = ()=>{ state.cat='all'; state.decade='all'; state.tag=''; state.q=''; state.favOnly=false; state.notedOnly=false; state.idxDim=null; state.idxKey=null; $('#q').value=''; renderAll(); };
+    return;
+  }
+  if (state.group==='none'){
+    wrap.innerHTML = (state.view==='grid'?'<div class="cards">':'<div class="rows">') + list.map(state.view==='grid'?cardHtml:rowHtml).join('') + '</div>';
+  } else {
+    const groups = {};
+    list.forEach(a=>{ const k=groupKey(a); (groups[k]=groups[k]||[]).push(a); });
+    const keys = Object.keys(groups);
+    const order = GROUP_ORDER[state.group]||[];
+    keys.sort((a,b)=>{
+      const ia=order.indexOf(a), ib=order.indexOf(b);
+      if (ia>=0&&ib>=0) return ia-ib;
+      if (ia>=0) return -1; if (ib>=0) return 1;
+      return a.localeCompare(b,'zh');
+    });
+    wrap.innerHTML = keys.map(k=>
+      '<div class="group-title">'+esc(k)+'<span class="n">'+groups[k].length+' 篇</span></div>'+
+      (state.view==='grid'?'<div class="cards">':'<div class="rows">')+
+      groups[k].map(state.view==='grid'?cardHtml:rowHtml).join('')+'</div>'
+    ).join('');
+  }
+  // 事件委托：卡片/行点击
+  wrap.onclick = e => {
+    const fav = e.target.closest('.card-fav');
+    if (fav){
+      e.preventDefault(); e.stopPropagation();
+      const card = fav.closest('.card'); const id = card.dataset.id;
+      const on = toggleFav(id);
+      fav.textContent = on?'★':'☆';
+      toast(on?'已收藏':'已取消收藏');
+      if (state.favOnly) renderLibrary();
+      return;
+    }
+    const el = e.target.closest('.card, .row');
+    if (el) location.hash = '#/a/'+el.dataset.id;
+  };
+}
+
+/* ================= 渲染：阅读视图 ================= */
+function openArticle(id){
+  const a = BYID[id];
+  if (!a) return;
+  state.cur = id;
+  libEl.hidden = true; readerEl.hidden = false;
+  $('#rTitle').textContent = a.title;
+  $('#rMeta').innerHTML =
+    '<span class="badge cat">'+CAT_NAME[a.catKey]+'</span>'+
+    (a.year?'<span class="badge year">'+a.year+'</span>':'')+
+    '<span>'+Math.max(1,Math.round(plainOf(a).length/500))+' 千字</span>'+
+    '<span>'+(a.links||[]).length+' 处关联</span>';
+  $('#rTags').innerHTML = (a.tags||[]).map(t=>
+    '<button class="tag-chip" data-tag="'+esc(t)+'">'+esc(t)+'</button>').join('');
+  $('#rTags').onclick = e=>{
+    const b=e.target.closest('[data-tag]');
+    if(!b) return;
+    state.tag=b.dataset.tag; state.q=''; $('#q').value='';
+    location.hash='#/'; renderAll();
+  };
+  // 年度索引行（信件类文章且有年度总索引条目时显示）
+  const yi = (IDX.year||[]).find(x=>x.y===a.year);
+  const idxLine = $('#rIdxLine');
+  if (yi){
+    idxLine.innerHTML = '<span>📋 年度索引</span>'+
+      (yi.e?'<span class="idx-ev">事件：<b>'+esc(yi.e)+'</b></span>':'')+
+      (yi.t&&yi.t.length?'<span class="idx-ev">坎宁安主题：'+(yi.t||[]).map(t=>'<button class="mini-tag" data-ct="'+esc(t)+'">'+esc(t)+'</button>').join(' ')+'</span>':'')+
+      '<button class="mini-tag" id="rIdxYear" title="查看年度摘要">年度摘要 →</button>';
+    idxLine.onclick = e=>{
+      const ct=e.target.closest('[data-ct]');
+      if(ct){ if(setIdxByCanonTopic(ct.dataset.ct)){ state.q=''; $('#q').value=''; location.hash='#/'; renderAll(); } return; }
+      if(e.target.closest('#rIdxYear')){ state.idxDim='year'; state.idxKey=yi.k; location.hash='#/'; renderAll(); }
+    };
+  } else idxLine.innerHTML='';
+  $('#rFav').textContent = isFav(id)?'★':'☆';
+  $('#rFav').onclick = ()=>{ const on=toggleFav(id); $('#rFav').textContent=on?'★':'☆'; toast(on?'已收藏':'已取消收藏'); };
+
+  // 正文
+  const {html, toc} = mdToHtml(a.md, a.fns||[]);
+  const artEl = $('#article');
+  artEl.innerHTML = html;
+  // 脚注数量显示 & 尾部说明
+  const fnCount = artEl.querySelectorAll('.fnref').length;
+  if (fnCount) {
+    const note = document.createElement('p');
+    note.className='footnote-hint';
+    note.style.cssText='font-size:12px;color:#9a917f;margin-top:2em';
+    note.textContent = '本文含 '+fnCount+' 处脚注（悬停角标查看）。';
+    artEl.appendChild(note);
+  }
+  applyHighlights(artEl, notesOf(id).hls||[]);
+  buildToc(toc);
+  renderNotesPanel();
+  renderChatPanel();
+  updateReaderNav();
+  // 上一篇/下一篇
+  $('#rPrev').onclick = ()=>navArticle(-1);
+  $('#rNext').onclick = ()=>navArticle(1);
+  $('#backBtn').onclick = ()=>{ location.hash='#/'; };
+  document.title = a.title+' · 巴菲特投资智慧';
+  window.scrollTo(0,0);
+}
+function navArticle(dir){
+  const list = visibleList();
+  const idx = list.findIndex(x=>x.id===state.cur);
+  if (idx<0) return;
+  const nxt = list[idx+dir];
+  if (nxt) location.hash = '#/a/'+nxt.id;
+  else toast(dir>0?'已经是最后一篇':'已经是第一篇');
+}
+function updateReaderNav(){
+  const list = visibleList();
+  const idx = list.findIndex(x=>x.id===state.cur);
+  const cur = BYID[state.cur];
+  const prev = idx>0?list[idx-1]:null, next = idx>=0&&idx<list.length-1?list[idx+1]:null;
+  $('#rPrev').textContent = prev?('← '+(prev.title.length>14?prev.title.slice(0,14)+'…':prev.title)):'← 已是第一篇';
+  $('#rPrev').disabled = !prev;
+  $('#rNext').textContent = next?((next.title.length>14?next.title.slice(0,14)+'…':next.title)+' →'):'已是最后一篇 →';
+  $('#rNext').disabled = !next;
+  $('#rNavInfo').textContent = cur?('第 '+(idx+1)+' / '+list.length+' 篇'):'';
+}
+function buildToc(toc){
+  const el = $('#tab-toc');
+  if (!toc.length){ el.innerHTML='<div class="toc-empty">本文无小节目录</div>'; return; }
+  el.innerHTML = toc.map(t=>
+    '<a class="toc-item l'+(t.l-1)+'" data-sec="'+t.id+'">'+esc(t.t)+'</a>').join('');
+  el.onclick = e=>{
+    const it=e.target.closest('.toc-item');
+    if(!it) return;
+    const h=document.getElementById(it.dataset.sec);
+    if(h) h.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+}
+
+/* ================= 高亮 ================= */
+function findTextRange(root, target){
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes=[], starts=[];
+  let acc='';
+  while(walker.nextNode()){
+    const n=walker.currentNode;
+    const d = n.data.replace(/\s+/g,' ');
+    if(!d) continue;
+    nodes.push({n,d}); starts.push(acc.length); acc+=d;
+  }
+  const idx = acc.indexOf(target);
+  if(idx<0) return null;
+  const end = idx+target.length;
+  let si=0; while(si<nodes.length-1 && starts[si+1]<=idx) si++;
+  let ei=nodes.length-1; while(ei>0 && starts[ei]>=end) ei--;
+  return {startNode:nodes[si].n, startOff:idx-starts[si], endNode:nodes[ei].n, endOff:end-starts[ei]};
+}
+function applyHighlights(container, hls){
+  if(!hls||!hls.length) return;
+  for(const hl of hls){
+    if(!hl.text) continue;
+    const f = findTextRange(container, hl.text.replace(/\s+/g,' '));
+    if(!f) continue;
+    try{
+      const range=document.createRange();
+      range.setStart(f.startNode,f.startOff);
+      range.setEnd(f.endNode,f.endOff);
+      const mark=document.createElement('mark');
+      mark.className='hl '+(hl.color||'yellow');
+      mark.dataset.hlid=hl.id;
+      const frag=range.extractContents();
+      mark.appendChild(frag);
+      range.insertNode(mark);
+    }catch(e){}
+  }
+}
+function currentSelection(){
+  const sel=window.getSelection();
+  if(!sel||sel.isCollapsed) return null;
+  if(!$('#article').contains(sel.anchorNode)||!$('#article').contains(sel.focusNode)) return null;
+  const text=sel.toString().replace(/\s+/g,' ').trim();
+  return text?text:null;
+}
+function showSelToolbar(x,y){
+  const tb=$('#selToolbar');
+  tb.hidden=false;
+  const w=tb.offsetWidth;
+  let left=Math.min(x, window.innerWidth-w-10);
+  let top=y+14;
+  if(top+tb.offsetHeight>window.innerHeight) top=y-tb.offsetHeight-10;
+  tb.style.left=left+'px'; tb.style.top=top+'px';
+}
+function hideSelToolbar(){ $('#selToolbar').hidden=true; }
+$('#article').addEventListener('mouseup', e=>{
+  setTimeout(()=>{
+    const text=currentSelection();
+    if(text) showSelToolbar(e.clientX,e.clientY); else hideSelToolbar();
+  },10);
+});
+document.addEventListener('mousedown', e=>{
+  if(!e.target.closest('#selToolbar')) hideSelToolbar();
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ hideSelToolbar(); closeModal(); } });
+
+/* ---------- 笔记 ---------- */
+let editingNoteId=null;
+function addHighlight(color){
+  const text=currentSelection();
+  if(!text){ toast('请先选中文字'); return; }
+  const firstLine = text.split('\n')[0].slice(0,300);
+  if(!firstLine){ hideSelToolbar(); return; }
+  const id=state.cur;
+  const n=notesOf(id);
+  n.hls=n.hls||[]; n.hls.push({id:uid(), text:firstLine, color, ts:Date.now()});
+  saveNotes(id,n);
+  hideSelToolbar();
+  toast('已添加'+(color==='underline'?'下划线':'高亮'));
+  reapplyHighlights();
+}
+function reapplyHighlights(){
+  const artEl=$('#article');
+  // 清掉旧 mark（按 data-hlid 精确移除，避免误伤脚注等）
+  $$('#article mark.hl').forEach(m=>m.replaceWith(document.createTextNode(m.textContent)));
+  applyHighlights(artEl, notesOf(state.cur).hls||[]);
+  renderNotesPanel();
+}
+function openNoteModal(quote, noteId, prefillText){
+  editingNoteId=noteId||null;
+  $('#nmQuote').textContent=quote||'';
+  $('#nmText').value=prefillText||'';
+  if(noteId){
+    const n=notesOf(state.cur);
+    const it=(n.notes||[]).find(x=>x.id===noteId);
+    if(it){ $('#nmQuote').textContent=it.quote||''; $('#nmText').value=it.text||''; }
+  }
+  $('#nmTitle').textContent = noteId ? '编辑笔记' : (prefillText ? '将内容加入笔记' : '新建笔记');
+  $('#modalBackdrop').hidden=false;
+  $('#nmText').focus();
+}
+function closeModal(){ $('#modalBackdrop').hidden=true; editingNoteId=null; }
+function saveNoteFromModal(){
+  const text=$('#nmText').value.trim();
+  const quote=$('#nmQuote').textContent.trim();
+  if(!text&&!quote){ toast('笔记为空'); return; }
+  const id=state.cur, n=notesOf(id);
+  n.notes=n.notes||[];
+  if(editingNoteId){
+    const it=n.notes.find(x=>x.id===editingNoteId);
+    if(it){ it.text=text; it.quote=quote; }
+  } else {
+    n.notes.push({id:uid(), quote, text, ts:Date.now()});
+  }
+  saveNotes(id,n);
+  closeModal();
+  toast('笔记已保存');
+  renderNotesPanel();
+}
+function renderNotesPanel(){
+  const id=state.cur;
+  if(!id) return;
+  const n=notesOf(id);
+  const hlEl=$('#ntHighlights'), ntEl=$('#ntNotes');
+  hlEl.innerHTML='';
+  (n.hls||[]).forEach(h=>{
+    const d=document.createElement('div');
+    d.className='hl-item';
+    d.innerHTML='<span class="sw '+(h.color||'yellow')+'"></span><span class="qt">'+esc(h.text)+'</span>'+
+      '<button class="x-btn" title="删除高亮">✕</button>';
+    d.querySelector('.x-btn').onclick=()=>{
+      n.hls=n.hls.filter(x=>x.id!==h.id); saveNotes(id,n);
+      reapplyHighlights(); toast('已删除高亮');
+    };
+    hlEl.appendChild(d);
+  });
+  if(!(n.hls||[]).length) hlEl.innerHTML='<div class="note-empty">还没有划线高亮。阅读时选中文字，即可高亮/下划线。</div>';
+  ntEl.innerHTML='';
+  (n.notes||[]).slice().reverse().forEach(nt=>{
+    const d=document.createElement('div');
+    d.className='nt-item';
+    d.innerHTML='<div style="flex:1">'+
+      (nt.quote?'<div class="qt">'+esc(nt.quote.slice(0,180))+'</div>':'')+
+      '<div class="body">'+esc(nt.text||'')+'</div></div>'+
+      '<button class="edit-btn" title="编辑">✎</button>'+
+      '<button class="x-btn" title="删除">✕</button>';
+    d.querySelector('.edit-btn').onclick=()=>openNoteModal(null,nt.id);
+    d.querySelector('.x-btn').onclick=()=>{
+      n.notes=n.notes.filter(x=>x.id!==nt.id); saveNotes(id,n);
+      renderNotesPanel(); toast('已删除笔记');
+    };
+    ntEl.appendChild(d);
+  });
+  if(!(n.notes||[]).length) ntEl.innerHTML='<div class="note-empty">还没有笔记。选中文字 → 「笔记」，或点击下方按钮。</div>'+
+    '<button class="btn ghost" style="margin-top:8px;font-size:12.5px" id="newNoteBtn">+ 写一条笔记</button>';
+  else ntEl.insertAdjacentHTML('beforeend','<button class="btn ghost" style="margin-top:8px;font-size:12.5px" id="newNoteBtn">+ 写一条笔记</button>');
+  const nb=$('#newNoteBtn'); if(nb) nb.onclick=()=>openNoteModal('');
+  // 文章笔记
+  const an=$('#articleNote');
+  an.value = (n.articleNote&&n.articleNote.text)||'';
+  const saved=$('#noteSaved');
+  let timer=null;
+  an.oninput=()=>{
+    saved.textContent='保存中…';
+    clearTimeout(timer);
+    timer=setTimeout(()=>{
+      n.articleNote={text:an.value, ts:Date.now()};
+      saveNotes(id,n);
+      saved.textContent='已保存 '+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    },600);
+  };
+  saved.textContent = n.articleNote&&n.articleNote.text ? '上次保存 '+new Date(n.articleNote.ts).toLocaleString('zh-CN',{hour:'2-digit',minute:'2-digit'}) : '自动保存';
+  const cnt=(n.hls||[]).length+(n.notes||[]).length+(n.articleNote&&n.articleNote.text?1:0);
+  $('#notesCnt').textContent=cnt?'('+cnt+')':'';
+}
+$('#nmCancel').onclick=closeModal;
+$('#nmSave').onclick=saveNoteFromModal;
+$('#modalBackdrop').addEventListener('mousedown',e=>{ if(e.target.id==='modalBackdrop') closeModal(); });
+$('#hlYellow').onclick=()=>addHighlight('yellow');
+$('#hlBlue').onclick=()=>addHighlight('blue');
+$('#hlUnderline').onclick=()=>addHighlight('underline');
+$('#hlNote').onclick=()=>{
+  const text=currentSelection();
+  hideSelToolbar();
+  if(text) openNoteModal(text.slice(0,400));
+  else toast('请先选中文字');
+};
+$('#hlCopy').onclick=()=>{
+  const text=currentSelection();
+  hideSelToolbar();
+  if(!text) return;
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(()=>toast('已复制'),()=>toast('复制失败')); }
+  else toast('复制失败');
+};
+
+/* ================= 导出笔记 ================= */
+function download(name, content, mime){
+  const blob=new Blob([content],{type:mime||'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },300);
+}
+function exportNotes(){
+  const db=notesDb();
+  const ids=Object.keys(db).filter(id=>hasNotes(id));
+  if(!ids.length){ toast('还没有任何笔记'); return; }
+  const lines=['# 巴菲特投资智慧 · 我的笔记','', '导出时间：'+new Date().toLocaleString('zh-CN'),'共 '+ids.length+' 篇文章有笔记',''];
+  ids.sort((a,b)=>((BYID[b]||{}).year||-1)-((BYID[a]||{}).year||-1));
+  ids.forEach(id=>{
+    const a=BYID[id]; if(!a) return;
+    const n=db[id];
+    lines.push('## '+a.title+'（'+(CAT_NAME[a.catKey]||'')+(a.year?' · '+a.year:'')+'）');
+    (n.hls||[]).forEach(h=>lines.push('- 高亮：「'+h.text+'」'));
+    (n.notes||[]).forEach(nt=>{
+      lines.push('- 笔记：'+(nt.quote?'\n  > 「'+nt.quote+'」\n  ':'')+nt.text);
+    });
+    if(n.articleNote&&n.articleNote.text) lines.push('- 文章笔记：\n  '+n.articleNote.text.replace(/\n/g,'\n  '));
+    lines.push('');
+  });
+  download('巴菲特投资智慧-笔记.md', lines.join('\n'));
+  const json={exportedAt:new Date().toISOString(), notes:db};
+  download('巴菲特投资智慧-笔记.json', JSON.stringify(json,null,2), 'application/json');
+  toast('已导出笔记（.md 与 .json）');
+}
+
+/* ================= AI 讨论 ================= */
+function settingsOk(){ return !!(settings().key); }
+function renderChatPanel(){
+  const id=state.cur;
+  const a=BYID[id]||{title:''};
+  const box=$('#aiMsgs');
+  box.innerHTML='';
+  const msgs=chatOf(id);
+  if(!settingsOk()){
+    box.innerHTML='<div class="ai-welcome">🤖 与 AI 讨论需要配置大模型接口（DeepSeek 等 OpenAI 兼容接口）。<br><br>点击下方按钮打开设置填写 API Key（仅保存在本机浏览器）。<br><br><button class="btn primary" id="aiOpenSettings" style="font-size:13px">⚙ 打开设置</button></div>';
+    const b=$('#aiOpenSettings'); if(b) b.onclick=openSettings;
+    $('#aiChips').innerHTML=''; $('#aiInput').style.display='none'; $('#aiStatus').textContent='';
+    return;
+  }
+  $('#aiInput').style.display='flex';
+  $('#aiStatus').textContent='';
+  let lastUser='';
+  msgs.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='ai-msg '+m.role;
+    if(m.quote) d.innerHTML='<span class="qref">'+esc(m.quote.slice(0,200))+'</span>'+mdLight(m.content);
+    else d.innerHTML=mdLight(m.content);
+    if(m.role==='user') lastUser=m.content;
+    if(m.role==='assistant'){
+      const btn=document.createElement('button');
+      btn.className='ai-note-btn';
+      btn.textContent='📝 加入笔记';
+      btn.title='把这条 AI 答复加入本文笔记（可编辑后保存）';
+      btn.onclick=()=>{
+        openNoteModal(
+          lastUser ? '我的提问：'+lastUser.slice(0,300) : '',
+          null,
+          'AI 答复（'+a.title+'）：\n'+m.content.slice(0,6000)
+        );
+      };
+      d.appendChild(btn);
+    }
+    box.appendChild(d);
+  });
+  if(!msgs.length){
+    $('#aiChips').innerHTML=[
+      '如何把本文思想应用到 A 股选股？',
+      '结合本文给我 3 条可落地实践建议',
+      '本文观点如何对应量化因子/回测假设？',
+      '结合我的笔记，提炼一份行动清单',
+    ].map(t=>'<button class="ai-chip">'+esc(t)+'</button>').join('');
+    $('#aiChips').onclick=e=>{
+      const c=e.target.closest('.ai-chip');
+      if(c){ $('#aiInputBox').value=c.textContent; sendAi(); }
+    };
+  } else $('#aiChips').innerHTML='';
+  box.scrollTop=box.scrollHeight;
+}
+function mdLight(t){
+  return esc(t)
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\n/g,'<br>');
+}
+function buildAiMessages(userText){
+  const a=BYID[state.cur];
+  const plain=plainOf(a).slice(0,14000);
+  const n=notesOf(a.id);
+  const notes=[];
+  if(n.articleNote&&n.articleNote.text) notes.push('文章笔记：'+n.articleNote.text);
+  (n.notes||[]).slice(-8).forEach(x=>notes.push('笔记：'+(x.quote?'「'+x.quote.slice(0,120)+'」 ':'')+x.text));
+  const sys=[
+    '你是「巴菲特投资智慧助教」，服务于一位 A 股量化投资者（使用选股因子、仓位管理、回测与择时信号体系）。',
+    '任务：帮助用户把巴菲特致股东信中的思想，结合到其股票投资实践中。',
+    '规则：',
+    '1. 严格基于【当前文章】的原文回答；引用原文用「」括起，不得编造巴菲特没有表达过的观点；',
+    '2. 每条建议给出「可操作步骤」或「如何验证」（如转化为选股条件、过滤规则、回测假设、仓位规则、风控阈值）；',
+    '3. 若文章内容不足以支撑问题，明确说明，并给出合理推演框架；',
+    '4. 注意巴菲特思想与 A 股市场（散户结构、涨跌停、T+1、政策市、行业轮动快）的差异并给出适配建议；',
+    '5. 中文回答，分点清晰，篇幅适中。',
+  ].join('\n');
+  const ctx=[
+    '【当前文章】标题：《'+a.title+'》｜分类：'+(CAT_NAME[a.catKey]||'')+(a.year?'｜年份：'+a.year:''),
+    '【文章内容】',
+    plain,
+    notes.length?('【用户在这篇文章的笔记/高亮】\n'+notes.join('\n')):'',
+  ].filter(Boolean).join('\n\n');
+  const msgs=[
+    {role:'system',content:sys},
+    {role:'user',content:ctx},
+  ];
+  (chatOf(a.id)||[]).filter(m=>m.role==='user'||m.role==='assistant').slice(-10)
+    .forEach(m=>msgs.push({role:m.role,content:m.content.slice(0,3000)}));
+  msgs.push({role:'user',content:userText});
+  return msgs;
+}
+let aiBusy=false;
+async function sendAi(){
+  if(aiBusy) return;
+  const box=$('#aiInputBox');
+  const text=box.value.trim();
+  if(!text){ toast('请输入问题'); return; }
+  if(!settingsOk()){ openSettings(); return; }
+  const id=state.cur;
+  const msgs=chatOf(id);
+  msgs.push({role:'user',content:text,quote:currentSelection()||'',ts:Date.now()});
+  saveChat(id,msgs);
+  box.value='';
+  renderChatPanel();
+  aiBusy=true;
+  const sendBtn=$('#aiSend'); sendBtn.disabled=true;
+  $('#aiStatus').textContent='思考中…（DeepSeek '+(settings().model.split('/').pop()||'')+'）';
+  const a=BYID[id];
+  try{
+    const reply=await callLLM(buildAiMessages(text));
+    const msgs2=chatOf(id);
+    msgs2.push({role:'assistant',content:reply,ts:Date.now()});
+    saveChat(id,msgs2);
+    renderChatPanel();
+  }catch(err){
+    const msgs2=chatOf(id);
+    msgs2.push({role:'err',content:'请求失败：'+err.message,ts:Date.now()});
+    saveChat(id,msgs2);
+    renderChatPanel();
+  }
+  aiBusy=false; sendBtn.disabled=false;
+  $('#aiStatus').textContent='';
+}
+async function callLLM(messages){
+  const s=settings();
+  if(!s.key) throw new Error('未配置 API Key');
+  let model=s.model||'';
+  if((s.base||'').includes('deepseek')&&model.includes('/')) model=model.split('/').pop();
+  const url=(s.base||'').replace(/\/+$/,'')+'/chat/completions';
+  let resp;
+  try{
+    resp=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+s.key},
+      body:JSON.stringify({model, messages, temperature:0.4}),
+    });
+  }catch(e){
+    throw new Error('网络/跨域错误：'+e.message+'（如持续失败，可尝试把 Key 配置到支持 CORS 的代理，或用本地服务器打开本页）');
+  }
+  if(!resp.ok){
+    let msg='HTTP '+resp.status;
+    try{ const j=await resp.json(); msg+='：'+((j.error&&(j.error.message||j.error.code))||JSON.stringify(j).slice(0,200)); }catch(e){}
+    throw new Error(msg);
+  }
+  const j=await resp.json();
+  const c=j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;
+  if(!c) throw new Error('响应为空');
+  return c;
+}
+$('#aiSend').onclick=sendAi;
+$('#aiInputBox').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendAi(); }
+});
+
+/* ================= 设置 ================= */
+function openSettings(){
+  const s=settings();
+  const cfg=window.BUFFETT_LLM_CONFIG||null;
+  $('#setBase').value=s.base;
+  $('#setKey').value=s.key;
+  $('#setModel').value=s.model;
+  $('#setHint').innerHTML = cfg
+    ? (cfg.key
+        ? '已从 llm-config.js 加载默认配置（密钥已由本地服务器从环境变量注入）。保存后会覆盖。'
+        : '已从 llm-config.js 加载默认配置（密钥为空）。用「启动巴菲特知识库.command」启动可自动注入环境变量 DEEPSEEK_API_KEY，或在此手动填写。')
+    : '未检测到 llm-config.js。请填写 API Key（仅保存在本浏览器 localStorage）。';
+  $('#setTestResult').textContent='';
+  $('#settingsModal').hidden=false;
+}
+function closeSettings(){ $('#settingsModal').hidden=true; }
+$('#settingsBtn').onclick=openSettings;
+$('#setCancel').onclick=closeSettings;
+$('#setSave').onclick=()=>{
+  store.set(SETTINGS_KEY,{base:$('#setBase').value.trim(),key:$('#setKey').value.trim(),model:$('#setModel').value.trim()});
+  closeSettings(); toast('设置已保存');
+  if(state.cur) renderChatPanel();
+};
+$('#setTest').onclick=async ()=>{
+  const btn=$('#setTest');
+  btn.disabled=true; btn.textContent='测试中…';
+  $('#setTestResult').textContent='';
+  try{
+    const saved=store.get(SETTINGS_KEY,{});
+    const base=$('#setBase').value.trim(), key=$('#setKey').value.trim(), model=$('#setModel').value.trim();
+    let m=model; if(base.includes('deepseek')&&m.includes('/')) m=m.split('/').pop();
+    const resp=await fetch(base.replace(/\/+$/,'')+'/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({model:m,messages:[{role:'user',content:'你好'}],max_tokens:8}),
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    $('#setTestResult').textContent='✅ 连接成功，配置可用';
+    $('#setTestResult').style.color='#15803d';
+  }catch(e){
+    $('#setTestResult').textContent='❌ '+e.message;
+    $('#setTestResult').style.color='#b91c1c';
+  }
+  btn.disabled=false; btn.textContent='测试连接';
+};
+
+/* ================= 全局事件 ================= */
+$('#q').addEventListener('input',e=>{
+  state.q=e.target.value;
+  clearTimeout(window.__qTimer);
+  window.__qTimer=setTimeout(()=>{
+    doSearch(state.q);
+    $('#qCount').textContent=state.q&&searchIdx?Object.keys(searchIdx).length+' 条':'';
+    renderAll();
+  },120);
+});
+$('#sortSel').onchange=e=>{ state.sort=e.target.value; renderAll(); };
+$('#groupSel').onchange=e=>{ state.group=e.target.value; renderAll(); };
+$('#viewSel').onchange=e=>{ state.view=e.target.value; renderAll(); };
+$('#sbFav').onchange=e=>{ state.favOnly=e.target.checked; renderAll(); };
+$('#sbNoted').onchange=e=>{ state.notedOnly=e.target.checked; renderAll(); };
+$('#menuBtn').onclick=()=>{ $('#sidebar').classList.toggle('open'); $('#sidebarBackdrop').classList.toggle('show'); };
+$('#sidebarBackdrop').onclick=()=>{ $('#sidebar').classList.remove('open'); $('#sidebarBackdrop').classList.remove('show'); };
+$('#notesExport').onclick=exportNotes;
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==$('#q')&&!e.target.closest('input,textarea')){ e.preventDefault(); $('#q').focus(); }
+});
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+  $('#progress').style.width=(p*100).toFixed(1)+'%';
+},{passive:true});
+// 阅读视图内点击内部链接
+document.addEventListener('click',e=>{
+  const lk=e.target.closest('a[data-nav]');
+  if(lk){ e.preventDefault(); location.hash=lk.getAttribute('href'); }
+});
+// 标签页切换
+$$('.rp-tab').forEach(t=>{
+  t.onclick=()=>{
+    $$('.rp-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    state.tab=t.dataset.tab;
+    $$('.tabpane').forEach(p=>p.classList.remove('active'));
+    const pane=$('#tab-'+state.tab);
+    pane.classList.add('active');
+    if(state.tab==='notes') renderNotesPanel();
+    if(state.tab==='ai') renderChatPanel();
+  };
+});
+
+/* ================= 路由 / 启动 ================= */
+function renderAll(){ renderSidebar(); renderLibrary(); }
+function onHash(){
+  const m=location.hash.match(/^#\/a\/(.+)$/);
+  const id=m?decodeURIComponent(m[1]):null;
+  if(id&&BYID[id]) openArticle(id);
+  else renderAll();
+}
+window.addEventListener('hashchange',onHash);
+let toastTimer=null;
+function toast(msg){
+  const t=$('#toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+renderSidebar();
+onHash();
+
+/* 测试钩子 */
+window.BUF={state,openArticle,doSearch,visibleList,mdToHtml,toPlain,plainOf,applyHighlights,
+  addHighlight,notesOf,saveNotes,settings,callLLM,exportNotes,store,BYID,ART};
+"""
+
+HTML_TEMPLATE = """<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="巴菲特致股东信知识库 · 分类/搜索/阅读/笔记/划线/LLM 讨论 单文件应用">
+<title>巴菲特投资智慧 · 致股东信知识库</title>
+<style>
+__CSS__
+</style>
+</head>
+<body>
+<header id="topbar">
+  <button class="tbtn" id="menuBtn" title="筛选面板">☰</button>
+  <div class="brand"><span class="logo">🏛 巴菲特<em>投资智慧</em></span><span class="sub">致股东信知识库</span></div>
+  <div class="search-wrap">
+    <input id="q" type="search" placeholder="搜索文章、概念、公司、人物…（/ 聚焦）" autocomplete="off">
+    <span id="qCount"></span>
+  </div>
+  <div class="top-actions">
+    <select class="tbtn" id="sortSel" title="排序">
+      <option value="year-desc">时间 ↓</option>
+      <option value="year-asc">时间 ↑</option>
+      <option value="title">标题</option>
+      <option value="cat">分类</option>
+      <option value="len">篇幅</option>
+      <option value="fav">收藏优先</option>
+    </select>
+    <select class="tbtn" id="groupSel" title="分组">
+      <option value="none">不分组</option>
+      <option value="cat">按分类分组</option>
+      <option value="decade">按年代分组</option>
+      <option value="tag">按主题分组</option>
+    </select>
+    <select class="tbtn" id="viewSel" title="视图">
+      <option value="grid">卡片</option>
+      <option value="rows">列表</option>
+    </select>
+    <button class="tbtn" id="notesExport" title="导出全部笔记">📥 导出笔记</button>
+    <button class="tbtn" id="settingsBtn" title="LLM 设置">⚙ 设置</button>
+  </div>
+</header>
+<div id="sidebarBackdrop"></div>
+<div id="layout">
+  <aside id="sidebar">
+    <div class="sb-sec">
+      <div class="sb-title">分类索引 <span style="font-weight:400">(1977-2025)</span></div>
+      <div id="sbIdx"></div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-title">分类</div>
+      <div id="sbCats"></div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-title">年代</div>
+      <div id="sbDecades"></div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-title">主题标签</div>
+      <div class="tag-cloud" id="sbTags"></div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-title">状态</div>
+      <label class="sb-check"><input type="checkbox" id="sbFav"> ★ 仅看收藏</label>
+      <label class="sb-check"><input type="checkbox" id="sbNoted"> 📝 有笔记/高亮</label>
+    </div>
+    <div class="sb-foot" id="sbFootInfo"></div>
+  </aside>
+  <main id="main">
+    <div id="libHead">
+      <span id="libTitle">全部文章</span>
+      <span id="libCount"></span>
+    </div>
+    <div id="idxBanner"></div>
+    <div id="library">
+      <div id="libList"></div>
+    </div>
+    <div id="reader" hidden>
+      <div id="progress"></div>
+      <div class="reader-top">
+        <button class="tbtn" id="backBtn">← 返回列表</button>
+        <div class="reader-title">
+          <h1 id="rTitle"></h1>
+          <div class="r-meta" id="rMeta"></div>
+          <div class="r-tags" id="rTags"></div>
+          <div class="r-idx" id="rIdxLine"></div>
+        </div>
+        <div class="r-actions">
+          <button class="tbtn" id="rFav" title="收藏">☆</button>
+          <button class="tbtn" id="rPrev">← 上一篇</button>
+          <button class="tbtn" id="rNext">下一篇 →</button>
+        </div>
+      </div>
+      <div class="reader-body">
+        <article id="article"></article>
+        <aside id="rpanel">
+          <div class="rp-tabs">
+            <button class="rp-tab active" data-tab="toc">目录</button>
+            <button class="rp-tab" data-tab="notes">笔记<span class="cnt" id="notesCnt"></span></button>
+            <button class="rp-tab" data-tab="ai">AI 讨论</button>
+          </div>
+          <div class="tabpane active" id="tab-toc"></div>
+          <div class="tabpane" id="tab-notes">
+            <div class="note-sec"><h4>划线高亮</h4><div id="ntHighlights"></div></div>
+            <div class="note-sec"><h4>笔记</h4><div id="ntNotes"></div></div>
+            <div class="note-sec"><h4>文章笔记（自动保存）</h4>
+              <textarea id="articleNote" placeholder="记录你对这篇文章的理解、与 A 股实践的关联…"></textarea>
+              <div class="note-saved" id="noteSaved"></div>
+            </div>
+          </div>
+          <div class="tabpane" id="tab-ai">
+            <div class="ai-msgs" id="aiMsgs"></div>
+            <div class="ai-chips" id="aiChips"></div>
+            <div class="ai-status" id="aiStatus"></div>
+            <div class="ai-input" id="aiInput" style="display:none">
+              <textarea id="aiInputBox" rows="1" placeholder="问 AI：这段思想如何应用到我的股票投资？"></textarea>
+              <button id="aiSend">发送</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+      <div class="reader-foot">
+        <span class="tbtn" id="rNavInfo" style="border:none;background:none"></span>
+        <span style="font-size:12px;color:#9a917f" id="rFootInfo">选中文字可高亮 / 下划线 / 记笔记</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="selToolbar" hidden>
+  <button id="hlYellow" title="黄色高亮">🟡 高亮</button>
+  <button id="hlBlue" title="蓝色高亮">🔵 高亮</button>
+  <button id="hlUnderline" title="绿色下划线">🟢 划线</button>
+  <span class="sep"></span>
+  <button id="hlNote" title="基于选中文字写笔记">📝 笔记</button>
+  <button id="hlCopy" title="复制选中文字">⧉ 复制</button>
+</div>
+
+<div id="modalBackdrop" hidden>
+  <div class="modal">
+    <h3 id="nmTitle">新建笔记</h3>
+    <div class="quote-box" id="nmQuote"></div>
+    <div class="field">
+      <textarea id="nmText" rows="5" style="width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:14px;outline:none;background:var(--bg);resize:vertical"
+        placeholder="写下你的想法…（会随文章保存，可导出）"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="nmCancel">取消</button>
+      <button class="btn primary" id="nmSave">保存笔记</button>
+    </div>
+  </div>
+</div>
+
+<div id="settingsModal" hidden>
+  <div class="modal">
+    <h3>⚙ LLM 讨论设置</h3>
+    <div class="field">
+      <label>API Base（OpenAI 兼容）</label>
+      <input type="text" id="setBase" placeholder="https://api.deepseek.com/v1">
+    </div>
+    <div class="field">
+      <label>API Key</label>
+      <input type="password" id="setKey" placeholder="sk-...">
+    </div>
+    <div class="field">
+      <label>模型</label>
+      <input type="text" id="setModel" placeholder="deepseek-v4-flash">
+    </div>
+    <div class="hint" id="setHint"></div>
+    <div class="hint" style="color:#15803d" id="setTestResult"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="setCancel">取消</button>
+      <button class="btn ghost" id="setTest">测试连接</button>
+      <button class="btn primary" id="setSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+window.BUFFETT_DATA = __DATA__;
+</script>
+<script src="llm-config.js" onerror="window.__noLlmCfg=1"></script>
+<script>
+__JS__
+</script>
+</body>
+</html>
+"""
+
+
+# ---------------------------------------------------------------- 组装
+
+def build_html(data_json: str, css: str, js: str) -> str:
+    return (
+        HTML_TEMPLATE
+        .replace("__DATA__", data_json)
+        .replace("__CSS__", css)
+        .replace("__JS__", js)
+    )
+
+
+def find_root_env():
+    """向上查找项目根 .env（解析为 dict，不含则返回 {}）。"""
+    d = HERE
+    for _ in range(6):
+        p = os.path.join(d, ".env")
+        if os.path.isfile(p):
+            env = {}
+            try:
+                for line in open(p, encoding="utf-8"):
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        env[k.strip()] = v.strip().strip('"').strip("'")
+            except OSError:
+                return {}
+            return env
+        d = os.path.dirname(d)
+    return {}
+
+
+def build_llm_config() -> bool:
+    """生成不含密钥的 llm-config.js（仅默认 base/model）。
+
+    密钥不落盘：由 serve_buffett_app.py 启动本地服务器时从环境变量
+    DEEPSEEK_API_KEY（或项目根 .env）动态注入；也可在应用「设置」面板
+    手动填写（仅存于浏览器 localStorage）。
+    """
+    env = find_root_env()
+    base = env.get("DEEPSEEK_API_BASE", "https://api.deepseek.com/v1")
+    model = "deepseek-v4-flash"   # 默认模型（可在设置面板覆盖）
+    js = (
+        "/* 可选 LLM 默认配置（由 build_buffett_app.py 生成，不含任何密钥）。\n"
+        " * 密钥不落盘：用「启动巴菲特知识库.command」启动时，本地服务器会从\n"
+        " * 环境变量 DEEPSEEK_API_KEY（或项目根 .env）动态注入；也可在应用\n"
+        " * 「设置」面板手动填写（仅保存在本浏览器 localStorage）。\n"
+        " * 修改本文件后刷新页面即可生效。 */\n"
+        "window.BUFFETT_LLM_CONFIG = {\n"
+        '  base: %s,\n'
+        '  key: "",\n'
+        '  model: %s\n'
+        "};\n"
+    ) % (json.dumps(base), json.dumps(model))
+    with open(OUT_LLM, "w", encoding="utf-8") as f:
+        f.write(js)
+    print(f"[ok] 已生成 {os.path.basename(OUT_LLM)}（无密钥，仅默认 base/model）")
+    return True
+
+
+def main():
+    debug = "--debug" in sys.argv
+    no_llm = "--no-llm-config" in sys.argv
+
+    data, tag_count = build()
+
+    # 数据 JSON：转义 </script
+    data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+    data_json = data_json.replace("</", "<\\/")
+
+    html = build_html(data_json, APP_CSS, APP_JS)
+    with open(OUT_HTML, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    print(f"[ok] 已生成 {os.path.basename(OUT_HTML)}（{len(html)/1024/1024:.2f} MB，{len(data['articles'])} 篇文章）")
+    if debug:
+        print("  分类: " + ", ".join(f"{c['name']}({c['count']})" for c in data['cats']))
+        print(f"  年份范围: {data['yearRange']}")
+        print("  主题标签数: %d，Top10: %s" % (len(tag_count), sorted(tag_count.items(), key=lambda x: -x[1])[:10]))
+
+    if not no_llm:
+        build_llm_config()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>国民保险公司 — 巴菲特知识库</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header"><a href="../index.html" class="logo">巴菲特知识库</a></div>
+<div class="sidebar-nav">
+<a href="../index.html" class="nav-link nav-home">🏠 首页</a>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('00_索引')"><span class="caret"></span>索引<span class="badge">4</span></div>
+<div class="nav-group-items" id="00_索引">
+<a href="../index-pages/人物索引.html" class="nav-link" title="人物索引">人物索引</a>
+<a href="../index-pages/公司索引.html" class="nav-link" title="公司索引">公司索引</a>
+<a href="../index-pages/巴菲特致股东信总览.html" class="nav-link" title="巴菲特致股东信总览">巴菲特致股东信总览</a>
+<a href="../index-pages/核心思想图谱.html" class="nav-link" title="核心思想图谱">核心思想图谱</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('01_合伙人信')"><span class="caret"></span>合伙人信<span class="badge">17</span></div>
+<div class="nav-group-items" id="01_合伙人信">
+<a href="../partnership/1956-有限合伙协议.html" class="nav-link" title="1956 有限合伙协议">1956 有限合伙协议</a>
+<a href="../partnership/1957-巴菲特致合伙人信.html" class="nav-link" title="1957 巴菲特致合伙人信">1957 巴菲特致合伙人信</a>
+<a href="../partnership/1958-巴菲特致合伙人信.html" class="nav-link" title="1958 巴菲特致合伙人信">1958 巴菲特致合伙人信</a>
+<a href="../partnership/1959-巴菲特致合伙人信.html" class="nav-link" title="1959 巴菲特致合伙人信">1959 巴菲特致合伙人信</a>
+<a href="../partnership/1960-巴菲特致合伙人信.html" class="nav-link" title="1960 巴菲特致合伙人信">1960 巴菲特致合伙人信</a>
+<a href="../partnership/1961-巴菲特致合伙人信.html" class="nav-link" title="1961 巴菲特致合伙人信">1961 巴菲特致合伙人信</a>
+<a href="../partnership/1961年中-巴菲特致合伙人信.html" class="nav-link" title="1961年中 巴菲特致合伙人信">1961年中 巴菲特致合伙人信</a>
+<a href="../partnership/1962-巴菲特致合伙人信.html" class="nav-link" title="1962 巴菲特致合伙人信">1962 巴菲特致合伙人信</a>
+<a href="../partnership/1962年11月-巴菲特致合伙人信.html" class="nav-link" title="1962年11月 巴菲特致合伙人信">1962年11月 巴菲特致合伙人信</a>
+<a href="../partnership/1962年12月-巴菲特致合伙人信.html" class="nav-link" title="1962年12月 巴菲特致合伙人信">1962年12月 巴菲特致合伙人信</a>
+<a href="../partnership/1962年中-巴菲特致合伙人信.html" class="nav-link" title="1962年中 巴菲特致合伙人信">1962年中 巴菲特致合伙人信</a>
+<a href="../partnership/1963-巴菲特致合伙人信.html" class="nav-link" title="1963 巴菲特致合伙人信">1963 巴菲特致合伙人信</a>
+<a href="../partnership/1963年11月-巴菲特致合伙人信.html" class="nav-link" title="1963年11月 巴菲特致合伙人信">1963年11月 巴菲特致合伙人信</a>
+<a href="../partnership/1963年12月-巴菲特致合伙人信.html" class="nav-link" title="1963年12月 巴菲特致合伙人信">1963年12月 巴菲特致合伙人信</a>
+<a href="../partnership/1963年中-巴菲特致合伙人信.html" class="nav-link" title="1963年中 巴菲特致合伙人信">1963年中 巴菲特致合伙人信</a>
+<a href="../partnership/1964-巴菲特致合伙人信.html" class="nav-link" title="1964 巴菲特致合伙人信">1964 巴菲特致合伙人信</a>
+<a href="../partnership/1964年中-巴菲特致合伙人信.html" class="nav-link" title="1964年中 巴菲特致合伙人信">1964年中 巴菲特致合伙人信</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('02_伯克希尔股东信')"><span class="caret"></span>伯克希尔股东信<span class="badge">60</span></div>
+<div class="nav-group-items" id="02_伯克希尔股东信">
+<a href="../berkshire/1965-巴菲特致股东信.html" class="nav-link" title="1965 巴菲特致股东信">1965 巴菲特致股东信</a>
+<a href="../berkshire/1966-巴菲特致股东信.html" class="nav-link" title="1966 巴菲特致股东信">1966 巴菲特致股东信</a>
+<a href="../berkshire/1967-巴菲特致股东信.html" class="nav-link" title="1967 巴菲特致股东信">1967 巴菲特致股东信</a>
+<a href="../berkshire/1968-巴菲特致股东信.html" class="nav-link" title="1968 巴菲特致股东信">1968 巴菲特致股东信</a>
+<a href="../berkshire/1969-巴菲特致股东信.html" class="nav-link" title="1969 巴菲特致股东信">1969 巴菲特致股东信</a>
+<a href="../berkshire/1970-巴菲特致股东信.html" class="nav-link" title="1970 巴菲特致股东信">1970 巴菲特致股东信</a>
+<a href="../berkshire/1971-巴菲特致股东信.html" class="nav-link" title="1971 巴菲特致股东信">1971 巴菲特致股东信</a>
+<a href="../berkshire/1972-巴菲特致股东信.html" class="nav-link" title="1972 巴菲特致股东信">1972 巴菲特致股东信</a>
+<a href="../berkshire/1973-巴菲特致股东信.html" class="nav-link" title="1973 巴菲特致股东信">1973 巴菲特致股东信</a>
+<a href="../berkshire/1974-巴菲特致股东信.html" class="nav-link" title="1974 巴菲特致股东信">1974 巴菲特致股东信</a>
+<a href="../berkshire/1975-巴菲特致股东信.html" class="nav-link" title="1975 巴菲特致股东信">1975 巴菲特致股东信</a>
+<a href="../berkshire/1976-巴菲特致股东信.html" class="nav-link" title="1976 巴菲特致股东信">1976 巴菲特致股东信</a>
+<a href="../berkshire/1977-巴菲特致股东信.html" class="nav-link" title="1977 巴菲特致股东信">1977 巴菲特致股东信</a>
+<a href="../berkshire/1978-巴菲特致股东信.html" class="nav-link" title="1978 巴菲特致股东信">1978 巴菲特致股东信</a>
+<a href="../berkshire/1979-巴菲特致股东信.html" class="nav-link" title="1979 巴菲特致股东信">1979 巴菲特致股东信</a>
+<a href="../berkshire/1980-巴菲特致股东信.html" class="nav-link" title="1980 巴菲特致股东信">1980 巴菲特致股东信</a>
+<a href="../berkshire/1981-巴菲特致股东信.html" class="nav-link" title="1981 巴菲特致股东信">1981 巴菲特致股东信</a>
+<a href="../berkshire/1982-巴菲特致股东信.html" class="nav-link" title="1982 巴菲特致股东信">1982 巴菲特致股东信</a>
+<a href="../berkshire/1983-巴菲特致股东信.html" class="nav-link" title="1983 巴菲特致股东信">1983 巴菲特致股东信</a>
+<a href="../berkshire/1984-巴菲特致股东信.html" class="nav-link" title="1984 巴菲特致股东信">1984 巴菲特致股东信</a>
+<a href="../berkshire/1985-巴菲特致股东信.html" class="nav-link" title="1985 巴菲特致股东信">1985 巴菲特致股东信</a>
+<a href="../berkshire/1986-巴菲特致股东信.html" class="nav-link" title="1986 巴菲特致股东信">1986 巴菲特致股东信</a>
+<a href="../berkshire/1987-巴菲特致股东信.html" class="nav-link" title="1987 巴菲特致股东信">1987 巴菲特致股东信</a>
+<a href="../berkshire/1988-巴菲特致股东信.html" class="nav-link" title="1988 巴菲特致股东信">1988 巴菲特致股东信</a>
+<a href="../berkshire/1989-巴菲特致股东信.html" class="nav-link" title="1989 巴菲特致股东信">1989 巴菲特致股东信</a>
+<a href="../berkshire/1990-巴菲特致股东信.html" class="nav-link" title="1990 巴菲特致股东信">1990 巴菲特致股东信</a>
+<a href="../berkshire/1991-巴菲特致股东信.html" class="nav-link" title="1991 巴菲特致股东信">1991 巴菲特致股东信</a>
+<a href="../berkshire/1992-巴菲特致股东信.html" class="nav-link" title="1992 巴菲特致股东信">1992 巴菲特致股东信</a>
+<a href="../berkshire/1993-巴菲特致股东信.html" class="nav-link" title="1993 巴菲特致股东信">1993 巴菲特致股东信</a>
+<a href="../berkshire/1994-巴菲特致股东信.html" class="nav-link" title="1994 巴菲特致股东信">1994 巴菲特致股东信</a>
+<a href="../berkshire/1995-巴菲特致股东信.html" class="nav-link" title="1995 巴菲特致股东信">1995 巴菲特致股东信</a>
+<a href="../berkshire/1996-巴菲特致股东信.html" class="nav-link" title="1996 巴菲特致股东信">1996 巴菲特致股东信</a>
+<a href="../berkshire/1997-巴菲特致股东信.html" class="nav-link" title="1997 巴菲特致股东信">1997 巴菲特致股东信</a>
+<a href="../berkshire/1998-巴菲特致股东信.html" class="nav-link" title="1998 巴菲特致股东信">1998 巴菲特致股东信</a>
+<a href="../berkshire/1999-巴菲特致股东信.html" class="nav-link" title="1999 巴菲特致股东信">1999 巴菲特致股东信</a>
+<a href="../berkshire/2000-巴菲特致股东信.html" class="nav-link" title="2000 巴菲特致股东信">2000 巴菲特致股东信</a>
+<a href="../berkshire/2001-巴菲特致股东信.html" class="nav-link" title="2001 巴菲特致股东信">2001 巴菲特致股东信</a>
+<a href="../berkshire/2002-巴菲特致股东信.html" class="nav-link" title="2002 巴菲特致股东信">2002 巴菲特致股东信</a>
+<a href="../berkshire/2003-巴菲特致股东信.html" class="nav-link" title="2003 巴菲特致股东信">2003 巴菲特致股东信</a>
+<a href="../berkshire/2004-巴菲特致股东信.html" class="nav-link" title="2004 巴菲特致股东信">2004 巴菲特致股东信</a>
+<a href="../berkshire/2005-巴菲特致股东信.html" class="nav-link" title="2005 巴菲特致股东信">2005 巴菲特致股东信</a>
+<a href="../berkshire/2006-巴菲特致股东信.html" class="nav-link" title="2006 巴菲特致股东信">2006 巴菲特致股东信</a>
+<a href="../berkshire/2007-巴菲特致股东信.html" class="nav-link" title="2007 巴菲特致股东信">2007 巴菲特致股东信</a>
+<a href="../berkshire/2008-巴菲特致股东信.html" class="nav-link" title="2008 巴菲特致股东信">2008 巴菲特致股东信</a>
+<a href="../berkshire/2009-巴菲特致股东信.html" class="nav-link" title="2009 巴菲特致股东信">2009 巴菲特致股东信</a>
+<a href="../berkshire/2010-巴菲特致股东信.html" class="nav-link" title="2010 巴菲特致股东信">2010 巴菲特致股东信</a>
+<a href="../berkshire/2011-巴菲特致股东信.html" class="nav-link" title="2011 巴菲特致股东信">2011 巴菲特致股东信</a>
+<a href="../berkshire/2012-巴菲特致股东信.html" class="nav-link" title="2012 巴菲特致股东信">2012 巴菲特致股东信</a>
+<a href="../berkshire/2013-巴菲特致股东信.html" class="nav-link" title="2013 巴菲特致股东信">2013 巴菲特致股东信</a>
+<a href="../berkshire/2014-巴菲特致股东信.html" class="nav-link" title="2014 巴菲特致股东信">2014 巴菲特致股东信</a>
+<a href="../berkshire/2015-巴菲特致股东信.html" class="nav-link" title="2015 巴菲特致股东信">2015 巴菲特致股东信</a>
+<a href="../berkshire/2016-巴菲特致股东信.html" class="nav-link" title="2016 巴菲特致股东信">2016 巴菲特致股东信</a>
+<a href="../berkshire/2017-巴菲特致股东信.html" class="nav-link" title="2017 巴菲特致股东信">2017 巴菲特致股东信</a>
+<a href="../berkshire/2018-巴菲特致股东信.html" class="nav-link" title="2018 巴菲特致股东信">2018 巴菲特致股东信</a>
+<a href="../berkshire/2019-巴菲特致股东信.html" class="nav-link" title="2019 巴菲特致股东信">2019 巴菲特致股东信</a>
+<a href="../berkshire/2020-巴菲特致股东信.html" class="nav-link" title="2020 巴菲特致股东信">2020 巴菲特致股东信</a>
+<a href="../berkshire/2021-巴菲特致股东信.html" class="nav-link" title="2021 巴菲特致股东信">2021 巴菲特致股东信</a>
+<a href="../berkshire/2022-巴菲特致股东信.html" class="nav-link" title="2022 巴菲特致股东信">2022 巴菲特致股东信</a>
+<a href="../berkshire/2023-巴菲特致股东信.html" class="nav-link" title="2023 巴菲特致股东信">2023 巴菲特致股东信</a>
+<a href="../berkshire/2024-巴菲特致股东信.html" class="nav-link" title="2024 巴菲特致股东信">2024 巴菲特致股东信</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('03_特别信件')"><span class="caret"></span>特别信件<span class="badge">4</span></div>
+<div class="nav-group-items" id="03_特别信件">
+<a href="../special/2014-伯克希尔的过去现在与未来.html" class="nav-link" title="2014 伯克希尔的过去现在与未来">2014 伯克希尔的过去现在与未来</a>
+<a href="../special/2014-副董事长的思考.html" class="nav-link" title="2014 副董事长的思考">2014 副董事长的思考</a>
+<a href="../special/2025-感恩节致辞.html" class="nav-link" title="2025 感恩节致辞">2025 感恩节致辞</a>
+<a href="../special/2025-感恩节致辞_2.html" class="nav-link" title="2025 感恩节致辞_2">2025 感恩节致辞_2</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('概念')"><span class="caret"></span>概念<span class="badge">35</span></div>
+<div class="nav-group-items" id="概念">
+<a href="../concepts/买入价格.html" class="nav-link" title="买入价格">买入价格</a>
+<a href="../concepts/企业文化.html" class="nav-link" title="企业文化">企业文化</a>
+<a href="../concepts/低估.html" class="nav-link" title="低估">低估</a>
+<a href="../concepts/保险浮存金.html" class="nav-link" title="保险浮存金">保险浮存金</a>
+<a href="../concepts/内在价值.html" class="nav-link" title="内在价值">内在价值</a>
+<a href="../concepts/分散投资.html" class="nav-link" title="分散投资">分散投资</a>
+<a href="../concepts/品牌.html" class="nav-link" title="品牌">品牌</a>
+<a href="../concepts/商业模式.html" class="nav-link" title="商业模式">商业模式</a>
+<a href="../concepts/商誉.html" class="nav-link" title="商誉">商誉</a>
+<a href="../concepts/回购.html" class="nav-link" title="回购">回购</a>
+<a href="../concepts/复利.html" class="nav-link" title="复利">复利</a>
+<a href="../concepts/安全边际.html" class="nav-link" title="安全边际">安全边际</a>
+<a href="../concepts/市场先生.html" class="nav-link" title="市场先生">市场先生</a>
+<a href="../concepts/市场预测.html" class="nav-link" title="市场预测">市场预测</a>
+<a href="../concepts/市盈率.html" class="nav-link" title="市盈率">市盈率</a>
+<a href="../concepts/承保纪律.html" class="nav-link" title="承保纪律">承保纪律</a>
+<a href="../concepts/护城河.html" class="nav-link" title="护城河">护城河</a>
+<a href="../concepts/收购.html" class="nav-link" title="收购">收购</a>
+<a href="../concepts/有效市场.html" class="nav-link" title="有效市场">有效市场</a>
+<a href="../concepts/杠杆.html" class="nav-link" title="杠杆">杠杆</a>
+<a href="../concepts/特许经营权.html" class="nav-link" title="特许经营权">特许经营权</a>
+<a href="../concepts/留存收益.html" class="nav-link" title="留存收益">留存收益</a>
+<a href="../concepts/竞争优势.html" class="nav-link" title="竞争优势">竞争优势</a>
+<a href="../concepts/管理层.html" class="nav-link" title="管理层">管理层</a>
+<a href="../concepts/纺织业务.html" class="nav-link" title="纺织业务">纺织业务</a>
+<a href="../concepts/股东导向.html" class="nav-link" title="股东导向">股东导向</a>
+<a href="../concepts/股息.html" class="nav-link" title="股息">股息</a>
+<a href="../concepts/能力圈.html" class="nav-link" title="能力圈">能力圈</a>
+<a href="../concepts/衍生品.html" class="nav-link" title="衍生品">衍生品</a>
+<a href="../concepts/账面价值.html" class="nav-link" title="账面价值">账面价值</a>
+<a href="../concepts/资本配置.html" class="nav-link" title="资本配置">资本配置</a>
+<a href="../concepts/透视盈余.html" class="nav-link" title="透视盈余">透视盈余</a>
+<a href="../concepts/通货膨胀.html" class="nav-link" title="通货膨胀">通货膨胀</a>
+<a href="../concepts/长期持有.html" class="nav-link" title="长期持有">长期持有</a>
+<a href="../concepts/集中投资.html" class="nav-link" title="集中投资">集中投资</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title open" onclick="toggle('公司')"><span class="caret"></span>公司<span class="badge">61</span></div>
+<div class="nav-group-items open" id="公司">
+<a href="BNSF铁路.html" class="nav-link" title="BNSF铁路">BNSF铁路</a>
+<a href="IBM.html" class="nav-link" title="IBM">IBM</a>
+<a href="三井物产.html" class="nav-link" title="三井物产">三井物产</a>
+<a href="三菱商事.html" class="nav-link" title="三菱商事">三菱商事</a>
+<a href="世界图书百科全书.html" class="nav-link" title="世界图书百科全书">世界图书百科全书</a>
+<a href="中国石油.html" class="nav-link" title="中国石油">中国石油</a>
+<a href="中美能源.html" class="nav-link" title="中美能源">中美能源</a>
+<a href="伊斯卡.html" class="nav-link" title="伊斯卡">伊斯卡</a>
+<a href="伊藤忠商事.html" class="nav-link" title="伊藤忠商事">伊藤忠商事</a>
+<a href="伯克希尔哈撒韦.html" class="nav-link" title="伯克希尔哈撒韦">伯克希尔哈撒韦</a>
+<a href="伯克希尔哈撒韦能源.html" class="nav-link" title="伯克希尔哈撒韦能源">伯克希尔哈撒韦能源</a>
+<a href="克莱顿房屋.html" class="nav-link" title="克莱顿房屋">克莱顿房屋</a>
+<a href="内布拉斯加家具店.html" class="nav-link" title="内布拉斯加家具店">内布拉斯加家具店</a>
+<a href="冰雪皇后.html" class="nav-link" title="冰雪皇后">冰雪皇后</a>
+<a href="利捷航空.html" class="nav-link" title="利捷航空">利捷航空</a>
+<a href="华盛顿邮报.html" class="nav-link" title="华盛顿邮报">华盛顿邮报</a>
+<a href="卡夫亨氏.html" class="nav-link" title="卡夫亨氏">卡夫亨氏</a>
+<a href="可口可乐.html" class="nav-link" title="可口可乐">可口可乐</a>
+<a href="吉列.html" class="nav-link" title="吉列">吉列</a>
+<a href="喜诗糖果.html" class="nav-link" title="喜诗糖果">喜诗糖果</a>
+<a href="国民保险公司.html" class="nav-link active" title="国民保险公司">国民保险公司</a>
+<a href="大都会通信.html" class="nav-link" title="大都会通信">大都会通信</a>
+<a href="威利家居.html" class="nav-link" title="威利家居">威利家居</a>
+<a href="威瑞森通讯.html" class="nav-link" title="威瑞森通讯">威瑞森通讯</a>
+<a href="富国银行.html" class="nav-link" title="富国银行">富国银行</a>
+<a href="州立农业保险.html" class="nav-link" title="州立农业保险">州立农业保险</a>
+<a href="布法罗新闻报.html" class="nav-link" title="布法罗新闻报">布法罗新闻报</a>
+<a href="康菲石油.html" class="nav-link" title="康菲石油">康菲石油</a>
+<a href="德克斯特鞋业.html" class="nav-link" title="德克斯特鞋业">德克斯特鞋业</a>
+<a href="房地美.html" class="nav-link" title="房地美">房地美</a>
+<a href="所罗门.html" class="nav-link" title="所罗门">所罗门</a>
+<a href="斯科特费泽.html" class="nav-link" title="斯科特费泽">斯科特费泽</a>
+<a href="森林河公司.html" class="nav-link" title="森林河公司">森林河公司</a>
+<a href="比亚迪.html" class="nav-link" title="比亚迪">比亚迪</a>
+<a href="波仙珠宝.html" class="nav-link" title="波仙珠宝">波仙珠宝</a>
+<a href="特许通讯.html" class="nav-link" title="特许通讯">特许通讯</a>
+<a href="盖可保险.html" class="nav-link" title="盖可保险">盖可保险</a>
+<a href="科比吸尘器.html" class="nav-link" title="科比吸尘器">科比吸尘器</a>
+<a href="穆迪.html" class="nav-link" title="穆迪">穆迪</a>
+<a href="精密铸件.html" class="nav-link" title="精密铸件">精密铸件</a>
+<a href="约翰斯曼维尔.html" class="nav-link" title="约翰斯曼维尔">约翰斯曼维尔</a>
+<a href="纽约梅隆银行.html" class="nav-link" title="纽约梅隆银行">纽约梅隆银行</a>
+<a href="美国合众银行.html" class="nav-link" title="美国合众银行">美国合众银行</a>
+<a href="美国家庭服务.html" class="nav-link" title="美国家庭服务">美国家庭服务</a>
+<a href="美国运通.html" class="nav-link" title="美国运通">美国运通</a>
+<a href="美国银行.html" class="nav-link" title="美国银行">美国银行</a>
+<a href="苹果.html" class="nav-link" title="苹果">苹果</a>
+<a href="蓝筹印花.html" class="nav-link" title="蓝筹印花">蓝筹印花</a>
+<a href="西方石油.html" class="nav-link" title="西方石油">西方石油</a>
+<a href="费希海默制服.html" class="nav-link" title="费希海默制服">费希海默制服</a>
+<a href="路博润.html" class="nav-link" title="路博润">路博润</a>
+<a href="通用再保险.html" class="nav-link" title="通用再保险">通用再保险</a>
+<a href="通用汽车.html" class="nav-link" title="通用汽车">通用汽车</a>
+<a href="通用电气.html" class="nav-link" title="通用电气">通用电气</a>
+<a href="雪佛龙.html" class="nav-link" title="雪佛龙">雪佛龙</a>
+<a href="韦斯科.html" class="nav-link" title="韦斯科">韦斯科</a>
+<a href="飞安公司.html" class="nav-link" title="飞安公司">飞安公司</a>
+<a href="马蒙集团.html" class="nav-link" title="马蒙集团">马蒙集团</a>
+<a href="高盛.html" class="nav-link" title="高盛">高盛</a>
+<a href="鲜果布衣.html" class="nav-link" title="鲜果布衣">鲜果布衣</a>
+<a href="麦克莱恩.html" class="nav-link" title="麦克莱恩">麦克莱恩</a>
+</div></div>
+<div class="nav-group">
+<div class="nav-group-title" onclick="toggle('人物')"><span class="caret"></span>人物<span class="badge">7</span></div>
+<div class="nav-group-items" id="人物">
+<a href="../people/B夫人.html" class="nav-link" title="B夫人">B夫人</a>
+<a href="../people/托德·库姆斯.html" class="nav-link" title="托德·库姆斯">托德·库姆斯</a>
+<a href="../people/格雷厄姆.html" class="nav-link" title="格雷厄姆">格雷厄姆</a>
+<a href="../people/格雷格·阿贝尔.html" class="nav-link" title="格雷格·阿贝尔">格雷格·阿贝尔</a>
+<a href="../people/泰德·韦施勒.html" class="nav-link" title="泰德·韦施勒">泰德·韦施勒</a>
+<a href="../people/芒格.html" class="nav-link" title="芒格">芒格</a>
+<a href="../people/阿吉特·贾恩.html" class="nav-link" title="阿吉特·贾恩">阿吉特·贾恩</a>
+</div></div>
+</div></aside>
+<main class="main">
+<article class="article">
+<div class="meta"><span class="english-name">National Indemnity</span> <span class="type-badge type-公司">公司</span></div>
+<h1>国民保险公司（National Indemnity）</h1>
+<h2>公司简介</h2>
+<p>国民保险公司（National Indemnity Company，简称NICO）是伯克希尔·哈撒韦旗下最重要的保险子公司，总部位于内布拉斯加州奥马哈。如今按净资产衡量，它是全球最大的财产意外险公司，但它的起步同样卑微。</p>
+<p>1940年，杰克·林沃特（Jack Ringwalt）在奥马哈白手起家创办了这家公司。杰克的梦想近乎荒唐——这家弱小的公司必须与拥有充足资本的保险巨头们竞争，那些巨头凭借遍布全国的、资金雄厚且历史悠久的代理商网络，早已占据了牢固的市场地位。国民保险公司选择了一条差异化道路：通过遍布全国的一般代理人（General Agent）网络，专注于承保商业汽车险和一般责任险等"非标准"或"超额及剩余"险种——这些是大公司不屑于做或不愿承接的高风险业务。</p>
+<p>国民保险公司的核心竞争力在于<a href="../concepts/承保纪律.html" class="wikilink">承保纪律</a>。在保险行业的繁荣期，当竞争对手纷纷降价抢夺市场份额时，国民保险宁愿让业务量大幅萎缩，也绝不以不合理的费率承保。反之，在行业低谷、其他公司收缩业务时，国民保险则大举扩张。这种反周期的承保策略需要极大的耐心和纪律——而这正是杰克·林沃特和他的继任者们代代传承的文化。</p>
+<p>1967年巴菲特以860万美元收购国民保险后，它成为伯克希尔保险帝国的基石。从最初1,900万美元的浮存金，到如今超过1,470亿美元的保险浮存金总额，国民保险公司作为母体孕育了伯克希尔整个财产意外险版图，堪称商业史上投资回报率最高的收购之一。</p>
+<h2>投资故事</h2>
+<p>国民保险公司的收购是伯克希尔从一家衰落中的纺织企业转型为金融帝国的关键转折点——没有这笔收购，就没有今天的伯克希尔。</p>
+<p><strong>1967年：命运的转折。</strong> 1960年代，伯克希尔的纺织业务虽然在蔡斯（Ken Chace）的管理下有所改善，但即使在行业景气高峰也从未真正赚到大钱。巴菲特一直在寻找更好的资本配置渠道。1967年初，杰克·林沃特出售国民保险公司的机会出现了。杰克后来回忆说："如果我自己不卖，我的遗嘱执行人也会卖。与其那样，不如卖给我信任的人。"巴菲特以860万美元完成收购，获得了670万美元的净有形资产。更关键的是，按照保险业务的特性，这些资产可以投入到有价证券中——把这个投资组合重新配置为巴菲特本来就想持有的证券是轻而易举的事。</p>
+<p><strong>承保纪律的典范。</strong> 国民保险公司在菲尔·利舍（Phil Liesche）的领导下，展现了惊人的承保纪律。1978年，在约9,000万美元的已赚保费上实现了1,100万美元的承保利润。但更令人印象深刻的是它在逆境中的表现：1971年行业费率开始下调时，公司宁愿让直接业务量明显萎缩，也不追随同行降价。1982年，当过去丰厚利润吸引大量竞争者以难以为继的费率蜂拥入市时，国民保险的业务从远高于行业平均的盈利水平滑落，但管理层绝不为了维持保费规模而放弃承保标准。这种"宁可让业务归零，也不承保亏钱生意"的文化，是巴菲特最为推崇的品质。</p>
+<p><strong>阿吉特·贾恩的再保险奇迹。</strong> 1986年，<a href="../people/阿吉特·贾恩.html" class="wikilink">阿吉特·贾恩</a>（Ajit Jain）加入国民保险公司，负责一个小而艰难的再保险业务。多年来，他把这项业务打造成了保险界独一无二的巨人。阿吉特的天才在于他能够对极端风险——飓风、地震、恐怖袭击——进行精准定价，同时保持铁一般的承保纪律。在他的领导下，国民保险的再保险部门成为世界上最大的"自产"浮存金来源之一。</p>
+<p><strong>从860万到全球之最。</strong> 巴菲特在致股东信中反复提到这个令人惊叹的数字：1967年以860万美元收购的国民保险公司，到2014年已经累计产生了240亿美元的承保收益，浮存金从1,900万美元增长到770亿美元以上。正如他所说："而这一切都始于1967年我们以860<em>万</em>美元收购了国民保险公司。"</p>
+<h2>巴菲特评价精选</h2>
+<blockquote>
+<p>"1967年初，我让伯克希尔花860万美元收购了国民保险公司，这是一家位于奥马哈的小型但前途光明的保险公司。保险正中我的甜蜜区：我理解这个行业，也喜欢它。"
+—— <a href="../special/2014-伯克希尔的过去现在与未来.html" class="wikilink">2014 伯克希尔的过去现在与未来</a></p>
+<p>"自从1967年以860万美元收购国民保险公司以来，财产意外险一直是推动我们扩张的引擎。如今，按净资产衡量，国民保险是全世界最大的财产意外险公司。"
+—— <a href="../berkshire/2016-巴菲特致股东信.html" class="wikilink">2016 巴菲特致股东信</a></p>
+<p>"1978年伯克希尔整体优异成绩的头号功臣，是国民保险公司由菲尔·列舍领导的那部分保险业务。在大约9,000万美元的已赚保费上，实现了约1,100万美元的承保利润——即使以行业景气良好为背景，这也是一流的成绩。"
+—— <a href="../berkshire/1978-巴菲特致股东信.html" class="wikilink">1978 巴菲特致股东信</a></p>
+<p>"我们当即让阿吉特负责国民保险公司旗下那个小而艰难的再保险业务。多年来，他把这项业务打造成了保险界独一无二的巨人。"
+—— <a href="../berkshire/2009-巴菲特致股东信.html" class="wikilink">2009 巴菲特致股东信</a></p>
+<p>"然后来了一记好运：1967年，国民保险公司出现了收购机会，我们便将资源转向了保险和其他非纺织业务。"
+—— <a href="../berkshire/2022-巴菲特致股东信.html" class="wikilink">2022 巴菲特致股东信</a></p>
+</blockquote>
+<h2>投资启示</h2>
+<p>国民保险公司的故事是理解伯克希尔商业模式的钥匙——它揭示了<a href="../concepts/保险浮存金.html" class="wikilink">保险浮存金</a>如何成为世界上最强大的投资杠杆。</p>
+<p><strong>第一，<span class="broken-link">浮存金</span>是保险业的灵魂。</strong> 保险公司先收保费、后赔付，中间持有的资金就是浮存金。如果承保盈利（综合比率低于100%），这些浮存金实际上是"别人付你钱让你帮他们保管的钱"——比无息贷款还好，因为你是在赚利息的同时还有人付你管理费。国民保险公司证明了一个惊人的事实：只要承保纪律够好，浮存金的成本可以长期为负。</p>
+<p><strong>第二，<a href="../concepts/承保纪律.html" class="wikilink">承保纪律</a>比增长更重要。</strong> 保险行业最大的陷阱是"制度性惯性"——没有CEO愿意告诉股东业务在萎缩。但国民保险公司在菲尔·利舍的领导下，敢于在费率不合理时大幅缩减业务。1986年的数据极为生动：在行业普遍亏损的年份，国民保险的月均保费收入从500万美元因为费率合理化而飙升至2,000万以上。这种反周期策略——在别人贪婪时恐惧，在别人恐惧时贪婪——正是巴菲特投资哲学在保险经营中的完美体现。</p>
+<p><strong>第三，小收购可以改变一切。</strong> 860万美元在1967年不算大数目，但这笔收购彻底改变了伯克希尔的命运。它提供了源源不断的浮存金用于投资，孕育了阿吉特·贾恩的再保险帝国，最终使伯克希尔拥有了全球最大的财产意外险业务。巴菲特经常说，伯克希尔的成功始于"一记好运"——国民保险公司出现了收购机会。但真正的智慧在于，他认识到了这个机会的真正价值，并且一旦抓住就再也没有放手。</p>
+<h2>历年提及</h2>
+<h3><a href="../berkshire/1967-巴菲特致股东信.html" class="wikilink">1967 巴菲特致股东信</a>（1967年）</h3>
+<blockquote>
+<p>自1967年3月完成收购以来，保险子公司的业绩表现令我们非常满意。国民保险公司 (National Indemnity Company) 和国民火灾与海事保险公司 (National Fire and Marine Insurance Company) 这两家公司继续由杰克·林沃特先生 (Jack Ringwalt) 掌舵——他自公司创立之初便一直负责管理这两家企业。</p>
+</blockquote>
+<h3><a href="../berkshire/1968-巴菲特致股东信.html" class="wikilink">1968 巴菲特致股东信</a>（1968年）</h3>
+<blockquote>
+<p>...国民保险公司 (National Indemnity Company) 和国民火灾与海事保险公司 (National Fire &amp; Marine Insurance Company) 在杰克·林沃特 (Jack Ringwalt) 的领导下，继续保持出...</p>
+</blockquote>
+<h3><a href="../berkshire/1970-巴菲特致股东信.html" class="wikilink">1970 巴菲特致股东信</a>（1970年）</h3>
+<blockquote>
+<p>...我们的"本州"业务——内布拉斯加意外险公司（Cornhusker Casualty Company）——势头良好。该公司于 1970 年初成立，是国民保险公司（National Indemnity）的全资子公司，仅通过内布拉斯加州的代理商承接标准业务。大公司的实力与小公司的亲和力相结合，对一流代理商而言正是强大的营销利器。约翰·林沃特（John Ringwalt）将这一构想变成了现实，功不可没。...</p>
+</blockquote>
+<h3><a href="../berkshire/1971-巴菲特致股东信.html" class="wikilink">1971 巴菲特致股东信</a>（1971年）</h3>
+<blockquote>
+<p>...业务已经相当有利可图，越来越多的公司开始争抢不久前还被它们拒之门外的投保人，部分地区的费率也开始下调。我们始终坚守承保盈利这一首要目标，这很可能意味着1972年国民保险公司 (National Indemnity Company) 的直接业务量将出现明显萎缩。杰克·林沃特 (Jack Ringwalt) 和菲尔·利舍 (Phil Liesche) 继续以业内无人能及的方式掌舵这项业务。...</p>
+</blockquote>
+<h3><a href="../berkshire/1972-巴菲特致股东信.html" class="wikilink">1972 巴菲特致股东信</a>（1972年）</h3>
+<blockquote>
+<p>1972年，国民保险公司 (National Indemnity Company) 在我们传统保险业务的核心领域创下了出色的承保利润，但这里面有一个值得深思的悖论。这份利润大幅拉高了1972年的整体公司盈利，然而正是产生这种利润的市场环境，吸引了大量新竞争者以我们认为难以为继的费率水平蜂拥入市。从长远来看，如果今年的利润没有这样大幅飙升，我们未来五年的前景反而可能更好。</p>
+</blockquote>
+<h3><a href="../berkshire/1973-巴菲特致股东信.html" class="wikilink">1973 巴菲特致股东信</a>（1973年）</h3>
+<blockquote>
+<p>1973年，杰克·林沃特 (Jack Ringwalt) 从国民保险公司 (National Indemnity Company) 总裁职位上退休。自1940年创立这家公司以来，他留下了一份极为出色的经营记录。接替他的是菲尔·利舍 (Phil Liesche)——幸运的是，Phil秉承了与杰克一脉相承的承保和管理哲学，而那套哲学已被充分证明行之有效。</p>
+</blockquote>
+<h3><a href="../berkshire/1974-巴菲特致股东信.html" class="wikilink">1974 巴菲特致股东信</a>（1974年）</h3>
+<blockquote>
+<p>...国民保险公司 (National Indemnity Company) 的传统直保业务是我们最大的保险板块，经历连续数年的高盈利之后，今年产生了约4%的承保亏损。保单量有所增加，但在费率回归合理水平之前，我们并不鼓励这样的增长。历史经验表明，在这一周期...</p>
+</blockquote>
+<h3><a href="../berkshire/1975-巴菲特致股东信.html" class="wikilink">1975 巴菲特致股东信</a>（1975年）</h3>
+<blockquote>
+<p>国民保险公司 (National Indemnity Company) 的传统业务占我们保险业务量的一半以上，1975年的承保结果却异常糟糕。尽管费率一再大幅提升，但全年始终在追赶亏损的脚步，始终落后一步。1970年代初期推出的几个特殊项目造成了重大损失，同时也大量消耗了管理层的时间和精力。目前迹象表明，1976年保费收入将有较大幅度增加，我们希望承保业绩也能随之改善。</p>
+</blockquote>
+<h3><a href="../berkshire/1976-巴菲特致股东信.html" class="wikilink">1976 巴菲特致股东信</a>（1976年）</h3>
+<blockquote>
+<p>历经两年的惨淡，1976年的经营业绩有了显著改善。去年我曾说过，保险承保业务的进展程度将决定我们收益的增长是"温和"还是"重大"。结果，实际收益甚至超出了我们最乐观的预期。这在很大程度上要归功于国民保险公司 (National Indemnity Company) 菲尔·利舍 (Phil Liesche) 管理团队的出色努力。</p>
+</blockquote>
+<h3><a href="../berkshire/1977-巴菲特致股东信.html" class="wikilink">1977 巴菲特致股东信</a>（1977年）</h3>
+<blockquote>
+<p>纺织业务的表现远低于预期，伊利诺伊国民银行 (Illinois National Bank) 的业绩以及蓝筹印花按持股比例贡献的经营收益大致符合预期。不过，保险业务的表现——在菲尔·利舍 (Phil Liesche) 领导的国民保险公司 (National Indemnity Company) 管理团队的出色带领下——甚至超出了我们最乐观的预期。</p>
+</blockquote>
+<h3><a href="../berkshire/1978-巴菲特致股东信.html" class="wikilink">1978 巴菲特致股东信</a>（1978年）</h3>
+<blockquote>
+<p>...1978 年伯克希尔整体优异成绩的头号功臣，是国民保险公司 (National Indemnity Company) 由菲尔·列舍 (Phil Liesche) 领导的那部分保险业务。在大约 9,000 万美元的已赚保费上，实现了约 1,100 万美元的承保利润——即使以行业景气良好为背景，这也是...</p>
+</blockquote>
+<h3><a href="../berkshire/1979-巴菲特致股东信.html" class="wikilink">1979 巴菲特致股东信</a>（1979年）</h3>
+<blockquote>
+<p>国民保险公司 (National Indemnity Company) 由菲尔·列舍 (Phil Liesche) 管理的承保业务交出了真正非凡的成绩。在承保部门罗兰·米勒 (Roland Miller) 和理赔部门比尔·里昂斯 (Bill Lyons) 的协助下，这个部门以约8,200万美元的已赚保费创造了840万美元的承保利润。在整个保险行业中，能做到这种水平的公司屈指可数。</p>
+</blockquote>
+<h3><a href="../berkshire/1980-巴菲特致股东信.html" class="wikilink">1980 巴菲特致股东信</a>（1980年）</h3>
+<blockquote>
+<p>...国民保险公司 (National Indemnity) 的经理们在菲尔·列舍 (Phil Liesche) 的带领下，加上罗兰·米勒 (Roland Miller) 和比尔·莱恩斯 (Bill Lyons) 一如既往的得力协助，在1980年超越了自我。...</p>
+</blockquote>
+<h3><a href="../berkshire/1982-巴菲特致股东信.html" class="wikilink">1982 巴菲特致股东信</a>（1982年）</h3>
+<blockquote>
+<p>1982年，我们的保险承保业绩恶化程度远超行业平均水平。从远高于行业平均的盈利水平，我们滑落到了略低于行业平均的位置。最大的波动出现在国民保险公司 (National Indemnity) 的传统险种上。过去为我们贡献丰厚利润的业务线，如今的定价水平已经注定了承保亏损。展望1983年，我们预计保险集团的业绩将与行业水平大致持平——而在这个行业里，"平均"意味着非常糟糕。</p>
+</blockquote>
+<h3><a href="../berkshire/1983-巴菲特致股东信.html" class="wikilink">1983 巴菲特致股东信</a>（1983年）</h3>
+<blockquote>
+<p>...尽管整体表现不佳，我们的几位经理人确实表现出色。罗兰·米勒 (Roland Miller) 领导国民保险公司 (National Indemnity Company) 和国民火灾海上保险公司 (National Fire and Marine Insurance Company) 的汽车及一般责任险业务取得了改善，而同行的业绩却在恶化。此外，大陆...</p>
+</blockquote>
+<h3><a href="../berkshire/1985-巴菲特致股东信.html" class="wikilink">1985 巴菲特致股东信</a>（1985年）</h3>
+<blockquote>
+<p>1967年初，纺织业务产生的现金被用来收购国民保险公司 (National Indemnity Company)，从而进入保险行业。部分资金来自利润，部分来自减少纺织品存货、应收账款和固定资产的投入。事实证明这次撤退的决策完全正确：尽管在蔡斯的管理下纺织业务已大为改善，但即使在景气高峰时期也从未真正赚到钱。</p>
+</blockquote>
+<h3><a href="../berkshire/1986-巴菲特致股东信.html" class="wikilink">1986 巴菲特致股东信</a>（1986年）</h3>
+<blockquote>
+<p>...从国民保险公司 (National Indemnity)的传统业务——通过一般代理人承保商业汽车险和一般责任险——的趋势，就可以看出其他保险公司是如何一会儿畏首畏尾、一会儿又胆大包天的。1984年第四季度，国民保险的月均保费收入约500万美元，大致维持了...</p>
+</blockquote>
+<h3><a href="../berkshire/1988-巴菲特致股东信.html" class="wikilink">1988 巴菲特致股东信</a>（1988年）</h3>
+<blockquote>
+<p>...意外险公司的三倍。迈克·戈德堡 (Mike Goldberg)，在阿吉特·贾恩 (Ajit Jain)、迪诺斯·约尔达努 (Dinos Iordanou) 以及国民保险公司 (National Indemnity) 管理团队的鼎力协助下，让我们在这方面占据了有利位置。...</p>
+</blockquote>
+<h3><a href="../berkshire/1992-巴菲特致股东信.html" class="wikilink">1992 巴菲特致股东信</a>（1992年）</h3>
+<blockquote>
+<p>...巧合的是，这笔最新的收购与我们26年前的第一笔收购有很多相似之处。当时我们从另一位老朋友杰克·林沃特 (Jack Ringwalt) 手中买下了同样位于奥马哈的国民保险公司 (National Indemnity Company) 及其一家小型关联公司。那家公司是Jack白手起家创建的，跟Bill一样，当他想卖掉公司的时候，第一个想到的就是我。（Jack当时说："如果我自己不卖，我的遗嘱执行人也会卖。与其那样...</p>
+</blockquote>
+<h3><a href="../berkshire/1993-巴菲特致股东信.html" class="wikilink">1993 巴菲特致股东信</a>（1993年）</h3>
+<blockquote>
+<p>...特勒 (Brad Kinstler) 领导的工伤赔偿保险业务、基泽 (Kizer) 家族经营的信用卡保险业务，以及唐·伍斯特 (Don Wurster) 领导的国民保险公司 (National Indemnity) 传统汽车和一般责任险业务，都取得了出色的业绩。总的来说，这四个业务部门既产生了可观的承保利润，又贡献了大量的浮存金。...</p>
+</blockquote>
+<h3><a href="../berkshire/1994-巴菲特致股东信.html" class="wikilink">1994 巴菲特致股东信</a>（1994年）</h3>
+<blockquote>
+<p>...德·金斯特勒 (Brad Kinstler) 负责的工伤赔偿业务、凯泽家族 (Kizer) 经营的信用卡业务，以及唐·伍斯特 (Don Wurster) 领导的国民保险公司 (National Indemnity) 传统汽车和一般责任险业务——所有这些都创造了可观的承保利润，同时也贡献了大量的浮存金。...</p>
+</blockquote>
+<h3><a href="../berkshire/1995-巴菲特致股东信.html" class="wikilink">1995 巴菲特致股东信</a>（1995年）</h3>
+<blockquote>
+<p>...伯克希尔的其他保险业务，虽然规模相对较小，但1995年的表现同样精彩绝伦。国民保险公司 (National Indemnity) 的传统业务综合比率为84.2，并且像往常一样，相对于保费规模产生了大量的浮存金。过去三年来，这个由唐·沃斯特 (Don Wurster) 负责的部门平均综合比率为85.6。由罗德·艾尔德瑞德 (R...</p>
+</blockquote>
+<h3><a href="../berkshire/1996-巴菲特致股东信.html" class="wikilink">1996 巴菲特致股东信</a>（1996年）</h3>
+<blockquote>
+<p>...虽然规模自然不及盖可保险，但我们其他的直保业务去年同样交出了令人惊叹的成绩单。国民保险公司 (National Indemnity) 的传统业务综合比率仅为74.2%，而且一如既往地相对于保费收入贡献了大量浮存金。过去三年，这块由唐·沃斯特 (Don Wurster) 负责的业务平均综合比率为83.0%。由罗德·埃尔德雷德 (R...</p>
+</blockquote>
+<h3><a href="../berkshire/1997-巴菲特致股东信.html" class="wikilink">1997 巴菲特致股东信</a>（1997年）</h3>
+<blockquote>
+<p>...虽然规模比盖可保险小得多，但我们其他的直保业务去年交出的成绩单加在一起同样令人惊叹。国民保险公司 (National Indemnity) 传统业务的承保利润率高达32.9%，而且一如既往，相对于保费规模产生了大量的浮存金。过去三年，这个由唐·沃斯特 (Don Wurster) 领导的部门平均利润率达到24.3%。由罗德·埃尔德雷德 ...</p>
+</blockquote>
+<h3><a href="../berkshire/1999-巴菲特致股东信.html" class="wikilink">1999 巴菲特致股东信</a>（1999年）</h3>
+<blockquote>
+<p>...下表显示了伯克希尔自33年前收购国民保险公司 (National Indemnity Company) 进入保险业以来，各业务板块所产生的浮存金（国民保险的传统业务包含在"其他直保"项下）。在这张表中，我们通过以下方式计算浮存金——相对于保费收入，我们持有的浮存金规模相当大——将净损...</p>
+</blockquote>
+<h3><a href="../berkshire/2000-巴菲特致股东信.html" class="wikilink">2000 巴菲特致股东信</a>（2000年）</h3>
+<blockquote>
+<p>...下表按时间间隔列示了伯克希尔自34年前收购国民保险公司 (National Indemnity Company) 进入保险行业以来各业务板块产生的浮存金（国民保险的传统业务包含在"其它直保"项下）。我们计算浮存金的方法——相对于保费收入，我们持有的浮存金规模相当可观——是将净损失准备金、损失调...</p>
+</blockquote>
+<h3><a href="../berkshire/2001-巴菲特致股东信.html" class="wikilink">2001 巴菲特致股东信</a>（2001年）</h3>
+<blockquote>
+<p>下表显示了伯克希尔自35年前收购国民保险公司 (National Indemnity Company)（其传统业务包含在"其他直保"项下）进入保险业以来，各保险业务板块产生的浮存金：</p>
+</blockquote>
+<h3><a href="../berkshire/2002-巴菲特致股东信.html" class="wikilink">2002 巴菲特致股东信</a>（2002年）</h3>
+<blockquote>
+<p>...下表展示了伯克希尔进入保险业36年来（自收购国民保险公司 (National Indemnity Company) 起），各业务板块在不同时间节点产生的浮存金（其中国民保险的传统业务归入"其他主险"项下）。我们计算浮存金的方法——相对于保费规模，我们持有的浮存金数额非常庞大——是将损失准备金、损...</p>
+</blockquote>
+<h3><a href="../berkshire/2003-巴菲特致股东信.html" class="wikilink">2003 巴菲特致股东信</a>（2003年）</h3>
+<blockquote>
+<p>基于这样的背景，我们为大家呈现伯克希尔的收益增长图景，起始年份定为1968年，同时每隔五年再加一个基准年。我们列出了多组计算结果，好让各位自行判断哪个时段最有参考意义。之所以从1968年开始，是因为那是我们经营国民保险公司 (National Indemnity) 的第一个完整年度——那是我们为拓展伯克希尔版图而进行的第一笔收购。</p>
+</blockquote>
+<h3><a href="../berkshire/2004-巴菲特致股东信.html" class="wikilink">2004 巴菲特致股东信</a>（2004年）</h3>
+<blockquote>
+<p>自从伯克希尔在1967年买下国民保险公司 (National Indemnity, "NICO") 之后，财产意外险就成了我们的核心业务，也是驱动增长的引擎。保险业为我们提供了源源不断的资金泉源，使我们得以收购那些如今贡献出越来越多样化收益来源的证券和企业。所以在这一部分，我会花点时间告诉大家我们是怎么走到今天这一步的。</p>
+</blockquote>
+<h3><a href="../berkshire/2005-巴菲特致股东信.html" class="wikilink">2005 巴菲特致股东信</a>（2005年）</h3>
+<blockquote>
+<p>...不到一年前，Applied与阿吉特·贾恩（Ajit Jain）签署了一份大额再保险合同，阿吉特是国民保险公司（National Indemnity）再保险部门的杰出经理人。阿吉特对Sid和Steve印象深刻，而他们也很欣赏伯克希尔的经营方式。于是我们决定合力而为。我们很高兴Sid和Steve保留了Applied 19%的股权。仅仅12年前他们还是...</p>
+</blockquote>
+<h3><a href="../berkshire/2007-巴菲特致股东信.html" class="wikilink">2007 巴菲特致股东信</a>（2007年）</h3>
+<blockquote>
+<p>1967年我们刚进入财产意外险领域时，就算在我最疯狂的梦里，也不曾想象过我们今天的规模。买下国民保险公司（National Indemnity）后的头五年，客气点说，我们起步很慢：</p>
+</blockquote>
+<h3><a href="../berkshire/2009-巴菲特致股东信.html" class="wikilink">2009 巴菲特致股东信</a>（2009年）</h3>
+<blockquote>
+<p>我们当即让阿吉特负责国民保险公司（National Indemnity）旗下那个小而艰难的再保险业务。多年来，他把这项业务打造成了保险界独一无二的巨人。</p>
+</blockquote>
+<h3><a href="../berkshire/2012-巴菲特致股东信.html" class="wikilink">2012 巴菲特致股东信</a>（2012年）</h3>
+<blockquote>
+<p>...们<em>做到了</em>，去年浮存金增加了25亿美元。我现在预计2013年还会进一步增长。但再往后的增长会越来越难。好的方面是，GEICO的浮存金几乎肯定会继续增长。然而在国民保险公司 (National Indemnity) 的再保险部门，我们有一些正在清偿中的合同，其浮存金在逐步减少。如果未来某个时候我们的浮存金确实出现下降，那也将是<em>非常</em>平缓的——每年最多不超过2%。...</p>
+</blockquote>
+<h3><a href="../berkshire/2013-巴菲特致股东信.html" class="wikilink">2013 巴菲特致股东信</a>（2013年）</h3>
+<blockquote>
+<p>...亿美元增长到了770亿美元。与此同时，我们累计实现了220亿美元的税前承保利润，其中2013年就有30亿。而这一切，始于我们1967年以区区860<em>万</em>美元收购国民保险公司 (National Indemnity)。...</p>
+</blockquote>
+<h3><a href="../special/2014-伯克希尔的过去现在与未来.html" class="wikilink">2014 伯克希尔的过去现在与未来</a>（2014年）</h3>
+<blockquote>
+<p>1967 年初，我让伯克希尔花 860 万美元收购了国民保险公司（National Indemnity Company，简称"NICO"），这是一家位于奥马哈的小型但前途光明的保险公司。（交易中还附带了一家很小的姊妹公司。）保险正中我的甜蜜区：我理解这个行业，也喜欢它。</p>
+</blockquote>
+<h3><a href="../berkshire/2014-巴菲特致股东信.html" class="wikilink">2014 巴菲特致股东信</a>（2014年）</h3>
+<blockquote>
+<p>...而产生可观的投资收入。与此同时，我们在这12年间累计获得240亿美元的承保收益，其中2014年为27亿美元。而这一切都始于1967年我们以860<em>万</em>美元收购了国民保险公司（National Indemnity）。...</p>
+</blockquote>
+<h3><a href="../berkshire/2015-巴菲特致股东信.html" class="wikilink">2015 巴菲特致股东信</a>（2015年）</h3>
+<blockquote>
+<p>我们先来看保险。自从1967年我们以860万美元收购了国民保险公司 (National Indemnity) 及其姊妹公司国民火灾与海事保险 (National Fire &amp; Marine) 以来，财产意外险 (P/C) 一直是推动我们扩张的引擎。如今，以净资产衡量，国民保险是全球最大的财产意外险公司。更重要的是，它的内在价值<em>远远</em>超出我们的账面价值。</p>
+</blockquote>
+<h3><a href="../berkshire/2016-巴菲特致股东信.html" class="wikilink">2016 巴菲特致股东信</a>（2016年）</h3>
+<blockquote>
+<p>自1967年我们以860万美元收购国民保险公司 (National Indemnity) 及其姊妹公司国家火灾与海事保险公司 (National Fire &amp; Marine) 以来，财产意外险 ("P/C") 业务一直是推动我们扩张的引擎。如今，按净资产衡量，国民保险公司是全世界最大的财产意外险公司。</p>
+</blockquote>
+<h3><a href="../berkshire/2017-巴菲特致股东信.html" class="wikilink">2017 巴菲特致股东信</a>（2017年）</h3>
+<blockquote>
+<p>...在讨论2017年的保险业绩之前，让我先带各位回顾一下我们是如何以及为何进入这个行业的。1967年初，我们以860万美元收购了国民保险公司 (National Indemnity) 和一家规模较小的姊妹公司。通过这笔收购，我们获得了670万美元的净有形资产，按照保险业务的特性，这些资产可以投入到有价证券中。把这个投资组合重新配置为伯克希尔本来就想持有的证券是轻而易举的事。实质...</p>
+</blockquote>
+<h3><a href="../berkshire/2018-巴菲特致股东信.html" class="wikilink">2018 巴菲特致股东信</a>（2018年）</h3>
+<blockquote>
+<p>我们的财产意外险业务——第五片树林——自1967年以来一直是驱动伯克希尔增长的引擎。那一年，我们以860万美元收购了国民保险公司 (National Indemnity) 及其姊妹公司国民火灾与海事保险公司 (National Fire &amp; Marine)。如今，以净资产衡量，国民保险公司是全球最大的财产意外险公司。</p>
+</blockquote>
+<h3><a href="../berkshire/2019-巴菲特致股东信.html" class="wikilink">2019 巴菲特致股东信</a>（2019年）</h3>
+<blockquote>
+<p>自从1967年我们以860万美元收购国民保险公司 (National Indemnity) 及其姊妹公司国民火灾及海事保险公司 (National Fire &amp; Marine) 以来，财产意外险（简称"P/C"）业务一直是推动伯克希尔成长的引擎。如今，以净资产衡量，国民保险已是全球最大的财产意外险公司。保险是一门关于承诺的生意，而伯克希尔履行承诺的能力无人能及。</p>
+</blockquote>
+<h3><a href="../berkshire/2020-巴菲特致股东信.html" class="wikilink">2020 巴菲特致股东信</a>（2020年）</h3>
+<blockquote>
+<p>...杰克的梦想近乎荒唐。他给公司起了一个颇为气派的名字——国民保险公司 (National Indemnity)，但这家弱小的公司必须与拥有充足资本的保险巨头们竞争。更何况，那些竞争对手凭借遍布全国的、资金雄厚且历史悠久的当地代理商网络，早已占据了牢固的地位。在杰克的计划里，国民保险公司不像盖可保险那样直销，...</p>
+</blockquote>
+<h3><a href="../berkshire/2021-巴菲特致股东信.html" class="wikilink">2021 巴菲特致股东信</a>（2021年）</h3>
+<blockquote>
+<ul>
+<li>从1967年以860万美元收购国民保险公司 (National Indemnity) 开始，伯克希尔已经成为保险"浮存金"领域的世界领导者——浮存金是我们持有并可以用于投资、但并不属于我们的资金。加上来自人寿保险业务的一小部分浮存金，伯克希尔的浮存金总额已从我们进入保险业时的1,900万美元增长到了1,470亿美元。</li>
+</ul>
+</blockquote>
+<h3><a href="../berkshire/2022-巴菲特致股东信.html" class="wikilink">2022 巴菲特致股东信</a>（2022年）</h3>
+<blockquote>
+<p>然后来了一记好运：1967年，国民保险公司 (National Indemnity) 出现了收购机会，我们便将资源转向了保险和其他非纺织业务。</p>
+</blockquote>
+<h3><a href="../special/2025-感恩节致辞.html" class="wikilink">2025 感恩节致辞</a>（2025年）</h3>
+<blockquote>
+<p>...可没的艾文·布鲁姆金（Irv Blumkin）和罗恩·布鲁姆金（Ron Blumkin），以及杰克·林沃特（Jack Ringwalt，1923届）——他创立了国民保险公司（National Indemnity），并于1967年将其出售给伯克希尔，由此奠定了我们庞大财产意外险业务的基石。...</p>
+</blockquote>
+<h3><a href="../special/2025-感恩节致辞_2.html" class="wikilink">2025 感恩节致辞_2</a>（2025年）</h3>
+<blockquote>
+<p>...金（Irv and Ron Blumkin，他们是内布拉斯加家具店发展壮大的关键人物），还有杰克·林沃尔特（Jack Ringwalt，1923届）——他创办了国民赔偿保险公司（National Indemnity），1967年将其出售给伯克希尔，这家公司后来成了我们庞大财产意外险业务的根基——都毕业于这所学校。...</p>
+</blockquote>
+</article>
+<section class="backlinks">
+<h2>🔗 链接到本页的文章（51）</h2><div class="bl-grid">
+<a href="../berkshire/1967-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1967 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1968-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1968 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1970-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1970 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1971-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1971 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1972-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1972 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1973-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1973 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1974-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1974 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1975-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1975 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1976-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1976 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1977-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1977 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1978-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1978 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1979-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1979 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1980-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1980 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1982-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1982 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1983-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1983 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1985-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1985 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1986-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1986 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1988-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1988 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1992-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1992 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1993-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1993 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1994-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1994 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1995-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1995 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1996-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1996 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1997-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1997 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/1999-巴菲特致股东信.html" class="bl-card"><span class="bl-name">1999 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2000-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2000 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2001-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2001 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2002-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2002 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2003-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2003 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2004-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2004 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2005-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2005 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2007-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2007 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2009-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2009 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2012-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2012 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2013-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2013 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../special/2014-伯克希尔的过去现在与未来.html" class="bl-card"><span class="bl-name">2014 伯克希尔的过去现在与未来</span><span class="bl-type">特别信件</span></a>
+<a href="../berkshire/2014-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2014 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2015-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2015 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2016-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2016 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2017-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2017 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2018-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2018 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2019-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2019 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2020-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2020 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2021-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2021 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../berkshire/2022-巴菲特致股东信.html" class="bl-card"><span class="bl-name">2022 巴菲特致股东信</span><span class="bl-type">伯克希尔股东信</span></a>
+<a href="../special/2025-感恩节致辞.html" class="bl-card"><span class="bl-name">2025 感恩节致辞</span><span class="bl-type">特别信件</span></a>
+<a href="../special/2025-感恩节致辞_2.html" class="bl-card"><span class="bl-name">2025 感恩节致辞_2</span><span class="bl-type">特别信件</span></a>
+<a href="伯克希尔哈撒韦.html" class="bl-card"><span class="bl-name">伯克希尔哈撒韦</span><span class="bl-type">公司</span></a>
+<a href="../concepts/保险浮存金.html" class="bl-card"><span class="bl-name">保险浮存金</span><span class="bl-type">概念</span></a>
+<a href="../index-pages/公司索引.html" class="bl-card"><span class="bl-name">公司索引</span><span class="bl-type">索引</span></a>
+<a href="../concepts/承保纪律.html" class="bl-card"><span class="bl-name">承保纪律</span><span class="bl-type">概念</span></a>
+</div></section>
+</main>
+<script src="../nav.js"></script>
+</body>
+</html>
