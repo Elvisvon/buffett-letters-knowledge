@@ -411,8 +411,8 @@ mark.hl.underline{background:transparent;text-decoration:underline;text-decorati
   </div>
   <div class="top-actions">
     <select class="tbtn" id="sortSel" title="排序">
-      <option value="year-desc">时间 ↓</option>
       <option value="year-asc">时间 ↑</option>
+      <option value="year-desc">时间 ↓</option>
       <option value="title">标题</option>
       <option value="cat">分类</option>
       <option value="len">篇幅</option>
@@ -672,7 +672,7 @@ const settings = () => {
 /* ================= 状态 ================= */
 const state = {
   cat:'all', decade:'all', tag:'', q:'', favOnly:false, notedOnly:false,
-  sort:'year-desc', group:'none', view:'grid', cur:null, tab:'toc',
+  sort:'year-asc', group:'none', view:'grid', cur:null, tab:'toc',
   idxDim:null, idxKey:null, idxOpenSet:{},
 };
 
@@ -2104,6 +2104,7 @@ function toast(msg){
   toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 renderSidebar();
+$('#sortSel').value = state.sort;   // 默认排序与状态保持一致
 onHash();
 
 /* 测试钩子 */
