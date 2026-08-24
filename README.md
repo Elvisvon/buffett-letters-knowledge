@@ -44,16 +44,13 @@ python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/�
 
 ## 快速开始
 
-```bash
-# 方式一：本地服务（推荐，密钥自动注入）
-./启动巴菲特知识库.command        # macOS 双击亦可
-# 或 python3 serve_buffett_app.py
+**唯一入口：`python3 serve_buffett_app.py`**（本地服务 + 环境变量密钥注入 + 自动打开浏览器）
 
-# 方式二：直接双击 巴菲特投资智慧.html（file:// 离线可用，
-# 此时在应用「设置」面板手动填写 API Key，仅存本机浏览器）
-```
+- 普通使用（推荐）：双击「巴菲特投资智慧.app」（跨机可安装版，见下）
+- 开发调试：双击「启动巴菲特知识库.command」或终端运行 `python3 serve_buffett_app.py`
+- 直接双击 html 也可离线阅读（此时在应用「设置」面板手动填写 API Key，仅存本机浏览器）
 
-打开后浏览器访问 `http://127.0.0.1:8666/巴菲特投资智慧.html`（经典版）或 `http://127.0.0.1:8666/巴菲特投资智慧-v2.html`（chian.io 风格版）。端口可用 `BUFFETT_PORT` 环境变量调整。
+服务地址 `http://127.0.0.1:8666/巴菲特投资智慧.html`（端口可用 `BUFFETT_PORT` 调整；若打开 404，先确认没有残留旧服务占用端口：`lsof -iTCP:8666 -sTCP:LISTEN`）。
 
 ## LLM 密钥安全设计
 

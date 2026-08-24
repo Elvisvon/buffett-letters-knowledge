@@ -42,7 +42,6 @@ BUNDLED = [
     "巴菲特致股东信分类索引(1956-2025) .xlsx",
     "巴菲特致股东信知识库",
     "skills",
-    "启动服务.command",
 ]
 
 LAUNCHER = r"""#!/bin/bash
