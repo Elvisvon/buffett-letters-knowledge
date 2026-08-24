@@ -30,7 +30,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 KB_ROOT = os.path.join(HERE, "巴菲特致股东信知识库")
 OUT_HTML = os.path.join(HERE, "巴菲特投资智慧.html")
 OUT_LLM = os.path.join(HERE, "llm-config.js")
-XLSX_PATH = os.path.join(HERE, "巴菲特致股东信分类索引(1977-2025).xlsx")
+XLSX_PATH = os.path.join(HERE, "巴菲特致股东信分类索引(1956-2025) .xlsx")
 
 _XLSX_NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 _XLSX_REL = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
@@ -121,10 +121,12 @@ def md_to_plain(md):
 
 
 def parse_classification_index(letter_years=None, by_id=None):
-    """解析「巴菲特致股东信分类索引(1977-2025).xlsx」→ 5 个维度（缺失时返回 None）。
+    """解析「巴菲特致股东信分类索引(1956-2025) .xlsx」→ (五维索引, 年度原始行)。
 
     letter_years: {年份: [文章id, ...]} 信件类文章按年份分组；用于给 Excel
-    未覆盖的早年（1956-1976 等）自动合成年度索引条目。
+    未覆盖的年份自动合成年度索引条目。
+    返回 (idx, year_rows)；year_rows 为按 (年份, 信件系列) 的原始行，
+    供 inject_summary_and_links() 做文章级摘要/原文链接注入。
     """
     letter_years = letter_years or {}
     by_id = by_id or {}
@@ -197,8 +199,8 @@ def parse_classification_index(letter_years=None, by_id=None):
                         "cases": str(cell(row, 4)).strip(),
                         "shift": str(cell(row, 5)).strip()})
 
-    # ---- 年度总索引：Excel(1977-2025) + 知识库早年信件补全(1956-1976) ----
-    years, seen_y = [], set()
+    # ---- 年度总索引（新表：A年份 B信件系列 C撰写人 D核心主题摘要 E坎宁安主题 F行业 G背景 H事件 I原文链接）----
+    year_rows = []
     for i, row in enumerate(grids.get("年度总索引", [])[1:], 1):
         yv = cell(row, 0)
         if not str(yv).strip():
@@ -207,16 +209,42 @@ def parse_classification_index(letter_years=None, by_id=None):
             y = int(yv)
         except (TypeError, ValueError):
             continue
-        years.append({"k": "Y%d" % y, "y": y,
-                      "a": str(cell(row, 1)).strip(),
-                      "s": str(cell(row, 2)).strip(),
-                      "t": [tok for tok in split_terms(cell(row, 3)) if canon_to_k(tok)],
-                      "i": split_terms(cell(row, 4)),
-                      "bg": str(cell(row, 5)).strip(),
-                      "e": str(cell(row, 6)).strip()})
+        year_rows.append({
+            "y": y,
+            "series": str(cell(row, 1)).strip(),
+            "a": str(cell(row, 2)).strip(),
+            "s": str(cell(row, 3)).strip(),
+            "t": [tok for tok in split_terms(cell(row, 4)) if canon_to_k(tok)],
+            "i": split_terms(cell(row, 5)),
+            "bg": str(cell(row, 6)).strip(),
+            "e": str(cell(row, 7)).strip(),
+            "link": str(cell(row, 8)).strip(),
+        })
+    # 同年多系列（1965-1969 合伙基金信+伯克希尔信并存）合并为一个年度条目
+    years, seen_y = [], set()
+    for y in sorted({r["y"] for r in year_rows}):
+        rows = [r for r in year_rows if r["y"] == y]
+        multi = len(rows) > 1
+
+        def _uniq(xs):
+            out = []
+            for x in xs:
+                if x and x not in out:
+                    out.append(x)
+            return out
+
+        years.append({
+            "k": "Y%d" % y,
+            "y": y,
+            "a": "、".join(_uniq([r["a"] for r in rows])),
+            "s": "\n".join((("【%s】" % r["series"]) if multi else "") + r["s"] for r in rows),
+            "t": list(dict.fromkeys(t for r in rows for t in r["t"])),
+            "i": list(dict.fromkeys(x for r in rows for x in r["i"])),
+            "bg": "；".join(_uniq([r["bg"] for r in rows])),
+            "e": "、".join(_uniq([r["e"] for r in rows])),
+        })
         seen_y.add(y)
-    # 补全 Excel 未覆盖的年份（如 1956-1976 合伙人信/早期股东信）：
-    # 摘要取当年主信正文开头（去日期行），事件/主题字段留空
+    # 兜底：Excel 未覆盖的年份（如未来新增信件），从知识库正文合成条目
     for y in sorted(k for k in letter_years if k not in seen_y):
         ids = letter_years[y]
         main = sorted(ids, key=lambda aid: (1 if re.search(r"年\d+月|年中", aid) else 0, aid))[0]
@@ -233,8 +261,39 @@ def parse_classification_index(letter_years=None, by_id=None):
     print("[ok] 已解析分类索引：主题%d / 行业%d / 事件%d / 方法%d / 年度%d（%d-%d）"
           % (len(topics), len(industries), len(events), len(methods), len(years),
              years[0]["y"] if years else 0, years[-1]["y"] if years else 0))
-    return {"topic": topics, "industry": industries,
-            "event": events, "method": methods, "year": years}
+    return ({"topic": topics, "industry": industries,
+             "event": events, "method": methods, "year": years}, year_rows)
+
+
+# 文章分类 → 信件系列（用于匹配年度总索引行）
+_SERIES_OF_CAT = {"partnership": "合伙基金信", "berkshire": "伯克希尔信", "special": "伯克希尔信"}
+
+
+def inject_summary_and_links(by_id, year_rows):
+    """按 (年份, 信件系列) 匹配年度总索引行：
+    核心主题摘要 → 文章开头（引用块）；原文链接 → 文章末尾（🔗 段落）。"""
+    if not year_rows:
+        return
+    by_key = {(r["y"], r["series"]): r for r in year_rows}
+    n_sum = n_link = 0
+    for art in by_id.values():
+        if art["catKey"] not in _SERIES_OF_CAT or not art["year"]:
+            continue
+        row = by_key.get((art["year"], _SERIES_OF_CAT[art["catKey"]]))
+        if not row:
+            cands = [r for r in year_rows if r["y"] == art["year"]]
+            row = cands[0] if cands else None
+        if not row:
+            continue
+        if row["s"]:
+            art["md"] = "> 📌 **核心主题摘要**：%s\n\n%s" % (row["s"], art["md"])
+            art["len"] += len(row["s"]) + 24
+            n_sum += 1
+        if row["link"]:
+            art["md"] = "%s\n\n## 🔗 原文链接\n\n[%s](%s)\n" % (art["md"], row["link"], row["link"])
+            art["len"] += len(row["link"]) * 2 + 28
+            n_link += 1
+    print("[ok] 文章摘要注入 %d 篇 / 原文链接 %d 篇" % (n_sum, n_link))
 
 # 目录 → (catKey, 显示名, 排序权重)
 CATS = [
@@ -388,7 +447,9 @@ def build():
     for a in articles:
         if a["year"] and a["catKey"] in ("berkshire", "partnership", "special"):
             letter_years.setdefault(a["year"], []).append(a["id"])
-    idx = parse_classification_index(letter_years, by_id)
+    idx, year_rows = parse_classification_index(letter_years, by_id)
+    if idx:
+        inject_summary_and_links(by_id, year_rows)
     data = {
         "title": "巴菲特投资智慧",
         "subtitle": "巴菲特致股东信知识库 · 阅读研究",
