@@ -1,0 +1,187 @@
+{
+  "name": "查理·芒格",
+  "display_name": "查理·芒格",
+  "character": "celebrity",
+  "research_profile": "budget-unfriendly",
+  "classification": {
+    "language": "zh-CN",
+    "gallery_category": "Celebrity",
+    "tags": [
+      "价值投资",
+      "多元思维模型",
+      "逆向思维",
+      "人类误判心理学",
+      "激励机制",
+      "普世智慧",
+      "长期主义"
+    ]
+  },
+  "profile": "决策与判断框架：多元思维模型 / 逆向思维 / 人类误判心理学 / 激励机制第一性 / 能力圈与等待 / 复利人生观",
+  "summary": "查理·芒格式投资与人生决策框架（celebrity，budget-unfriendly）",
+  "tags": [
+    "价值投资",
+    "多元思维模型",
+    "逆向思维",
+    "人类误判心理学",
+    "激励机制",
+    "普世智慧",
+    "长期主义"
+  ],
+  "knowledge_sources": [
+    "芒格演讲文集 1986-2017（哈佛/USC/斯坦福/学术经济学/误判心理学等，中英文本，本地一手）",
+    "Wesco 致股东信 1997-2009（13 封英文原信，本地一手）",
+    "Wesco/DJCO 年会问答 1999-2023（含 2021/2022/2023 三次年会 YouTube 转写，2026-08-25 补强）",
+    "Acquired 播客 2023 长访谈转写（去世前最后长谈，2026-08-25 补强）",
+    "《The Best of Charlie Munger 1994-2011》87 万字符符合集（本地）"
+  ],
+  "type": "celebrity",
+  "lifecycle": {
+    "status": "active",
+    "created_at": "2026-08-25T23:40:00+08:00",
+    "updated_at": "2026-08-25T15:42:13.789909+00:00",
+    "version": "v2"
+  },
+  "schema_version": "3",
+  "slug": "charlie-munger",
+  "generation": {
+    "engine": "distilly",
+    "character": "celebrity",
+    "research_profile": "budget-unfriendly",
+    "preset": "distilly.celebrity.v1",
+    "prompt_bundle": {
+      "preset": "distilly.celebrity.v1",
+      "intake": "prompts/celebrity/intake.md",
+      "research": "prompts/celebrity/research.md",
+      "work_analyzer": "prompts/work_analyzer.md",
+      "persona_analyzer": "prompts/celebrity/persona_analyzer.md",
+      "work_builder": "prompts/work_builder.md",
+      "persona_builder": "prompts/celebrity/persona_builder.md",
+      "merger": "prompts/celebrity/merger.md",
+      "correction_handler": "prompts/correction_handler.md"
+    },
+    "research_profile_bundle": {
+      "research": "prompts/celebrity/budget_unfriendly/research.md",
+      "audit": "prompts/celebrity/budget_unfriendly/audit.md",
+      "synthesis": "prompts/celebrity/budget_unfriendly/synthesis.md",
+      "validation": "prompts/celebrity/budget_unfriendly/validation.md",
+      "persona_analyzer": "prompts/celebrity/budget_unfriendly/persona_analyzer.md",
+      "persona_builder": "prompts/celebrity/budget_unfriendly/persona_builder.md"
+    },
+    "research_profile_references": [
+      "references/celebrity_budget_unfriendly_framework.md",
+      "references/celebrity_budget_unfriendly_template.md"
+    ],
+    "merge_strategy": "deep",
+    "quality_profile": "budget-unfriendly",
+    "knowledge_dirs": [
+      "docs",
+      "messages",
+      "emails",
+      "research/raw",
+      "research/merged",
+      "research/reviews",
+      "transcripts",
+      "subtitles"
+    ],
+    "storage_root": "skills/celebrity",
+    "research_tools": {
+      "public_x_posts": "tools/research/xquik_public_posts.py",
+      "subtitle_downloader": "tools/research/download_subtitles.sh",
+      "subtitle_cleaner": "tools/research/srt_to_transcript.py",
+      "research_merger": "tools/research/merge_research.py",
+      "quality_check": "tools/research/quality_check.py"
+    },
+    "created_from": [
+      "芒格演讲文集 1986-2017（哈佛/USC/斯坦福/学术经济学/误判心理学等，中英文本，本地一手）",
+      "Wesco 致股东信 1997-2009（13 封英文原信，本地一手）",
+      "Wesco/DJCO 年会问答 1999-2023（含 2021/2022/2023 三次年会 YouTube 转写，2026-08-25 补强）",
+      "Acquired 播客 2023 长访谈转写（去世前最后长谈，2026-08-25 补强）",
+      "《The Best of Charlie Munger 1994-2011》87 万字符符合集（本地）"
+    ],
+    "corrections_count": 0
+  },
+  "source_context": {
+    "domain": "public",
+    "relationship_to_user": "public_figure",
+    "is_real_person": true,
+    "is_public_figure": true,
+    "is_fictional": false
+  },
+  "engine": {
+    "name": "distilly",
+    "kind": "meta-skill",
+    "character": "celebrity",
+    "research_profile": "budget-unfriendly",
+    "preset": "distilly.celebrity.v1",
+    "prompt_bundle": {
+      "preset": "distilly.celebrity.v1",
+      "intake": "prompts/celebrity/intake.md",
+      "research": "prompts/celebrity/research.md",
+      "work_analyzer": "prompts/work_analyzer.md",
+      "persona_analyzer": "prompts/celebrity/persona_analyzer.md",
+      "work_builder": "prompts/work_builder.md",
+      "persona_builder": "prompts/celebrity/persona_builder.md",
+      "merger": "prompts/celebrity/merger.md",
+      "correction_handler": "prompts/correction_handler.md"
+    },
+    "research_profile_bundle": {
+      "research": "prompts/celebrity/budget_unfriendly/research.md",
+      "audit": "prompts/celebrity/budget_unfriendly/audit.md",
+      "synthesis": "prompts/celebrity/budget_unfriendly/synthesis.md",
+      "validation": "prompts/celebrity/budget_unfriendly/validation.md",
+      "persona_analyzer": "prompts/celebrity/budget_unfriendly/persona_analyzer.md",
+      "persona_builder": "prompts/celebrity/budget_unfriendly/persona_builder.md"
+    },
+    "research_profile_references": [
+      "references/celebrity_budget_unfriendly_framework.md",
+      "references/celebrity_budget_unfriendly_template.md"
+    ],
+    "merge_strategy": "deep",
+    "quality_profile": "budget-unfriendly",
+    "knowledge_dirs": [
+      "docs",
+      "messages",
+      "emails",
+      "research/raw",
+      "research/merged",
+      "research/reviews",
+      "transcripts",
+      "subtitles"
+    ],
+    "storage_root": "skills/celebrity",
+    "research_tools": {
+      "public_x_posts": "tools/research/xquik_public_posts.py",
+      "subtitle_downloader": "tools/research/download_subtitles.sh",
+      "subtitle_cleaner": "tools/research/srt_to_transcript.py",
+      "research_merger": "tools/research/merge_research.py",
+      "quality_check": "tools/research/quality_check.py"
+    }
+  },
+  "kind": "meta-skill",
+  "subtype": null,
+  "preset": "distilly.celebrity.v1",
+  "id": "meta-skill.celebrity.charlie-munger",
+  "artifacts": {
+    "combined_skill": "SKILL.md",
+    "work_skill": "work_skill.md",
+    "persona_skill": "persona_skill.md",
+    "work_doc": "work.md",
+    "persona_doc": "persona.md",
+    "manifest": "manifest.json",
+    "combined_name": "celebrity-charlie-munger",
+    "work_name": "celebrity-charlie-munger-work",
+    "persona_name": "celebrity-charlie-munger-persona",
+    "combined_command": "celebrity-charlie-munger",
+    "work_command": "celebrity-charlie-munger-work",
+    "persona_command": "celebrity-charlie-munger-persona"
+  },
+  "compat": {
+    "legacy_command": "/create-icon",
+    "legacy_storage_root": "skills/celebrity",
+    "legacy_type": "celebrity"
+  },
+  "created_at": "2026-08-25T23:40:00+08:00",
+  "updated_at": "2026-08-25T15:42:13.789909+00:00",
+  "version": "v2",
+  "corrections_count": 0
+}

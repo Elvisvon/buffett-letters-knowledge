@@ -15,8 +15,10 @@
 - **阅读**：内置 Markdown 渲染（表格/引用/脚注/交叉链接应用内跳转）、目录、上一篇/下一篇、进度条
 - **笔记与划线**：选中文字 → 高亮（黄/蓝）/ 下划线 / 笔记；**笔记正文支持 Markdown 渲染**（标题/加粗/列表/引用/代码块/链接，AI 答复保存后直接呈现排版）；文章级笔记自动保存；一键导出 `.md` + `.json`
 - **AI 讨论**：每篇文章旁聊天面板，自动携带文章全文与你的笔记；每条 AI 答复可一键「加入笔记」；OpenAI 兼容接口（默认 DeepSeek）
-- **与巴菲特对话**：基于 `celebrity-buffett` 人格（distilly 蒸馏，项目内 `skills/celebrity-buffett/`）的独立对话专栏，护城河/安全边际/能力圈等框架先研究再回答
-- **流式输出**：AI 讨论与巴菲特对话均为 SSE 流式逐字渲染
+- **与巴菲特对话 / 与芒格对话**：基于 `celebrity-buffett` / `celebrity-charlie-munger` 人格（distilly 蒸馏，项目内 `skills/` 下）的双对话专栏，主页双入口（巴菲特头像 / 芒格头像），护城河、多元思维模型等框架先研究再回答；两套对话记忆独立持久化
+- **主页 Hero 交互图**：巴菲特历年收益率（1957–2025，纯账面价值口径）——逐年收益率柱状图（正琥珀/负深红）+ 累计净值对数轴曲线 + 年化收益虚线，十字线 tooltip、图例开关、滚轮/滑块缩放，右上角标注口径说明；数据来自 `buffet_return_data.csv`（OCR 提取 + 官方年报交叉校验）
+- **侧栏隐藏/显示**：顶栏 `◧/◨` 按钮一键收起/展开左侧栏，正文与 Hero 图随之伸缩，偏好持久化
+- **流式输出**：AI 讨论与两路人格对话均为 SSE 流式逐字渲染
 - **背景解释**：选中文章中的词语 →「🔍 背景解释」，AI 结合文章内容与**写作年份的市场背景**（从年度索引自动注入：市场环境、重大事件、核心主题）解释金融概念；支持就解释继续追问；满意的解释可保存到笔记「背景解释」栏，随时回顾，导出时一并包含
 - **编辑风索引纵览**：顶栏「📖 索引」进入独立的杂志风分类索引页（`#/index`），Playfair 衬线标题 + 暖米色排版，含 Hero 统计、5 个标签页（年度信件 / 主题分类 / 行业分类 / 事件时期 / 选股方法）、信件系列与事件类型筛选；信件卡片可直接跳转应用内阅读，与主应用共享全部数据，不替换原有界面
 
@@ -34,7 +36,7 @@ python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/�
 
 ## 记忆材料持久化（笔记 / 收藏 / 已读 / AI 对话）
 
-- 笔记、划线高亮、收藏、已读标记、文章 AI 讨论、与巴菲特对话，都会**实时保存到本地文件**：`~/Library/Application Support/巴菲特投资智慧/state.json`
+- 笔记、划线高亮、收藏、已读标记、文章 AI 讨论、与巴菲特对话、与芒格对话，都会**实时保存到本地文件**：`~/Library/Application Support/巴菲特投资智慧/state.json`
 - 该目录属于**本机用户数据**，任何 Git 仓库都不会包含它——上传 GitHub 不涉及这部分信息；如需改存项目目录，可设 `BUFFETT_DATA_DIR`（此时项目 `.gitignore` 已忽略 `.buffett-data/` 兜底）
 - API Key 等设置**绝不落盘**：只存在于内存（环境变量注入）或浏览器 localStorage
 - 直接双击 html（无服务）时自动降级为浏览器 localStorage，不影响使用
@@ -69,16 +71,20 @@ python3 package_app.py              # → dist/巴菲特投资智慧.app + DMG
 ## 目录结构
 
 ```
-├── 巴菲特投资智慧.html               # 单文件应用（数据全部内嵌，2.6MB 压缩后）
+├── 巴菲特投资智慧.html               # 单文件应用（数据全部内嵌，约 3.7MB）
 ├── 巴菲特致股东信知识库/             # 原始文章（md + 原站 html）
 ├── 巴菲特致股东信分类索引(1956-2025) .xlsx  # 五维分类索引数据源
-├── build_buffett_app.py             # 构建脚本
-├── serve_buffett_app.py             # 本地启动器（环境变量注入密钥 + /api/state 记忆持久化）
+├── buffet_return_data.csv            # 巴菲特历年收益率（1957–2025 账面口径，Hero 图数据源）
+├── build_buffett_app.py              # 构建脚本（内嵌 ECharts / 图标 / 收益率）
+├── serve_buffett_app.py              # 本地启动器（环境变量注入密钥 + /api/state 记忆持久化）
 ├── 启动巴菲特知识库.command           # macOS 一键启动（终端方式）
-├── macapp/main.swift                # 原生窗口壳（Swift + WKWebView，Dock 图标）
-├── package_app.py                   # App/DMG 打包器
+├── macapp/main.swift                 # 原生窗口壳（Swift + WKWebView，Dock 图标）
+├── package_app.py                    # App/DMG 打包器
+├── assets/                           # buffett.png / munger.png（128px 内嵌图标源）
+├── vendor/echarts.min.js             # ECharts 5.5.1（构建时内嵌，离线可用）
 ├── skills/celebrity-buffett/         # 项目级巴菲特人格 Skill（构建时嵌入应用）
-└── llm-config.js                    # 默认 LLM 配置（无密钥）
+├── skills/celebrity-charlie-munger/  # 项目级芒格人格 Skill（构建时嵌入应用）
+└── llm-config.js                     # 默认 LLM 配置（无密钥）
 ```
 
 ## 数据来源与致谢

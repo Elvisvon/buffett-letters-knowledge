@@ -1,0 +1,7847 @@
+1
+00:00:00,480 --> 00:00:06,120
+Ben, when we teased this episode in the
+
+2
+00:00:03,200 --> 00:00:08,160
+email about the Jensen episode that we
+
+3
+00:00:06,120 --> 00:00:10,920
+just released, the guesses that we were
+
+4
+00:00:08,160 --> 00:00:12,200
+getting from folks were amazing. I mean,
+
+5
+00:00:10,920 --> 00:00:13,880
+people were like, it's Charlie, it's
+
+6
+00:00:12,200 --> 00:00:16,200
+Warren, or it's Taylor Swift. And a lot
+
+7
+00:00:13,880 --> 00:00:16,880
+of people were right. Hey Taylor, you
+
+8
+00:00:16,200 --> 00:00:18,400
+know where to find us.
+
+9
+00:00:16,880 --> 00:00:19,520
+acquiredfm@gmail.com.
+
+10
+00:00:18,400 --> 00:00:21,800
+If you are looking to get more
+
+11
+00:00:19,520 --> 00:00:23,440
+publicity, we're open. Have Travis get
+
+12
+00:00:21,800 --> 00:00:26,880
+in touch.
+
+13
+00:00:23,440 --> 00:00:26,880
+All right. Let's do it.
+
+14
+00:00:41,960 --> 00:00:46,040
+Welcome to this episode of Acquired, the
+
+15
+00:00:44,040 --> 00:00:47,680
+podcast about great technology companies
+
+16
+00:00:46,040 --> 00:00:49,160
+and the stories and playbooks behind
+
+17
+00:00:47,680 --> 00:00:51,480
+them. I'm Ben Gilbert.
+
+18
+00:00:49,160 --> 00:00:54,560
+I'm David Rosenthal. And we are your
+
+19
+00:00:51,480 --> 00:00:56,400
+hosts. This episode is a very unique one
+
+20
+00:00:54,560 --> 00:00:58,360
+for David and I. Good friend of the
+
+21
+00:00:56,400 --> 00:01:00,760
+show, Andrew Marks, organized a little
+
+22
+00:00:58,360 --> 00:01:02,720
+dinner for us with Charlie Munger and a
+
+23
+00:01:00,760 --> 00:01:05,000
+few other folks at Charlie's home in Los
+
+24
+00:01:02,720 --> 00:01:06,320
+Angeles. You can hear Andrew a few times
+
+25
+00:01:05,000 --> 00:01:08,400
+in the background asking Charlie
+
+26
+00:01:06,320 --> 00:01:10,400
+questions. We are pretty sure that this
+
+27
+00:01:08,400 --> 00:01:11,560
+is the only podcast that Charlie has
+
+28
+00:01:10,400 --> 00:01:13,400
+ever done.
+
+29
+00:01:11,560 --> 00:01:15,080
+Charlie, aside from being one of the
+
+30
+00:01:13,400 --> 00:01:17,200
+most prolific investors of all time
+
+31
+00:01:15,080 --> 00:01:20,520
+alongside his partner Warren Buffett, is
+
+32
+00:01:17,200 --> 00:01:23,040
+99 years old. He will turn 100 on
+
+33
+00:01:20,520 --> 00:01:24,560
+January 1st. Of course, our conversation
+
+34
+00:01:23,040 --> 00:01:27,800
+was interesting because he's freaking
+
+35
+00:01:24,560 --> 00:01:29,040
+Charlie Munger, but also because it was
+
+36
+00:01:27,800 --> 00:01:31,720
+interesting to get the perspective of
+
+37
+00:01:29,040 --> 00:01:33,680
+someone who has seen the last 99 years
+
+38
+00:01:31,720 --> 00:01:35,960
+of human history. We talked with
+
+39
+00:01:33,680 --> 00:01:37,800
+Charlie, of course, about Costco, his
+
+40
+00:01:35,960 --> 00:01:40,400
+history investing in retailers over the
+
+41
+00:01:37,800 --> 00:01:42,320
+last 50 years. We also got to hear his
+
+42
+00:01:40,400 --> 00:01:44,400
+views on what it takes to build a great
+
+43
+00:01:42,320 --> 00:01:46,680
+partnership, what's gone wrong in the
+
+44
+00:01:44,400 --> 00:01:48,280
+global securities markets these days,
+
+45
+00:01:46,680 --> 00:01:50,360
+the concept of investing versus
+
+46
+00:01:48,280 --> 00:01:53,120
+gambling, and where investment
+
+47
+00:01:50,360 --> 00:01:56,160
+opportunities remain in the world today.
+
+48
+00:01:53,120 --> 00:01:57,920
+Yeah, Ben, this was such a special life
+
+49
+00:01:56,160 --> 00:02:00,240
+experience for you and me, and you and
+
+50
+00:01:57,920 --> 00:02:01,720
+me together to do this. And the fact
+
+51
+00:02:00,240 --> 00:02:04,360
+that we got to record it and now share
+
+52
+00:02:01,720 --> 00:02:05,840
+it with the world for posterity, just
+
+53
+00:02:04,360 --> 00:02:07,640
+icing on the cake, and the whole thing
+
+54
+00:02:05,840 --> 00:02:08,800
+was unbelievable. Yeah, listeners, we
+
+55
+00:02:07,640 --> 00:02:10,080
+knew we were going to have dinner. We
+
+56
+00:02:08,800 --> 00:02:11,680
+were not sure whether we were going to
+
+57
+00:02:10,080 --> 00:02:13,200
+be able to record it, and now we get to
+
+58
+00:02:11,680 --> 00:02:14,640
+share it with all of you.
+
+59
+00:02:13,200 --> 00:02:16,440
+With that, join the Slack. There is
+
+60
+00:02:14,640 --> 00:02:17,320
+awesome discussion of every episode and
+
+61
+00:02:16,440 --> 00:02:19,600
+the news of the day at
+
+62
+00:02:17,320 --> 00:02:22,120
+acquired.fm/slack.
+
+63
+00:02:19,600 --> 00:02:24,000
+If you sign up for Acquired emails, you
+
+64
+00:02:22,120 --> 00:02:25,800
+will get episode corrections and
+
+65
+00:02:24,000 --> 00:02:28,880
+follow-up from previous episodes, plus
+
+66
+00:02:25,800 --> 00:02:31,760
+hints at what the next episode will be.
+
+67
+00:02:28,880 --> 00:02:33,480
+That's acquired.fm/email.
+
+68
+00:02:31,760 --> 00:02:35,760
+And we have only one sponsor for this
+
+69
+00:02:33,480 --> 00:02:38,000
+interview. Yes, a special conversation
+
+70
+00:02:35,760 --> 00:02:39,560
+deserves a special sponsorship. And
+
+71
+00:02:38,000 --> 00:02:41,080
+long-time listeners will know there's
+
+72
+00:02:39,560 --> 00:02:42,920
+only one company in the Acquired
+
+73
+00:02:41,080 --> 00:02:44,920
+universe that is truly appropriate
+
+74
+00:02:42,920 --> 00:02:46,800
+because everything they do is modeled
+
+75
+00:02:44,920 --> 00:02:49,280
+after Charlie and Warren, and that's
+
+76
+00:02:46,800 --> 00:02:51,400
+Tiny. Yep. Tiny is the Berkshire
+
+77
+00:02:49,280 --> 00:02:52,840
+Hathaway of the internet. Literally,
+
+78
+00:02:51,400 --> 00:02:54,400
+they are such huge fans that they
+
+79
+00:02:52,840 --> 00:02:56,640
+started a company that makes bronze
+
+80
+00:02:54,400 --> 00:02:58,640
+busts of Buffett and Munger themselves,
+
+81
+00:02:56,640 --> 00:03:00,280
+but more on that in a minute. Yeah, so
+
+82
+00:02:58,640 --> 00:03:02,960
+Berkshire, as we know, started as a
+
+83
+00:03:00,280 --> 00:03:05,880
+textile mill in Massachusetts nearly 200
+
+84
+00:03:02,960 --> 00:03:07,480
+years ago. And almost 20 years ago, Tiny
+
+85
+00:03:05,880 --> 00:03:09,720
+founders Andrew Wilkinson and his
+
+86
+00:03:07,480 --> 00:03:11,920
+partner Chris took their version of an
+
+87
+00:03:09,720 --> 00:03:14,400
+internet textile mill, the premier
+
+88
+00:03:11,920 --> 00:03:16,840
+design agency Metalab, which designed
+
+89
+00:03:14,400 --> 00:03:18,960
+the UIs for Slack, Uber, Tinder,
+
+90
+00:03:16,840 --> 00:03:20,760
+Headspace, Coinbase, and others. And
+
+91
+00:03:18,960 --> 00:03:23,520
+they asked themselves, "What would
+
+92
+00:03:20,760 --> 00:03:25,800
+Charlie and Warren do if they were us?"
+
+93
+00:03:23,520 --> 00:03:27,200
+And that led to the realization that,
+
+94
+00:03:25,800 --> 00:03:29,840
+just like Berkshire discovered in the
+
+95
+00:03:27,200 --> 00:03:31,880
+physical world, the internet also has
+
+96
+00:03:29,840 --> 00:03:34,600
+wonderful niche businesses with great
+
+97
+00:03:31,880 --> 00:03:36,560
+cash flows. In fact, they tend to be
+
+98
+00:03:34,600 --> 00:03:38,520
+even better than the old days of See's
+
+99
+00:03:36,560 --> 00:03:40,720
+Candies and Blue Chip Stamps because
+
+100
+00:03:38,520 --> 00:03:42,560
+they require zero capital reinvestment,
+
+101
+00:03:40,720 --> 00:03:44,600
+have software margins, and can build
+
+102
+00:03:42,560 --> 00:03:46,520
+global brands much faster than the,
+
+103
+00:03:44,600 --> 00:03:49,000
+what, 50-some-odd years it took See's to
+
+104
+00:03:46,520 --> 00:03:50,680
+expand around the world. Yep. So, Andrew
+
+105
+00:03:49,000 --> 00:03:52,640
+and Chris took the extra cash flow from
+
+106
+00:03:50,680 --> 00:03:55,120
+Metalab and their other businesses and
+
+107
+00:03:52,640 --> 00:03:57,240
+created Tiny, the world's first and best
+
+108
+00:03:55,120 --> 00:03:58,840
+permanent holding company for wonderful
+
+109
+00:03:57,240 --> 00:04:01,360
+internet businesses, and boy, did it
+
+110
+00:03:58,840 --> 00:04:03,120
+work. Yeah, fast forward to today, and
+
+111
+00:04:01,360 --> 00:04:05,200
+thanks to Tiny's success, this
+
+112
+00:04:03,120 --> 00:04:06,720
+opportunity is no longer a secret. Many
+
+113
+00:04:05,200 --> 00:04:08,720
+people have caught on to the idea that
+
+114
+00:04:06,720 --> 00:04:10,480
+this can really work. But, just like
+
+115
+00:04:08,720 --> 00:04:12,680
+Berkshire itself, no one else has the
+
+116
+00:04:10,480 --> 00:04:14,280
+combination of experience, temperament,
+
+117
+00:04:12,680 --> 00:04:16,040
+access to capital, and frankly,
+
+118
+00:04:14,280 --> 00:04:17,959
+reputation that Andrew and Chris have
+
+119
+00:04:16,040 --> 00:04:20,000
+built over the past two decades. We're
+
+120
+00:04:17,959 --> 00:04:22,520
+investors in Tiny ourselves, alongside
+
+121
+00:04:20,000 --> 00:04:24,360
+Bill Ackman and Howard Marks. And just
+
+122
+00:04:22,520 --> 00:04:26,280
+like the two of them, Tiny is really the
+
+123
+00:04:24,360 --> 00:04:28,120
+long-term buyer of choice in their
+
+124
+00:04:26,280 --> 00:04:29,800
+niche. Anyone who's looking for a
+
+125
+00:04:28,120 --> 00:04:31,640
+permanent home for their profitable
+
+126
+00:04:29,800 --> 00:04:34,000
+internet business, or who needs a
+
+127
+00:04:31,640 --> 00:04:36,280
+capital partner for a co-founder or VC
+
+128
+00:04:34,000 --> 00:04:38,560
+cap table buyout, would be lucky to work
+
+129
+00:04:36,280 --> 00:04:40,080
+with Tiny. Yep. For instance, they just
+
+130
+00:04:38,560 --> 00:04:42,200
+bought the premier social network for
+
+131
+00:04:40,080 --> 00:04:44,600
+film buffs, Letterboxd, which has been
+
+132
+00:04:42,200 --> 00:04:46,440
+the founder's baby for 12 years and will
+
+133
+00:04:44,600 --> 00:04:49,000
+stay so within Tiny. And this really
+
+134
+00:04:46,440 --> 00:04:50,360
+reflects Tiny's whole ethos. Work with
+
+135
+00:04:49,000 --> 00:04:52,160
+only the best internet businesses,
+
+136
+00:04:50,360 --> 00:04:54,440
+commit to simple diligence, 30-day
+
+137
+00:04:52,160 --> 00:04:56,160
+deals, and leave the business alone,
+
+138
+00:04:54,440 --> 00:04:58,120
+either for you to operate or bring in
+
+139
+00:04:56,160 --> 00:05:00,400
+new long-term oriented management, up to
+
+140
+00:04:58,120 --> 00:05:02,000
+you. So, thanks to Tiny, this is the
+
+141
+00:05:00,400 --> 00:05:03,880
+only sponsor, as Ben said, that you'll
+
+142
+00:05:02,000 --> 00:05:06,240
+hear on this episode. And just like
+
+143
+00:05:03,880 --> 00:05:08,160
+Berkshire, it'll be here in perpetuity.
+
+144
+00:05:06,240 --> 00:05:09,920
+Tiny just became a public company
+
+145
+00:05:08,160 --> 00:05:11,800
+earlier this year, and they can now do
+
+146
+00:05:09,920 --> 00:05:14,080
+deals ranging anywhere from 1 million
+
+147
+00:05:11,800 --> 00:05:15,280
+all the way up to 250 million. So, if
+
+148
+00:05:14,080 --> 00:05:17,800
+you want to get in touch, just shoot
+
+149
+00:05:15,280 --> 00:05:19,720
+them a note at hi@tiny.com,
+
+150
+00:05:17,800 --> 00:05:21,960
+and just tell them that Ben and David
+
+151
+00:05:19,720 --> 00:05:24,560
+sent you. Oh, and one more thing, the
+
+152
+00:05:21,960 --> 00:05:27,040
+bronze Charlie busts, the perfect daily
+
+153
+00:05:24,560 --> 00:05:29,000
+reminder in your workspace to ask, "What
+
+154
+00:05:27,040 --> 00:05:31,000
+would Charlie do?" Just head on over to
+
+155
+00:05:29,000 --> 00:05:32,960
+berkshirenerds.store
+
+156
+00:05:31,000 --> 00:05:35,720
+to buy your own. And they also have
+
+157
+00:05:32,960 --> 00:05:37,560
+plenty of some guy named Warren, too.
+
+158
+00:05:35,720 --> 00:05:39,200
+Okay, now without further ado, this is
+
+159
+00:05:37,560 --> 00:05:40,480
+not investment advice. David and I may
+
+160
+00:05:39,200 --> 00:05:41,760
+have investments in the companies we
+
+161
+00:05:40,480 --> 00:05:43,400
+discuss, and this show is for
+
+162
+00:05:41,760 --> 00:05:46,680
+informational and entertainment purposes
+
+163
+00:05:43,400 --> 00:05:48,600
+only. And on to Charlie Munger.
+
+164
+00:05:46,680 --> 00:05:50,120
+Charlie, I was watching the NFL games
+
+165
+00:05:48,600 --> 00:05:52,720
+last weekend, and it seems like every
+
+166
+00:05:50,120 --> 00:05:55,120
+advertisement now is a sports betting
+
+167
+00:05:52,720 --> 00:05:58,160
+advertisement. Is this good for America?
+
+168
+00:05:55,120 --> 00:05:58,160
+No, of course not.
+
+169
+00:05:58,680 --> 00:06:03,280
+Are the dog tracks and race tracks of
+
+170
+00:06:01,040 --> 00:06:05,400
+America, are the casinos good for
+
+171
+00:06:03,280 --> 00:06:07,120
+America? Of course not.
+
+172
+00:06:05,400 --> 00:06:08,480
+They are just very popular. But that's
+
+173
+00:06:07,120 --> 00:06:09,920
+how Warren got his start, though, right,
+
+174
+00:06:08,480 --> 00:06:12,080
+at the racetrack?
+
+175
+00:06:09,920 --> 00:06:13,960
+Well, but Warren never gambled.
+
+176
+00:06:12,080 --> 00:06:15,680
+He only is a patron of it.
+
+177
+00:06:13,960 --> 00:06:17,840
+Warren wanted the odds in his favor, not
+
+178
+00:06:15,680 --> 00:06:19,680
+somebody else. Right. It's just so
+
+179
+00:06:17,840 --> 00:06:21,040
+simple. If you're Warren,
+
+180
+00:06:19,680 --> 00:06:23,560
+you want the house. You want to be the
+
+181
+00:06:21,040 --> 00:06:25,680
+house, not the punter.
+
+182
+00:06:23,560 --> 00:06:27,560
+Listeners, the next topic that came up
+
+183
+00:06:25,680 --> 00:06:29,480
+was retail stock trading and the idea
+
+184
+00:06:27,560 --> 00:06:30,960
+that for many Americans, this is akin to
+
+185
+00:06:29,480 --> 00:06:32,160
+gambling.
+
+186
+00:06:30,960 --> 00:06:33,200
+Well, that's the way it's organized.
+
+187
+00:06:32,160 --> 00:06:35,200
+They don't really know anything about
+
+188
+00:06:33,200 --> 00:06:37,520
+the companies or anything. They just
+
+189
+00:06:35,200 --> 00:06:38,560
+gamble on going up and down in price.
+
+190
+00:06:37,520 --> 00:06:40,160
+Mhm.
+
+191
+00:06:38,560 --> 00:06:43,280
+If I were running the world, I would
+
+192
+00:06:40,160 --> 00:06:46,720
+have a tax on short-term gains
+
+193
+00:06:43,280 --> 00:06:48,400
+with no offset for losses and anything.
+
+194
+00:06:46,720 --> 00:06:50,440
+And I would just drive this whole crowd
+
+195
+00:06:48,400 --> 00:06:51,840
+of people out of business.
+
+196
+00:06:50,440 --> 00:06:53,800
+What do you think about the algorithms,
+
+197
+00:06:51,840 --> 00:06:56,000
+like Renaissance and stuff like that?
+
+198
+00:06:53,800 --> 00:06:57,880
+Well, of course, Renaissance is probably
+
+199
+00:06:56,000 --> 00:07:00,240
+the first algorithm.
+
+200
+00:06:57,880 --> 00:07:02,080
+It was so simple. They sifted out all
+
+201
+00:07:00,240 --> 00:07:04,720
+the data for the past.
+
+202
+00:07:02,080 --> 00:07:07,800
+And what did they decide?
+
+203
+00:07:04,720 --> 00:07:09,680
+Up, up for two closing prices,
+
+204
+00:07:07,800 --> 00:07:12,400
+and down, down were more common than
+
+205
+00:07:09,680 --> 00:07:14,080
+down, up or up, down.
+
+206
+00:07:12,400 --> 00:07:15,440
+Once they realized that's the way it was
+
+207
+00:07:14,080 --> 00:07:17,360
+for various
+
+208
+00:07:15,440 --> 00:07:19,960
+reasons deep in the psychology of man,
+
+209
+00:07:17,360 --> 00:07:22,320
+is that man is a natural trend follower.
+
+210
+00:07:19,960 --> 00:07:24,560
+You trigger your gambling short-term.
+
+211
+00:07:22,320 --> 00:07:27,320
+And they do they just he just programmed
+
+212
+00:07:24,560 --> 00:07:29,280
+the computers to automatically,
+
+213
+00:07:27,320 --> 00:07:30,760
+you know, buy on one thing on the first
+
+214
+00:07:29,280 --> 00:07:32,520
+up day and
+
+215
+00:07:30,760 --> 00:07:34,960
+and sell before the end of the second
+
+216
+00:07:32,520 --> 00:07:36,800
+day. And he did it day after day after
+
+217
+00:07:34,960 --> 00:07:38,720
+day. And they did every day they would
+
+218
+00:07:36,800 --> 00:07:40,000
+the machine would, you know, the signal
+
+219
+00:07:38,720 --> 00:07:42,080
+for their agent
+
+220
+00:07:40,000 --> 00:07:44,440
+would say, "Your check today is
+
+221
+00:07:42,080 --> 00:07:45,200
+$8,500,000."
+
+222
+00:07:44,440 --> 00:07:48,400
+It's crazy.
+
+223
+00:07:45,200 --> 00:07:51,080
+tomorrow is $9,400,000."
+
+224
+00:07:48,400 --> 00:07:53,080
+Well, what happens is that the ones the
+
+225
+00:07:51,080 --> 00:07:54,840
+easiest trade is to front-run what, you
+
+226
+00:07:53,080 --> 00:07:57,000
+know, what the averages
+
+227
+00:07:54,840 --> 00:07:58,640
+what the index funds have to buy.
+
+228
+00:07:57,000 --> 00:08:00,200
+And you know what it is exactly. They
+
+229
+00:07:58,640 --> 00:08:02,080
+all know that.
+
+230
+00:08:00,200 --> 00:08:03,320
+And the way they get their returns year
+
+231
+00:08:02,080 --> 00:08:05,840
+after year
+
+232
+00:08:03,320 --> 00:08:07,840
+is taking the leverage, the midday
+
+233
+00:08:05,840 --> 00:08:08,880
+leverage of higher and higher and higher
+
+234
+00:08:07,840 --> 00:08:10,360
+and higher.
+
+235
+00:08:08,880 --> 00:08:12,440
+So, they're making smaller and smaller
+
+236
+00:08:10,360 --> 00:08:15,640
+profits on more and more volume, which
+
+237
+00:08:12,440 --> 00:08:18,000
+gives them this big peak leverage risk,
+
+238
+00:08:15,640 --> 00:08:19,480
+which I would not run myself.
+
+239
+00:08:18,000 --> 00:08:21,920
+And that's the only way they make these
+
+240
+00:08:19,480 --> 00:08:24,200
+big returns is to have this huge
+
+241
+00:08:21,920 --> 00:08:26,120
+leverage. It would make you crazy if you
+
+242
+00:08:24,200 --> 00:08:27,760
+were already rich.
+
+243
+00:08:26,120 --> 00:08:29,640
+I had the good fortune of speaking with
+
+244
+00:08:27,760 --> 00:08:31,200
+someone you know well, Richard Galanti,
+
+245
+00:08:29,640 --> 00:08:32,599
+at Costco and spending a few hours
+
+246
+00:08:31,200 --> 00:08:34,800
+lot about it. He's been there all his
+
+247
+00:08:32,599 --> 00:08:36,000
+life. It's crazy. I mean, it seems like
+
+248
+00:08:34,800 --> 00:08:37,039
+that's everyone on the executive team.
+
+249
+00:08:36,000 --> 00:08:38,599
+They've all been there their whole
+
+250
+00:08:37,039 --> 00:08:41,039
+lives.
+
+251
+00:08:38,599 --> 00:08:43,320
+I'm curious, how did you first come
+
+252
+00:08:41,039 --> 00:08:44,640
+across Costco or or Price Club at the
+
+253
+00:08:43,320 --> 00:08:48,120
+time?
+
+254
+00:08:44,640 --> 00:08:49,800
+Rod Hills, someone who saw Price.
+
+255
+00:08:48,120 --> 00:08:51,040
+And what he was doing, he said, "You
+
+256
+00:08:49,800 --> 00:08:51,840
+have to come down and meet him," he
+
+257
+00:08:51,040 --> 00:08:53,640
+said.
+
+258
+00:08:51,840 --> 00:08:55,360
+So, I drove down and look went through
+
+259
+00:08:53,640 --> 00:08:56,920
+his store and
+
+260
+00:08:55,360 --> 00:08:58,240
+talked with Sol.
+
+261
+00:08:56,920 --> 00:09:00,440
+And of course, Sol was a very
+
+262
+00:08:58,240 --> 00:09:02,800
+intelligent man. Sol wasn't ordinary
+
+263
+00:09:00,440 --> 00:09:04,160
+lawyer until he was 39 years of age. And
+
+264
+00:09:02,800 --> 00:09:06,520
+he was out of former government
+
+265
+00:09:04,160 --> 00:09:08,440
+employees discount company or whatever.
+
+266
+00:09:06,520 --> 00:09:11,160
+Was this in the Fedco days?
+
+267
+00:09:08,440 --> 00:09:12,160
+He was no longer with Fedco.
+
+268
+00:09:11,160 --> 00:09:14,680
+He um
+
+269
+00:09:12,160 --> 00:09:19,120
+He sold Fedco to the Germans. Uh,
+
+270
+00:09:14,680 --> 00:09:22,000
+Fedmart to the Yeah, Kmart. Kmart, yeah.
+
+271
+00:09:19,120 --> 00:09:24,920
+And did you get to invest in Price Club
+
+272
+00:09:22,000 --> 00:09:26,080
+before it merged with Costco? Yes, I
+
+273
+00:09:24,920 --> 00:09:27,480
+did.
+
+274
+00:09:26,080 --> 00:09:29,120
+But I just bought my stock in the
+
+275
+00:09:27,480 --> 00:09:30,880
+market. I wasn't I didn't get any favor
+
+276
+00:09:29,120 --> 00:09:32,800
+from
+
+277
+00:09:30,880 --> 00:09:34,200
+And so, how did you eventually meet Jim
+
+278
+00:09:32,800 --> 00:09:37,200
+Sinegal?
+
+279
+00:09:34,200 --> 00:09:38,440
+Well, Sinegal asked Warren to become a
+
+280
+00:09:37,200 --> 00:09:39,760
+director of
+
+281
+00:09:38,440 --> 00:09:41,400
+Costco.
+
+282
+00:09:39,760 --> 00:09:44,040
+He was looking for somebody with a
+
+283
+00:09:41,400 --> 00:09:46,080
+financial reputation. As an independent?
+
+284
+00:09:44,040 --> 00:09:47,320
+Yes, and Warren wouldn't do it. He said,
+
+285
+00:09:46,080 --> 00:09:49,160
+"Why don't you see if you can get
+
+286
+00:09:47,320 --> 00:09:51,640
+Charlie to do it?
+
+287
+00:09:49,160 --> 00:09:54,000
+I won't shorter plane rides to
+
+288
+00:09:51,640 --> 00:09:55,840
+directors' meetings and so on."
+
+289
+00:09:54,000 --> 00:09:58,160
+So, that's how that happened. And did
+
+290
+00:09:55,840 --> 00:09:59,880
+Berkshire ever try to become a
+
+291
+00:09:58,160 --> 00:10:00,080
+shareholder or acquire Costco?
+
+292
+00:09:59,880 --> 00:10:02,360
+No.
+
+293
+00:10:00,080 --> 00:10:05,880
+to get Warren to buy out the French
+
+294
+00:10:02,360 --> 00:10:07,120
+when they left Carefour. Ah. And
+
+295
+00:10:05,880 --> 00:10:08,880
+Warren wouldn't do it. Warren doesn't
+
+296
+00:10:07,120 --> 00:10:10,520
+like retailing.
+
+297
+00:10:08,880 --> 00:10:11,800
+Was it just that he doesn't like retail
+
+298
+00:10:10,520 --> 00:10:13,280
+or what was the big objection?
+
+299
+00:10:11,800 --> 00:10:14,600
+He's afraid of retail.
+
+300
+00:10:13,280 --> 00:10:17,120
+Practically everything that was once
+
+301
+00:10:14,600 --> 00:10:19,120
+mighty in retail is gone. Sears Roebuck
+
+302
+00:10:17,120 --> 00:10:20,720
+is gone. The big department stores are
+
+303
+00:10:19,120 --> 00:10:22,160
+gone, you know.
+
+304
+00:10:20,720 --> 00:10:23,640
+It's just too damn difficult as far as
+
+305
+00:10:22,160 --> 00:10:25,600
+he's concerned. And he had a bad
+
+306
+00:10:23,640 --> 00:10:28,160
+experience with diversified retail,
+
+307
+00:10:25,600 --> 00:10:30,600
+right? No, we made nothing but money at
+
+308
+00:10:28,160 --> 00:10:32,880
+diversified. We didn't exactly make it
+
+309
+00:10:30,600 --> 00:10:34,160
+in retailing, but we made a lot of
+
+310
+00:10:32,880 --> 00:10:36,080
+money.
+
+311
+00:10:34,160 --> 00:10:37,600
+Wow. And with diversified, most of the
+
+312
+00:10:36,080 --> 00:10:39,120
+money was not on the retailing
+
+313
+00:10:37,600 --> 00:10:39,640
+operation. You made a lot of that money
+
+314
+00:10:39,120 --> 00:10:43,240
+through
+
+315
+00:10:39,640 --> 00:10:43,240
+What happened was very simple.
+
+316
+00:10:43,440 --> 00:10:49,040
+We bought this little piss ant
+
+317
+00:10:46,400 --> 00:10:52,080
+department store chain in Baltimore.
+
+318
+00:10:49,040 --> 00:10:55,040
+Big mistake to compare it.
+
+319
+00:10:52,080 --> 00:10:56,280
+As the ink dried on the closing papers,
+
+320
+00:10:55,040 --> 00:10:57,600
+we realized we'd made a terrible
+
+321
+00:10:56,280 --> 00:10:59,360
+mistake.
+
+322
+00:10:57,600 --> 00:11:01,000
+So, we decided just to reverse it and
+
+323
+00:10:59,360 --> 00:11:03,480
+take the hits to
+
+324
+00:11:01,000 --> 00:11:05,240
+look foolish rather than go broke.
+
+325
+00:11:03,480 --> 00:11:06,839
+We just told Sy
+
+326
+00:11:05,240 --> 00:11:08,520
+get us out of this.
+
+327
+00:11:06,839 --> 00:11:10,440
+By that time, we'd already financed half
+
+328
+00:11:08,520 --> 00:11:11,560
+of it on covenant free debt and so
+
+329
+00:11:10,440 --> 00:11:14,320
+forth.
+
+330
+00:11:11,560 --> 00:11:16,320
+And they had all this extra cash
+
+331
+00:11:14,320 --> 00:11:18,360
+and our own stocks got down to selling
+
+332
+00:11:16,320 --> 00:11:19,800
+at an enormous
+
+333
+00:11:18,360 --> 00:11:21,480
+We just in the middle of one of those
+
+334
+00:11:19,800 --> 00:11:23,360
+recessions we just bought and bought and
+
+335
+00:11:21,480 --> 00:11:25,640
+bought and bought.
+
+336
+00:11:23,360 --> 00:11:26,640
+And all that money went back into those
+
+337
+00:11:25,640 --> 00:11:28,000
+stocks.
+
+338
+00:11:26,640 --> 00:11:29,760
+And of course, we tripled it just by
+
+339
+00:11:28,000 --> 00:11:31,960
+sitting on our ass.
+
+340
+00:11:29,760 --> 00:11:34,040
+And that led to Blue Chip
+
+341
+00:11:31,960 --> 00:11:35,960
+Yeah, yeah. It was part of the early
+
+342
+00:11:34,040 --> 00:11:37,080
+success of Blue Chip.
+
+343
+00:11:35,960 --> 00:11:38,720
+Wow.
+
+344
+00:11:37,080 --> 00:11:39,920
+And so, you know, you mentioned Warren
+
+345
+00:11:38,720 --> 00:11:41,880
+doesn't like retail.
+
+346
+00:11:39,920 --> 00:11:43,760
+else that people don't know about. Yeah.
+
+347
+00:11:41,880 --> 00:11:44,960
+We bought a little piss ant savings and
+
+348
+00:11:43,760 --> 00:11:47,120
+loan company
+
+349
+00:11:44,960 --> 00:11:48,040
+for maybe 20 million dollars.
+
+350
+00:11:47,120 --> 00:11:50,720
+And
+
+351
+00:11:48,040 --> 00:11:52,480
+when we left that thing, we had taken
+
+352
+00:11:50,720 --> 00:11:54,560
+out of our little 20 million dollar
+
+353
+00:11:52,480 --> 00:11:56,640
+investment
+
+354
+00:11:54,560 --> 00:11:59,280
+over 2 billion dollars
+
+355
+00:11:56,640 --> 00:12:01,160
+in marketable securities which went into
+
+356
+00:11:59,280 --> 00:12:03,120
+the rescue insurance companies as part
+
+357
+00:12:01,160 --> 00:12:05,400
+of their bedrock capital.
+
+358
+00:12:03,120 --> 00:12:06,520
+So, we we had some wonderful early
+
+359
+00:12:05,400 --> 00:12:07,800
+years.
+
+360
+00:12:06,520 --> 00:12:09,880
+And that's what everybody needs is
+
+361
+00:12:07,800 --> 00:12:10,920
+wonderful early years.
+
+362
+00:12:09,880 --> 00:12:13,520
+Wow.
+
+363
+00:12:10,920 --> 00:12:15,200
+So, in our Costco episode, we started
+
+364
+00:12:13,520 --> 00:12:17,360
+with the joke at one of the Berkshire
+
+365
+00:12:15,200 --> 00:12:19,680
+meetings probably 10 years ago. Warren
+
+366
+00:12:17,360 --> 00:12:22,839
+told the joke about you were on a plane
+
+367
+00:12:19,680 --> 00:12:25,880
+being hijacked and the hijackers gave
+
+368
+00:12:22,839 --> 00:12:27,480
+you one final request and you said you'd
+
+369
+00:12:25,880 --> 00:12:29,280
+like to give your speech on the virtues
+
+370
+00:12:27,480 --> 00:12:31,839
+of me kind of reminding you of me. Yeah,
+
+371
+00:12:29,280 --> 00:12:33,040
+yeah. And he said shoot me first.
+
+372
+00:12:31,839 --> 00:12:34,839
+We were hoping
+
+373
+00:12:33,040 --> 00:12:37,480
+could you give us your speech on the
+
+374
+00:12:34,839 --> 00:12:39,600
+virtues of Costco?
+
+375
+00:12:37,480 --> 00:12:42,360
+No, Warren was kidding me for being so
+
+376
+00:12:39,600 --> 00:12:43,360
+repetitive on the subject.
+
+377
+00:12:42,360 --> 00:12:46,440
+But
+
+378
+00:12:43,360 --> 00:12:48,320
+there aren't many times in a lifetime
+
+379
+00:12:46,440 --> 00:12:49,839
+when you know you're right and you know
+
+380
+00:12:48,320 --> 00:12:51,520
+you have one that's really going to work
+
+381
+00:12:49,839 --> 00:12:53,560
+wonderfully.
+
+382
+00:12:51,520 --> 00:12:56,920
+Maybe five, six times in a lifetime you
+
+383
+00:12:53,560 --> 00:12:59,240
+get a chance to do it. Hm. And
+
+384
+00:12:56,920 --> 00:13:02,040
+people do it two or three times early.
+
+385
+00:12:59,240 --> 00:13:04,880
+All go broke cuz they think it's easy.
+
+386
+00:13:02,040 --> 00:13:06,520
+It's fact, it's very hard and rare.
+
+387
+00:13:04,880 --> 00:13:08,280
+What was it about Costco that made you
+
+388
+00:13:06,520 --> 00:13:10,600
+realize this is one of those few moments
+
+389
+00:13:08,280 --> 00:13:12,560
+in a lifetime? Well,
+
+390
+00:13:10,600 --> 00:13:14,400
+they really did sell cheaper than
+
+391
+00:13:12,560 --> 00:13:17,200
+anybody else in America.
+
+392
+00:13:14,400 --> 00:13:20,080
+And they did it in big efficient stores.
+
+393
+00:13:17,200 --> 00:13:22,720
+And all the parking spaces were
+
+394
+00:13:20,080 --> 00:13:25,440
+10 ft wide instead of
+
+395
+00:13:22,720 --> 00:13:28,440
+8 ft 9 or whatever they normally are.
+
+396
+00:13:25,440 --> 00:13:29,440
+They they did a lot of right.
+
+397
+00:13:28,440 --> 00:13:31,839
+Yeah.
+
+398
+00:13:29,440 --> 00:13:33,880
+And they had a lot of parking spaces.
+
+399
+00:13:31,839 --> 00:13:35,760
+And they kept out of their stores all
+
+400
+00:13:33,880 --> 00:13:36,760
+these people didn't do big volumes, you
+
+401
+00:13:35,760 --> 00:13:38,920
+see.
+
+402
+00:13:36,760 --> 00:13:40,040
+And they gave special benefits to people
+
+403
+00:13:38,920 --> 00:13:42,200
+who did
+
+404
+00:13:40,040 --> 00:13:44,680
+come to the stores in the way of
+
+405
+00:13:42,200 --> 00:13:46,680
+reward points. The executive membership.
+
+406
+00:13:44,680 --> 00:13:48,520
+Yeah.
+
+407
+00:13:46,680 --> 00:13:51,040
+It all worked.
+
+408
+00:13:48,520 --> 00:13:52,640
+And that capital light business model, I
+
+409
+00:13:51,040 --> 00:13:53,440
+mean, when we were studying it, the
+
+410
+00:13:52,640 --> 00:13:55,920
+difference between
+
+411
+00:13:53,440 --> 00:13:57,360
+No, no, no. Price Club No investment in
+
+412
+00:13:55,920 --> 00:13:58,960
+inventory.
+
+413
+00:13:57,360 --> 00:14:00,880
+They make the suppliers wait until
+
+414
+00:13:58,960 --> 00:14:03,080
+they've been paid and then
+
+415
+00:14:00,880 --> 00:14:05,160
+they're scheduled to pay only
+
+416
+00:14:03,080 --> 00:14:08,160
+after they're scheduled to sell. They've
+
+417
+00:14:05,160 --> 00:14:11,240
+got 900 warehouses around the world full
+
+418
+00:14:08,160 --> 00:14:13,440
+of high quality merchandise, none of
+
+419
+00:14:11,240 --> 00:14:14,800
+which they have sitting on their books.
+
+420
+00:14:13,440 --> 00:14:15,839
+That's correct.
+
+421
+00:14:14,800 --> 00:14:18,160
+Yeah.
+
+422
+00:14:15,839 --> 00:14:20,959
+Our understanding is that Price Club
+
+423
+00:14:18,160 --> 00:14:22,240
+went public initially before the merger.
+
+424
+00:14:20,959 --> 00:14:25,400
+They just listed. They didn't raise any
+
+425
+00:14:22,240 --> 00:14:27,280
+capital. They didn't need any capital.
+
+426
+00:14:25,400 --> 00:14:29,280
+Who knows?
+
+427
+00:14:27,280 --> 00:14:30,839
+Sol kind of would like that. He was kind
+
+428
+00:14:29,280 --> 00:14:32,800
+of a financier.
+
+429
+00:14:30,839 --> 00:14:35,280
+Hm. He liked deals. He liked his
+
+430
+00:14:32,800 --> 00:14:37,240
+miscellaneous real estate like Yeah, but
+
+431
+00:14:35,280 --> 00:14:39,400
+it doesn't make sense. You don't want
+
+432
+00:14:37,240 --> 00:14:40,760
+You got an enterprise as big as Costco.
+
+433
+00:14:39,400 --> 00:14:43,200
+You don't want to screw around with your
+
+434
+00:14:40,760 --> 00:14:45,400
+parking lot to get other people
+
+435
+00:14:43,200 --> 00:14:46,959
+to clog up your
+
+436
+00:14:45,400 --> 00:14:49,120
+parking lot permanently and stuff that's
+
+437
+00:14:46,959 --> 00:14:50,880
+not going to pay you very much.
+
+438
+00:14:49,120 --> 00:14:52,240
+Right. You don't want them is the
+
+439
+00:14:50,880 --> 00:14:54,520
+answer.
+
+440
+00:14:52,240 --> 00:14:56,440
+Have you ever seen another business that
+
+441
+00:14:54,520 --> 00:15:00,280
+takes advantage of the virtue of the low
+
+442
+00:14:56,440 --> 00:15:02,600
+SKU count the way that Costco does?
+
+443
+00:15:00,280 --> 00:15:05,600
+Well, if you There are lots of them.
+
+444
+00:15:02,600 --> 00:15:07,760
+That little grocery store chain
+
+445
+00:15:05,600 --> 00:15:10,280
+here in Los Angeles,
+
+446
+00:15:07,760 --> 00:15:12,079
+Gelson's Brothers. Hm.
+
+447
+00:15:10,280 --> 00:15:13,760
+They wanted a high turnover and low
+
+448
+00:15:12,079 --> 00:15:16,079
+capital cost.
+
+449
+00:15:13,760 --> 00:15:17,720
+And they never made the least effort to
+
+450
+00:15:16,079 --> 00:15:20,280
+earn any money or have any They wanted
+
+451
+00:15:17,720 --> 00:15:21,800
+to share their parking lot with anybody.
+
+452
+00:15:20,280 --> 00:15:24,160
+Hm.
+
+453
+00:15:21,800 --> 00:15:27,079
+As you reflect back on, you know, one of
+
+454
+00:15:24,160 --> 00:15:29,680
+these few great companies in a lifetime
+
+455
+00:15:27,079 --> 00:15:32,240
+that you should bet big on, what advice
+
+456
+00:15:29,680 --> 00:15:34,400
+would you have for David and I as young
+
+457
+00:15:32,240 --> 00:15:36,800
+partners looking for a few of these in
+
+458
+00:15:34,400 --> 00:15:38,600
+our lifetime, things to look out for?
+
+459
+00:15:36,800 --> 00:15:41,160
+Well, when you find one, you you may
+
+460
+00:15:38,600 --> 00:15:43,760
+find it five years after you bought it,
+
+461
+00:15:41,160 --> 00:15:46,200
+you know. Hm. These things may work into
+
+462
+00:15:43,760 --> 00:15:48,600
+it or you may your own own understanding
+
+463
+00:15:46,200 --> 00:15:51,079
+may get better.
+
+464
+00:15:48,600 --> 00:15:54,400
+But when you know you have an edge,
+
+465
+00:15:51,079 --> 00:15:57,160
+you should bet heavily.
+
+466
+00:15:54,400 --> 00:15:58,640
+Hm. You know you're right.
+
+467
+00:15:57,160 --> 00:16:01,400
+And most people they don't they don't
+
+468
+00:15:58,640 --> 00:16:04,280
+teach that in business school.
+
+469
+00:16:01,400 --> 00:16:04,280
+It's insane.
+
+470
+00:16:04,839 --> 00:16:07,959
+Of course, you got to bet heavily on
+
+471
+00:16:06,160 --> 00:16:09,839
+your best bets.
+
+472
+00:16:07,959 --> 00:16:12,720
+And how do you develop that level of
+
+473
+00:16:09,839 --> 00:16:14,959
+conviction to know You work at it. You
+
+474
+00:16:12,720 --> 00:16:16,480
+really do a lot of reading and thinking
+
+475
+00:16:14,959 --> 00:16:18,839
+and visiting.
+
+476
+00:16:16,480 --> 00:16:20,440
+I'm curious to we wanted to ask you you
+
+477
+00:16:18,839 --> 00:16:23,600
+you've had this beautiful partnership
+
+478
+00:16:20,440 --> 00:16:25,079
+with Warren for half a century.
+
+479
+00:16:23,600 --> 00:16:26,640
+We're a decade into our partnership.
+
+480
+00:16:25,079 --> 00:16:27,800
+There was there was a lot of low hanging
+
+481
+00:16:26,640 --> 00:16:30,320
+fruit
+
+482
+00:16:27,800 --> 00:16:33,160
+in the early days of our operation.
+
+483
+00:16:30,320 --> 00:16:35,800
+You don't have any low hanging fruit
+
+484
+00:16:33,160 --> 00:16:37,440
+that is easy to recognize.
+
+485
+00:16:35,800 --> 00:16:38,800
+You mean an investment opportunity.
+
+486
+00:16:37,440 --> 00:16:40,880
+Yeah, that's right. But your
+
+487
+00:16:38,800 --> 00:16:41,680
+relationship with Warren, like
+
+488
+00:16:40,880 --> 00:16:43,480
+how have you
+
+489
+00:16:41,680 --> 00:16:45,280
+were all somewhat kind of similar. We
+
+490
+00:16:43,480 --> 00:16:47,920
+both wanted
+
+491
+00:16:45,280 --> 00:16:49,839
+to keep our family safe and
+
+492
+00:16:47,920 --> 00:16:51,000
+take good care of our investors and so
+
+493
+00:16:49,839 --> 00:16:53,839
+on.
+
+494
+00:16:51,000 --> 00:16:56,760
+We had similar attitudes. Yeah.
+
+495
+00:16:53,839 --> 00:16:58,480
+Did it change over the decades?
+
+496
+00:16:56,760 --> 00:17:00,079
+No, Warren still cares more about the
+
+497
+00:16:58,480 --> 00:17:02,160
+safety of his Berkshire shareholders
+
+498
+00:17:00,079 --> 00:17:04,199
+than he cares about anything else.
+
+499
+00:17:02,160 --> 00:17:05,400
+If we used a little bit more leverage
+
+500
+00:17:04,199 --> 00:17:08,199
+throughout,
+
+501
+00:17:05,400 --> 00:17:10,040
+we'd have three times as much now.
+
+502
+00:17:08,199 --> 00:17:11,880
+And it wouldn't have been that much more
+
+503
+00:17:10,040 --> 00:17:13,560
+risk, either.
+
+504
+00:17:11,880 --> 00:17:17,000
+And we just do We never wanted to give
+
+505
+00:17:13,560 --> 00:17:18,800
+them any least chance of us
+
+506
+00:17:17,000 --> 00:17:20,120
+screwing up our basic shareholder
+
+507
+00:17:18,800 --> 00:17:21,959
+position.
+
+508
+00:17:20,120 --> 00:17:23,400
+If you had used more leverage, do you
+
+509
+00:17:21,959 --> 00:17:24,439
+think there's some chance that
+
+510
+00:17:23,400 --> 00:17:25,400
+We would have done a little better,
+
+511
+00:17:24,439 --> 00:17:26,679
+sure.
+
+512
+00:17:25,400 --> 00:17:28,079
+Do you think there's some chance that it
+
+513
+00:17:26,679 --> 00:17:30,800
+wouldn't exist at all, that it would
+
+514
+00:17:28,079 --> 00:17:33,200
+have cost you the franchise?
+
+515
+00:17:30,800 --> 00:17:35,360
+No, I think it would have worked fine.
+
+516
+00:17:33,200 --> 00:17:37,760
+Hm. Does Warren think that? He's He
+
+517
+00:17:35,360 --> 00:17:40,080
+The situation lent itself to
+
+518
+00:17:37,760 --> 00:17:41,240
+if you were intelligent to just milk it
+
+519
+00:17:40,080 --> 00:17:43,679
+out.
+
+520
+00:17:41,240 --> 00:17:45,480
+When you leverage, I'm so curious on
+
+521
+00:17:43,679 --> 00:17:47,600
+after we did our It's automatically
+
+522
+00:17:45,480 --> 00:17:49,120
+leveraged. You go into a new store with
+
+523
+00:17:47,600 --> 00:17:51,720
+no capital.
+
+524
+00:17:49,120 --> 00:17:53,920
+Of course, it's leveraged.
+
+525
+00:17:51,720 --> 00:17:55,880
+Who wouldn't want a business with
+
+526
+00:17:53,920 --> 00:17:57,360
+with no inventories?
+
+527
+00:17:55,880 --> 00:17:59,120
+Right, that's a good point. By the
+
+528
+00:17:57,360 --> 00:18:01,920
+virtue of you owe a whole bunch of
+
+529
+00:17:59,120 --> 00:18:02,320
+people money on day one for these goods
+
+530
+00:18:01,920 --> 00:18:04,760
+that
+
+531
+00:18:02,320 --> 00:18:06,600
+Which is which turnovers are rapidly.
+
+532
+00:18:04,760 --> 00:18:10,240
+Right. It's interesting. I mean, that's
+
+533
+00:18:06,600 --> 00:18:11,360
+leverage. It's not debt leverage.
+
+534
+00:18:10,240 --> 00:18:13,320
+I mean, how do you think about debt?
+
+535
+00:18:11,360 --> 00:18:15,000
+Like after we did our Berkshire series A
+
+536
+00:18:13,320 --> 00:18:16,320
+lot of people don't know A lot of people
+
+537
+00:18:15,000 --> 00:18:17,320
+now do it
+
+538
+00:18:16,320 --> 00:18:19,000
+who
+
+539
+00:18:17,320 --> 00:18:21,160
+manage extra something.
+
+540
+00:18:19,000 --> 00:18:23,960
+They're just terribly strong.
+
+541
+00:18:21,160 --> 00:18:26,360
+And they're just forcing the suppliers
+
+542
+00:18:23,960 --> 00:18:29,040
+to carry all the inventory.
+
+543
+00:18:26,360 --> 00:18:31,120
+Isn't like we're the only ones to do it.
+
+544
+00:18:29,040 --> 00:18:33,000
+Back to the point on partnership. David
+
+545
+00:18:31,120 --> 00:18:35,000
+and I are coming up on 10 years as
+
+546
+00:18:33,000 --> 00:18:36,560
+partners in this podcast we do together.
+
+547
+00:18:35,000 --> 00:18:39,840
+Different than the investing business,
+
+548
+00:18:36,560 --> 00:18:42,280
+but a compounding one nonetheless. After
+
+549
+00:18:39,840 --> 00:18:43,640
+a 50 year partnership with Warren, what
+
+550
+00:18:42,280 --> 00:18:45,520
+advice would you have for us
+
+551
+00:18:43,640 --> 00:18:47,679
+interpersonally to make for a an
+
+552
+00:18:45,520 --> 00:18:50,240
+enduring partnership?
+
+553
+00:18:47,679 --> 00:18:50,240
+Well,
+
+554
+00:18:50,800 --> 00:18:56,159
+it helps if you like one another and
+
+555
+00:18:52,679 --> 00:18:58,000
+enjoy working together. We do. Yeah.
+
+556
+00:18:56,159 --> 00:19:00,200
+But
+
+557
+00:18:58,000 --> 00:19:01,880
+I don't think there's any one formula.
+
+558
+00:19:00,200 --> 00:19:04,280
+A lot of partnerships that work well for
+
+559
+00:19:01,880 --> 00:19:06,480
+a long time happen cuz one's good at one
+
+560
+00:19:04,280 --> 00:19:09,040
+thing and one's good at another.
+
+561
+00:19:06,480 --> 00:19:12,679
+And they just naturally divide it.
+
+562
+00:19:09,040 --> 00:19:14,960
+And each one likes what he's doing.
+
+563
+00:19:12,679 --> 00:19:17,400
+Now, in Costco's case, they had Jeff
+
+564
+00:19:14,960 --> 00:19:18,640
+Brotman who's very smart, but not a
+
+565
+00:19:17,400 --> 00:19:20,480
+retailer.
+
+566
+00:19:18,640 --> 00:19:21,480
+And Jim Sinegal, well, they divided it
+
+567
+00:19:20,480 --> 00:19:23,200
+up.
+
+568
+00:19:21,480 --> 00:19:25,480
+And they had originally agreed that
+
+569
+00:19:23,200 --> 00:19:27,000
+Brotman would be the chairman and CEO
+
+570
+00:19:25,480 --> 00:19:28,320
+cuz he was his idea. He founded the
+
+571
+00:19:27,000 --> 00:19:30,760
+whole thing.
+
+572
+00:19:28,320 --> 00:19:33,320
+But Sinegal said, "No, I have to be the
+
+573
+00:19:30,760 --> 00:19:35,640
+CEO."
+
+574
+00:19:33,320 --> 00:19:39,360
+So, there was a big unfortunate board
+
+575
+00:19:35,640 --> 00:19:41,760
+meeting and a big internal struggle.
+
+576
+00:19:39,360 --> 00:19:43,720
+And Brotman moved aside.
+
+577
+00:19:41,760 --> 00:19:46,240
+Was that after you joined the board?
+
+578
+00:19:43,720 --> 00:19:47,840
+No, before.
+
+579
+00:19:46,240 --> 00:19:50,080
+Do you think you and Warren not living
+
+580
+00:19:47,840 --> 00:19:52,000
+in the same city helped your partnership
+
+581
+00:19:50,080 --> 00:19:55,400
+last so long?
+
+582
+00:19:52,000 --> 00:19:57,480
+Well, it may have helped.
+
+583
+00:19:55,400 --> 00:19:58,880
+But Warren has very close relations with
+
+584
+00:19:57,480 --> 00:20:00,680
+all those people
+
+585
+00:19:58,880 --> 00:20:02,720
+that have
+
+586
+00:20:00,680 --> 00:20:04,480
+lunch every Saturday
+
+587
+00:20:02,720 --> 00:20:06,000
+at Berkshire headquarters. It isn't like
+
+588
+00:20:04,480 --> 00:20:07,720
+he doesn't have a
+
+589
+00:20:06,000 --> 00:20:11,400
+little coterie of people there who are
+
+590
+00:20:07,720 --> 00:20:12,840
+kind of fellows from the ground up.
+
+591
+00:20:11,400 --> 00:20:15,280
+Do you think it helps that when you do
+
+592
+00:20:12,840 --> 00:20:19,160
+spend the time together, it's special
+
+593
+00:20:15,280 --> 00:20:19,160
+rather than being common?
+
+594
+00:20:19,280 --> 00:20:21,920
+Well, of course we used to spend a lot
+
+595
+00:20:20,720 --> 00:20:24,880
+of time together when we were young cuz
+
+596
+00:20:21,920 --> 00:20:26,960
+we didn't have that much to do.
+
+597
+00:20:24,880 --> 00:20:29,280
+Now we've got more to do and then but
+
+598
+00:20:26,960 --> 00:20:30,640
+then it's just the other minutiae of
+
+599
+00:20:29,280 --> 00:20:31,840
+life.
+
+600
+00:20:30,640 --> 00:20:34,680
+So
+
+601
+00:20:31,840 --> 00:20:37,360
+it's different. Yeah.
+
+602
+00:20:34,680 --> 00:20:39,080
+It's funny. I feel like we have a lot to
+
+603
+00:20:37,360 --> 00:20:40,520
+do now but
+
+604
+00:20:39,080 --> 00:20:43,200
+Well, of course you do. It's really
+
+605
+00:20:40,520 --> 00:20:45,320
+difficult to invest money well.
+
+606
+00:20:43,200 --> 00:20:46,400
+And I think it's all but impossible to
+
+607
+00:20:45,320 --> 00:20:48,040
+do
+
+608
+00:20:46,400 --> 00:20:49,080
+time after time after time in venture
+
+609
+00:20:48,040 --> 00:20:51,320
+capital.
+
+610
+00:20:49,080 --> 00:20:52,160
+Yeah, we really wanted to ask you your
+
+611
+00:20:51,320 --> 00:20:54,440
+thoughts on venture capital.
+
+612
+00:20:52,160 --> 00:20:55,760
+get so hot and you have to decide so
+
+613
+00:20:54,440 --> 00:20:59,560
+quickly
+
+614
+00:20:55,760 --> 00:20:59,560
+that you're all just sort of gambling.
+
+615
+00:20:59,920 --> 00:21:04,240
+Do you think the role of venture capital
+
+616
+00:21:02,320 --> 00:21:06,600
+is being properly accomplished in
+
+617
+00:21:04,240 --> 00:21:08,000
+society? No, I think it's very poorly
+
+618
+00:21:06,600 --> 00:21:09,680
+done.
+
+619
+00:21:08,000 --> 00:21:11,480
+Charlie elaborated on this point with a
+
+620
+00:21:09,680 --> 00:21:13,960
+few things that we can't air but the
+
+621
+00:21:11,480 --> 00:21:15,760
+topic did turn to Bitcoin.
+
+622
+00:21:13,960 --> 00:21:17,880
+I've heard many comments you've made on
+
+623
+00:21:15,760 --> 00:21:20,000
+Bitcoin. I'm curious if you have a
+
+624
+00:21:17,880 --> 00:21:22,280
+thought on this particular angle. An
+
+625
+00:21:20,000 --> 00:21:23,760
+easy way to transfer money in between
+
+626
+00:21:22,280 --> 00:21:25,880
+countries especially when those
+
+627
+00:21:23,760 --> 00:21:28,600
+countries don't have a stable store of
+
+628
+00:21:25,880 --> 00:21:31,040
+value within that country. Is it good to
+
+629
+00:21:28,600 --> 00:21:32,400
+have an independent store of value that
+
+630
+00:21:31,040 --> 00:21:34,120
+is not pegged to a national currency?
+
+631
+00:21:32,400 --> 00:21:36,360
+for the world
+
+632
+00:21:34,120 --> 00:21:38,360
+as a whole to have a way of
+
+633
+00:21:36,360 --> 00:21:40,760
+having some currency.
+
+634
+00:21:38,360 --> 00:21:42,480
+The way that was solved is
+
+635
+00:21:40,760 --> 00:21:44,560
+for a long time the British pound was
+
+636
+00:21:42,480 --> 00:21:46,760
+the national currency of the
+
+637
+00:21:44,560 --> 00:21:48,560
+investment world. Then it shifted to the
+
+638
+00:21:46,760 --> 00:21:51,160
+dollar.
+
+639
+00:21:48,560 --> 00:21:53,240
+And it's still the dollar.
+
+640
+00:21:51,160 --> 00:21:55,280
+Yep. And people like China have these
+
+641
+00:21:53,240 --> 00:21:57,680
+enormous reserves of dollars.
+
+642
+00:21:55,280 --> 00:21:59,120
+You know, the money we make by
+
+643
+00:21:57,680 --> 00:22:00,880
+think of the
+
+644
+00:21:59,120 --> 00:22:02,640
+money people give us where we always
+
+645
+00:22:00,880 --> 00:22:04,000
+just print up these
+
+646
+00:22:02,640 --> 00:22:06,960
+pieces of paper.
+
+647
+00:22:04,000 --> 00:22:08,640
+Yep. And what about the common person in
+
+648
+00:22:06,960 --> 00:22:12,160
+some of these less fortunate countries
+
+649
+00:22:08,640 --> 00:22:13,640
+who don't have access to US dollars?
+
+650
+00:22:12,160 --> 00:22:15,960
+Oh,
+
+651
+00:22:13,640 --> 00:22:17,360
+they do it they are getting your money.
+
+652
+00:22:15,960 --> 00:22:19,280
+The dollar is very fungible. You can
+
+653
+00:22:17,360 --> 00:22:20,880
+always buy one in
+
+654
+00:22:19,280 --> 00:22:22,920
+anywhere.
+
+655
+00:22:20,880 --> 00:22:24,320
+I'm curious back to this point of
+
+656
+00:22:22,920 --> 00:22:26,679
+the role of venture capital in a
+
+657
+00:22:24,320 --> 00:22:29,160
+society. If you could design a perfect
+
+658
+00:22:26,679 --> 00:22:30,520
+system Well, I think it's a legitimate
+
+659
+00:22:29,160 --> 00:22:32,400
+business.
+
+660
+00:22:30,520 --> 00:22:34,480
+If you do it right.
+
+661
+00:22:32,400 --> 00:22:35,760
+If you want to give the right people the
+
+662
+00:22:34,480 --> 00:22:37,760
+power and
+
+663
+00:22:35,760 --> 00:22:39,880
+nurture them, help them.
+
+664
+00:22:37,760 --> 00:22:41,760
+And you know a lot about the tricks of
+
+665
+00:22:39,880 --> 00:22:43,600
+the game so you can help them
+
+666
+00:22:41,760 --> 00:22:46,080
+run their business yet not interfere
+
+667
+00:22:43,600 --> 00:22:48,480
+with them so much they hate you.
+
+668
+00:22:46,080 --> 00:22:50,080
+By and large, having
+
+669
+00:22:48,480 --> 00:22:51,640
+bumped into a lot of people in the
+
+670
+00:22:50,080 --> 00:22:54,040
+businesses
+
+671
+00:22:51,640 --> 00:22:55,880
+with venture capital financing,
+
+672
+00:22:54,040 --> 00:22:59,080
+I would say the ordinary rule is that
+
+673
+00:22:55,880 --> 00:23:00,640
+people in the business doing the work,
+
+674
+00:22:59,080 --> 00:23:01,840
+they more than not they hate the venture
+
+675
+00:23:00,640 --> 00:23:03,679
+capitalists.
+
+676
+00:23:01,840 --> 00:23:06,120
+They don't feel they're really their
+
+677
+00:23:03,679 --> 00:23:07,520
+partner trying to help them become They
+
+678
+00:23:06,120 --> 00:23:09,240
+they're only taking care of themselves
+
+679
+00:23:07,520 --> 00:23:11,560
+and so on and so on. And they don't like
+
+680
+00:23:09,240 --> 00:23:13,760
+them. How could it work differently?
+
+681
+00:23:11,560 --> 00:23:15,240
+Yeah, well, I I but that's not true in
+
+682
+00:23:13,760 --> 00:23:16,920
+Berkshire.
+
+683
+00:23:15,240 --> 00:23:18,280
+You see, our people way they know we're
+
+684
+00:23:16,920 --> 00:23:19,640
+not trying to discard them to the
+
+685
+00:23:18,280 --> 00:23:22,840
+highest bid.
+
+686
+00:23:19,640 --> 00:23:25,120
+See, if some investment banker offers us
+
+687
+00:23:22,840 --> 00:23:26,480
+20 times earnings or some
+
+688
+00:23:25,120 --> 00:23:27,880
+lousy business,
+
+689
+00:23:26,480 --> 00:23:29,600
+we don't sell.
+
+690
+00:23:27,880 --> 00:23:31,320
+Hm. If it's a problem business we've
+
+691
+00:23:29,600 --> 00:23:33,280
+never been able to fix,
+
+692
+00:23:31,320 --> 00:23:35,520
+we'll sell it but if they have a decent
+
+693
+00:23:33,280 --> 00:23:37,200
+business, we never sell anything.
+
+694
+00:23:35,520 --> 00:23:38,800
+And that gives us this reputation of
+
+695
+00:23:37,200 --> 00:23:40,280
+staying with things
+
+696
+00:23:38,800 --> 00:23:43,280
+which helps us.
+
+697
+00:23:40,280 --> 00:23:46,360
+And do you think that buy and hold not
+
+698
+00:23:43,280 --> 00:23:49,520
+only mentality but demonstration is the
+
+699
+00:23:46,360 --> 00:23:52,120
+key thing that aligns investors with
+
+700
+00:23:49,520 --> 00:23:54,960
+managers?
+
+701
+00:23:52,120 --> 00:23:56,600
+Well, it's rare, you see.
+
+702
+00:23:54,960 --> 00:23:57,920
+Everybody else has a standard way of
+
+703
+00:23:56,600 --> 00:24:00,480
+doing things.
+
+704
+00:23:57,920 --> 00:24:02,360
+The lawyers have their standard forms.
+
+705
+00:24:00,480 --> 00:24:03,320
+And everybody just has the same standard
+
+706
+00:24:02,360 --> 00:24:05,640
+form.
+
+707
+00:24:03,320 --> 00:24:08,400
+And they get the same standard results
+
+708
+00:24:05,640 --> 00:24:10,000
+subject to the vicissitudes of
+
+709
+00:24:08,400 --> 00:24:11,560
+investment life.
+
+710
+00:24:10,000 --> 00:24:13,040
+You don't want to make money by screwing
+
+711
+00:24:11,560 --> 00:24:14,480
+your investors.
+
+712
+00:24:13,040 --> 00:24:16,440
+And that's what a lot of venture
+
+713
+00:24:14,480 --> 00:24:18,960
+capitalists do. The world is full of
+
+714
+00:24:16,440 --> 00:24:20,560
+ex-GE, Goldman's ex-partners that formed
+
+715
+00:24:18,960 --> 00:24:21,960
+a private fund.
+
+716
+00:24:20,560 --> 00:24:23,400
+And they manage a billion dollars or
+
+717
+00:24:21,960 --> 00:24:24,600
+something like that.
+
+718
+00:24:23,400 --> 00:24:27,560
+And
+
+719
+00:24:24,600 --> 00:24:28,880
+they charge two points off the top plus
+
+720
+00:24:27,560 --> 00:24:30,720
+the split fee.
+
+721
+00:24:28,880 --> 00:24:32,840
+And that enables them to make very
+
+722
+00:24:30,720 --> 00:24:34,520
+handsome livings themselves
+
+723
+00:24:32,840 --> 00:24:36,360
+but the endowments are not getting a
+
+724
+00:24:34,520 --> 00:24:38,200
+good return.
+
+725
+00:24:36,360 --> 00:24:40,560
+And do you think it's specifically the
+
+726
+00:24:38,200 --> 00:24:41,560
+fee aspect of fund structures?
+
+727
+00:24:40,560 --> 00:24:42,840
+of the way it is. It's just the way it
+
+728
+00:24:41,560 --> 00:24:45,360
+works.
+
+729
+00:24:42,840 --> 00:24:47,160
+And of course
+
+730
+00:24:45,360 --> 00:24:48,760
+you really shouldn't be in the business
+
+731
+00:24:47,160 --> 00:24:50,600
+of charging extra
+
+732
+00:24:48,760 --> 00:24:52,880
+unless you really are going to achieve
+
+733
+00:24:50,600 --> 00:24:54,960
+very unusual results.
+
+734
+00:24:52,880 --> 00:24:57,640
+And of course it's more
+
+735
+00:24:54,960 --> 00:24:59,600
+easy to
+
+736
+00:24:57,640 --> 00:25:02,160
+pretend that you can get good results
+
+737
+00:24:59,600 --> 00:25:05,280
+than it is actually get them.
+
+738
+00:25:02,160 --> 00:25:06,880
+And so it attracts the wrong people.
+
+739
+00:25:05,280 --> 00:25:07,800
+People with investment capital turn of
+
+740
+00:25:06,880 --> 00:25:09,240
+mind.
+
+741
+00:25:07,800 --> 00:25:10,880
+And the people who make the most money
+
+742
+00:25:09,240 --> 00:25:12,400
+out of venture capital
+
+743
+00:25:10,880 --> 00:25:14,040
+are a lot like investment bankers
+
+744
+00:25:12,400 --> 00:25:15,480
+deciding which hot new area they're
+
+745
+00:25:14,040 --> 00:25:17,720
+going to get in.
+
+746
+00:25:15,480 --> 00:25:19,360
+They're not great investors or great at
+
+747
+00:25:17,720 --> 00:25:21,040
+anything.
+
+748
+00:25:19,360 --> 00:25:22,679
+What do you think
+
+749
+00:25:21,040 --> 00:25:24,720
+endowments and large pools of capital
+
+750
+00:25:22,679 --> 00:25:26,640
+should do then? Well, they're starting
+
+751
+00:25:24,720 --> 00:25:28,400
+to do it. The endowments have started to
+
+752
+00:25:26,640 --> 00:25:29,960
+say to the
+
+753
+00:25:28,400 --> 00:25:31,560
+all these people
+
+754
+00:25:29,960 --> 00:25:34,240
+that charge
+
+755
+00:25:31,560 --> 00:25:35,440
+three and 30 or whatever they charge,
+
+756
+00:25:34,240 --> 00:25:37,360
+they said,
+
+757
+00:25:35,440 --> 00:25:38,679
+"We'll pay your three and 30
+
+758
+00:25:37,360 --> 00:25:40,840
+but we're going to put in twice as much
+
+759
+00:25:38,679 --> 00:25:43,200
+money in the next half you'll get
+
+760
+00:25:40,840 --> 00:25:44,480
+nothing on it. We're just going to write
+
+761
+00:25:43,200 --> 00:25:45,800
+Perry passive on some of your
+
+762
+00:25:44,480 --> 00:25:48,400
+investments."
+
+763
+00:25:45,800 --> 00:25:51,880
+So the fees go down by 50%.
+
+764
+00:25:48,400 --> 00:25:54,080
+That'll take a lot of the fun out of it.
+
+765
+00:25:51,880 --> 00:25:56,880
+Fees down 50%.
+
+766
+00:25:54,080 --> 00:25:58,280
+And that's happening all over America.
+
+767
+00:25:56,880 --> 00:26:00,520
+They feel
+
+768
+00:25:58,280 --> 00:26:02,880
+had, misled,
+
+769
+00:26:00,520 --> 00:26:04,160
+irritated.
+
+770
+00:26:02,880 --> 00:26:06,040
+They've looked foolish to their own
+
+771
+00:26:04,160 --> 00:26:07,960
+trustees.
+
+772
+00:26:06,040 --> 00:26:09,400
+One of the issues I think in investing
+
+773
+00:26:07,960 --> 00:26:10,440
+right now, you mentioned it about
+
+774
+00:26:09,400 --> 00:26:11,880
+venture capital but I think it's true
+
+775
+00:26:10,440 --> 00:26:14,880
+everywhere. It's like there's just so
+
+776
+00:26:11,880 --> 00:26:17,560
+much capital and so much competition.
+
+777
+00:26:14,880 --> 00:26:18,560
+We're so far removed from the cigar butt
+
+778
+00:26:17,560 --> 00:26:20,000
+era.
+
+779
+00:26:18,560 --> 00:26:21,640
+We're in the opposite of the cigar butt
+
+780
+00:26:20,000 --> 00:26:23,760
+era these days.
+
+781
+00:26:21,640 --> 00:26:25,560
+Are there opportunities out there?
+
+782
+00:26:23,760 --> 00:26:28,760
+will find a few things.
+
+783
+00:26:25,560 --> 00:26:31,560
+But it gets harder and harder.
+
+784
+00:26:28,760 --> 00:26:33,160
+I would argue one of the easiest ones
+
+785
+00:26:31,560 --> 00:26:35,360
+was when
+
+786
+00:26:33,160 --> 00:26:38,520
+they decided a little group around Home
+
+787
+00:26:35,360 --> 00:26:40,840
+Depot they would copy the Costco model
+
+788
+00:26:38,520 --> 00:26:43,160
+in home improvements.
+
+789
+00:26:40,840 --> 00:26:44,640
+That was basically a good idea.
+
+790
+00:26:43,160 --> 00:26:45,760
+And think of the money they made doing
+
+791
+00:26:44,640 --> 00:26:46,920
+it.
+
+792
+00:26:45,760 --> 00:26:50,240
+Yeah.
+
+793
+00:26:46,920 --> 00:26:53,120
+Bernie Marcus. Yeah.
+
+794
+00:26:50,240 --> 00:26:53,920
+It was a direct copy of Costco.
+
+795
+00:26:53,120 --> 00:26:56,160
+Do you think there are more
+
+796
+00:26:53,920 --> 00:26:59,120
+opportunities to copy Costco?
+
+797
+00:26:56,160 --> 00:27:01,200
+There was another one at Costco.
+
+798
+00:26:59,120 --> 00:27:04,360
+Floor and Decor
+
+799
+00:27:01,200 --> 00:27:07,240
+is the current imitator.
+
+800
+00:27:04,360 --> 00:27:09,400
+And it's just this in vinyl wood
+
+801
+00:27:07,240 --> 00:27:11,320
+imitating vinyl flooring
+
+802
+00:27:09,400 --> 00:27:12,360
+that they're running a Costco model.
+
+803
+00:27:11,320 --> 00:27:13,960
+Huh.
+
+804
+00:27:12,360 --> 00:27:15,440
+And they keep adding miscellaneous stuff
+
+805
+00:27:13,960 --> 00:27:16,600
+to it, too.
+
+806
+00:27:15,440 --> 00:27:19,240
+It's the miscellaneous stuff that'll
+
+807
+00:27:16,600 --> 00:27:20,200
+eventually kill you, though.
+
+808
+00:27:19,240 --> 00:27:24,080
+Well,
+
+809
+00:27:20,200 --> 00:27:26,080
+it'll be simpler if it was all flooring.
+
+810
+00:27:24,080 --> 00:27:28,679
+Yeah, it's just like the vertical Home
+
+811
+00:27:26,080 --> 00:27:30,640
+Depot worked so well.
+
+812
+00:27:28,679 --> 00:27:32,320
+But it I don't know that it was totally
+
+813
+00:27:30,640 --> 00:27:35,320
+obvious. Like part of the appeal of
+
+814
+00:27:32,320 --> 00:27:37,320
+Costco was it was horizontal. It was
+
+815
+00:27:35,320 --> 00:27:38,679
+everything. Consumers could come, they
+
+816
+00:27:37,320 --> 00:27:40,040
+could make a trip, bring their big
+
+817
+00:27:38,679 --> 00:27:42,880
+wagon, bring their big truck.
+
+818
+00:27:40,040 --> 00:27:44,840
+Home Depot is the same.
+
+819
+00:27:42,880 --> 00:27:46,240
+They copied everything.
+
+820
+00:27:44,840 --> 00:27:48,040
+And famously Bernie Marcus came out to
+
+821
+00:27:46,240 --> 00:27:50,520
+visit Sol before he started. Yeah.
+
+822
+00:27:48,040 --> 00:27:53,280
+they came out they copied everything.
+
+823
+00:27:50,520 --> 00:27:54,720
+Sol was like happy to share the playbook
+
+824
+00:27:53,280 --> 00:27:56,360
+with everybody, right? How did Jim and
+
+825
+00:27:54,720 --> 00:27:59,120
+you feel about that?
+
+826
+00:27:56,360 --> 00:28:00,320
+Sol was a not a crazy he
+
+827
+00:27:59,120 --> 00:28:03,880
+he was
+
+828
+00:28:00,320 --> 00:28:06,760
+domineering and so on.
+
+829
+00:28:03,880 --> 00:28:08,840
+But he was also very intelligent.
+
+830
+00:28:06,760 --> 00:28:11,360
+Hm.
+
+831
+00:28:08,840 --> 00:28:13,120
+But there aren't many opportunities like
+
+832
+00:28:11,360 --> 00:28:15,200
+Home Depot and
+
+833
+00:28:13,120 --> 00:28:17,080
+Costco. There aren't very many.
+
+834
+00:28:15,200 --> 00:28:20,080
+Why do you think Walmart hasn't been
+
+835
+00:28:17,080 --> 00:28:22,200
+successful once they saw Costco in
+
+836
+00:28:20,080 --> 00:28:24,000
+competing?
+
+837
+00:28:22,200 --> 00:28:26,560
+They were too wedded by the ideas they
+
+838
+00:28:24,000 --> 00:28:28,200
+already had. That's everybody's trouble.
+
+839
+00:28:26,560 --> 00:28:30,040
+They just can't accept a new idea cuz
+
+840
+00:28:28,200 --> 00:28:31,919
+the play space is occupied by an old
+
+841
+00:28:30,040 --> 00:28:33,280
+idea.
+
+842
+00:28:31,919 --> 00:28:34,679
+They got in the habit of getting the
+
+843
+00:28:33,280 --> 00:28:36,360
+real estate for like giving it nothing
+
+844
+00:28:34,679 --> 00:28:38,159
+cuz they were in any little towns where
+
+845
+00:28:36,360 --> 00:28:39,840
+nothing was valuable.
+
+846
+00:28:38,159 --> 00:28:41,440
+So their always their occupancy costs
+
+847
+00:28:39,840 --> 00:28:44,040
+were like zero. And they knew how to
+
+848
+00:28:41,440 --> 00:28:46,120
+make big division stores.
+
+849
+00:28:44,040 --> 00:28:48,159
+That was their formula.
+
+850
+00:28:46,120 --> 00:28:49,800
+So it offended them to go against the
+
+851
+00:28:48,159 --> 00:28:51,280
+rich suburbs and have to pay up for the
+
+852
+00:28:49,800 --> 00:28:53,480
+good locations.
+
+853
+00:28:51,280 --> 00:28:56,240
+And Costco just specialized in the good
+
+854
+00:28:53,480 --> 00:28:57,960
+locations where the rich people lived.
+
+855
+00:28:56,240 --> 00:29:00,400
+And Walmart just let them do it year
+
+856
+00:28:57,960 --> 00:29:02,640
+after year. It was a terrible mistake.
+
+857
+00:29:00,400 --> 00:29:04,240
+Did you know Sam?
+
+858
+00:29:02,640 --> 00:29:06,480
+Walton?
+
+859
+00:29:04,240 --> 00:29:09,440
+No, never met him.
+
+860
+00:29:06,480 --> 00:29:10,720
+I knew the son, one of the sons.
+
+861
+00:29:09,440 --> 00:29:12,200
+And
+
+862
+00:29:10,720 --> 00:29:14,400
+they divided it up, you know, in about
+
+863
+00:29:12,200 --> 00:29:15,040
+six parts very early. Yeah, Walton
+
+864
+00:29:14,400 --> 00:29:16,960
+Enterprises.
+
+865
+00:29:15,040 --> 00:29:18,520
+So they had never paid much gift taxes
+
+866
+00:29:16,960 --> 00:29:20,600
+or anything.
+
+867
+00:29:18,520 --> 00:29:23,280
+The topic then turned to the auto makers
+
+868
+00:29:20,600 --> 00:29:25,120
+and the future of the car industry.
+
+869
+00:29:23,280 --> 00:29:26,600
+Look at how hard it would be
+
+870
+00:29:25,120 --> 00:29:29,520
+to go into the auto business and have
+
+871
+00:29:26,600 --> 00:29:31,400
+some big killing.
+
+872
+00:29:29,520 --> 00:29:32,919
+Who's going to win?
+
+873
+00:29:31,400 --> 00:29:34,280
+Who knows?
+
+874
+00:29:32,919 --> 00:29:36,800
+The whole thing's been thrown way up in
+
+875
+00:29:34,280 --> 00:29:39,640
+the air by all these electric cars.
+
+876
+00:29:36,800 --> 00:29:42,560
+All these big new capital requirements,
+
+877
+00:29:39,640 --> 00:29:45,800
+different ways of selling cars.
+
+878
+00:29:42,560 --> 00:29:47,000
+And plus they got these tough unions.
+
+879
+00:29:45,800 --> 00:29:48,680
+See, I just don't even look at auto
+
+880
+00:29:47,000 --> 00:29:50,520
+industry.
+
+881
+00:29:48,680 --> 00:29:52,480
+Do you think it's more investable today
+
+882
+00:29:50,520 --> 00:29:55,360
+than it was 50 years ago because of the
+
+883
+00:29:52,480 --> 00:29:58,240
+disruptive innovation of electric?
+
+884
+00:29:55,360 --> 00:30:01,600
+Well, for maybe for one or two
+
+885
+00:29:58,240 --> 00:30:03,000
+electric cars that are really good at
+
+886
+00:30:01,600 --> 00:30:05,400
+maybe.
+
+887
+00:30:03,000 --> 00:30:06,680
+But certainly nobody else.
+
+888
+00:30:05,400 --> 00:30:07,880
+So you think BYD is too
+
+889
+00:30:06,680 --> 00:30:10,120
+tough.
+
+890
+00:30:07,880 --> 00:30:12,760
+BYD was a miracle.
+
+891
+00:30:10,120 --> 00:30:15,320
+But that guy works 70 hours a week and
+
+892
+00:30:12,760 --> 00:30:17,440
+has a very high IQ. He can do things you
+
+893
+00:30:15,320 --> 00:30:18,920
+can't do. He can look at somebody else's
+
+894
+00:30:17,440 --> 00:30:20,680
+auto part and he can figure out how to
+
+895
+00:30:18,920 --> 00:30:22,600
+make the god damn thing.
+
+896
+00:30:20,680 --> 00:30:25,200
+You can't do that, you see. Charlie, you
+
+897
+00:30:22,600 --> 00:30:27,880
+invested in Hyundai.
+
+898
+00:30:25,200 --> 00:30:29,960
+Yes, but they're they're clever, too.
+
+899
+00:30:27,880 --> 00:30:31,440
+How was that investment for you?
+
+900
+00:30:29,960 --> 00:30:33,600
+I lost money.
+
+901
+00:30:31,440 --> 00:30:35,520
+Not much because I was stubborn. I held
+
+902
+00:30:33,600 --> 00:30:37,360
+out until it got back to almost where I
+
+903
+00:30:35,520 --> 00:30:39,040
+paid for it and then I sold it.
+
+904
+00:30:37,360 --> 00:30:40,800
+There's been a lot of discussion about
+
+905
+00:30:39,040 --> 00:30:44,480
+Berkshire's investments in the Japanese
+
+906
+00:30:40,800 --> 00:30:47,800
+trading houses. Well,
+
+907
+00:30:44,480 --> 00:30:50,240
+but that is a no-brainer.
+
+908
+00:30:47,800 --> 00:30:52,880
+Something like that
+
+909
+00:30:50,240 --> 00:30:55,800
+if you're as smart as Warren Buffett
+
+910
+00:30:52,880 --> 00:30:58,160
+maybe two three times a century
+
+911
+00:30:55,800 --> 00:30:59,960
+you get an idea like that. The interest
+
+912
+00:30:58,160 --> 00:31:02,640
+rates in Japan were half a percent per
+
+913
+00:30:59,960 --> 00:31:03,920
+year for 10 years.
+
+914
+00:31:02,640 --> 00:31:05,760
+And
+
+915
+00:31:03,920 --> 00:31:07,800
+these trading companies were really
+
+916
+00:31:05,760 --> 00:31:09,720
+entrenched old companies.
+
+917
+00:31:07,800 --> 00:31:12,440
+And they had all these cheap copper
+
+918
+00:31:09,720 --> 00:31:13,480
+mines and rubber plantations. And so you
+
+919
+00:31:12,440 --> 00:31:16,200
+could
+
+920
+00:31:13,480 --> 00:31:17,600
+borrow for 10 years
+
+921
+00:31:16,200 --> 00:31:18,960
+ahead
+
+922
+00:31:17,600 --> 00:31:22,000
+all the money and you could buy the
+
+923
+00:31:18,960 --> 00:31:25,080
+stocks and the stocks paid 5% dividends.
+
+924
+00:31:22,000 --> 00:31:27,000
+So you had a huge flow of cash
+
+925
+00:31:25,080 --> 00:31:28,160
+with no investment, no thought, no
+
+926
+00:31:27,000 --> 00:31:30,200
+anything.
+
+927
+00:31:28,160 --> 00:31:31,800
+How often do you do that?
+
+928
+00:31:30,200 --> 00:31:34,040
+You'll be lucky if you get one or two a
+
+929
+00:31:31,800 --> 00:31:35,520
+century. We could do that, nobody else
+
+930
+00:31:34,040 --> 00:31:37,240
+could.
+
+931
+00:31:35,520 --> 00:31:40,720
+It looked attractive at half a percent,
+
+932
+00:31:37,240 --> 00:31:40,720
+but you you couldn't get it.
+
+933
+00:31:40,800 --> 00:31:45,080
+But Berkshire with its credit could.
+
+934
+00:31:43,360 --> 00:31:47,120
+And the only way you could get it was to
+
+935
+00:31:45,080 --> 00:31:49,200
+be very patient and just pick away at
+
+936
+00:31:47,120 --> 00:31:51,080
+the little pieces at a time.
+
+937
+00:31:49,200 --> 00:31:52,360
+It took a forever to get $10 billion
+
+938
+00:31:51,080 --> 00:31:54,960
+invested.
+
+939
+00:31:52,360 --> 00:31:56,360
+But it was like having God just opening
+
+940
+00:31:54,960 --> 00:32:00,240
+a
+
+941
+00:31:56,360 --> 00:32:00,240
+chest and just pouring money into the
+
+942
+00:32:01,320 --> 00:32:04,720
+It's awfully easy money. It's
+
+943
+00:32:03,000 --> 00:32:07,000
+interesting that it's paradoxical. You
+
+944
+00:32:04,720 --> 00:32:08,760
+need Berkshire's credit, but at
+
+945
+00:32:07,000 --> 00:32:09,840
+Berkshire's scale, it's actually hard to
+
+946
+00:32:08,760 --> 00:32:11,640
+put enough money to work.
+
+947
+00:32:09,840 --> 00:32:12,800
+That's true, but why should it be hard
+
+948
+00:32:11,640 --> 00:32:15,840
+to make money?
+
+949
+00:32:12,800 --> 00:32:17,360
+Why should it be easy?
+
+950
+00:32:15,840 --> 00:32:18,840
+Japanese trading companies reminds me,
+
+951
+00:32:17,360 --> 00:32:20,080
+we studied another company recently,
+
+952
+00:32:18,840 --> 00:32:22,520
+Nike.
+
+953
+00:32:20,080 --> 00:32:24,000
+That is That's a very good company.
+
+954
+00:32:22,520 --> 00:32:25,120
+Yeah, did you ever look at it?
+
+955
+00:32:24,000 --> 00:32:26,760
+company.
+
+956
+00:32:25,120 --> 00:32:29,840
+Of course I've looked I've looked at it,
+
+957
+00:32:26,760 --> 00:32:32,160
+but I don't like style companies.
+
+958
+00:32:29,840 --> 00:32:33,160
+Mhm. Too fad driven?
+
+959
+00:32:32,160 --> 00:32:34,800
+Well,
+
+960
+00:32:33,160 --> 00:32:36,280
+I suppose if you had a Hermes and the
+
+961
+00:32:34,800 --> 00:32:37,880
+chairman of Berkshire bought it, but
+
+962
+00:32:36,280 --> 00:32:40,600
+short of that, I'm not going to buy any
+
+963
+00:32:37,880 --> 00:32:42,440
+style company. Ooh, that's a good pick.
+
+964
+00:32:40,600 --> 00:32:45,720
+To the style point, another one that
+
+965
+00:32:42,440 --> 00:32:48,560
+they covered was LVMH. What Arnault has
+
+966
+00:32:45,720 --> 00:32:49,840
+done has been amazing. So what do you
+
+967
+00:32:48,560 --> 00:32:51,800
+make of that company?
+
+968
+00:32:49,840 --> 00:32:53,400
+Well, if you're as good as they are and
+
+969
+00:32:51,800 --> 00:32:55,679
+what they've done, you have a lifetime
+
+970
+00:32:53,400 --> 00:32:57,880
+to do it in or without a lifetime really
+
+971
+00:32:55,679 --> 00:33:00,480
+three or four lifetimes to do it in. You
+
+972
+00:32:57,880 --> 00:33:02,560
+can create another, but it's not easy.
+
+973
+00:33:00,480 --> 00:33:05,720
+Hermes is on the eighth generation, I
+
+974
+00:33:02,560 --> 00:33:07,480
+think, now. The family running it.
+
+975
+00:33:05,720 --> 00:33:09,120
+It's not a bit easy.
+
+976
+00:33:07,480 --> 00:33:11,440
+They have meetings every day where they
+
+977
+00:33:09,120 --> 00:33:13,800
+make policy decisions and they choose
+
+978
+00:33:11,440 --> 00:33:15,480
+the locations one at a time and it's
+
+979
+00:33:13,800 --> 00:33:16,880
+work.
+
+980
+00:33:15,480 --> 00:33:19,960
+It's definitely work.
+
+981
+00:33:16,880 --> 00:33:22,000
+What do you think the durable value is
+
+982
+00:33:19,960 --> 00:33:23,679
+in these, as you say, style companies of
+
+983
+00:33:22,000 --> 00:33:25,800
+the very best one in the world, the
+
+984
+00:33:23,679 --> 00:33:27,640
+Hermes or the LVMH? What makes them
+
+985
+00:33:25,800 --> 00:33:29,320
+enduring?
+
+986
+00:33:27,640 --> 00:33:32,400
+Well, they just got a brand people trust
+
+987
+00:33:29,320 --> 00:33:35,560
+so much. Mhm.
+
+988
+00:33:32,400 --> 00:33:37,280
+It took them centuries to do it.
+
+989
+00:33:35,560 --> 00:33:39,800
+Our conversation then turned to
+
+990
+00:33:37,280 --> 00:33:41,679
+comparing Kirkland Signature as a brand
+
+991
+00:33:39,800 --> 00:33:43,720
+to Hermes.
+
+992
+00:33:41,679 --> 00:33:45,080
+Kirkland is a brand the way Tide is a
+
+993
+00:33:43,720 --> 00:33:46,520
+brand.
+
+994
+00:33:45,080 --> 00:33:50,240
+And
+
+995
+00:33:46,520 --> 00:33:53,000
+Hermes is a different kind of a brand.
+
+996
+00:33:50,240 --> 00:33:54,920
+Yeah, Ferrari doesn't make detergent.
+
+997
+00:33:53,000 --> 00:33:56,560
+No.
+
+998
+00:33:54,920 --> 00:33:57,920
+We've spent a lot of time studying these
+
+999
+00:33:56,560 --> 00:34:01,520
+brands.
+
+1000
+00:33:57,920 --> 00:34:03,720
+How do you look at the value of a brand?
+
+1001
+00:34:01,520 --> 00:34:06,480
+Well,
+
+1002
+00:34:03,720 --> 00:34:08,000
+it's hard for us not to love brands.
+
+1003
+00:34:06,480 --> 00:34:10,320
+Since we were lucky enough to buy the
+
+1004
+00:34:08,000 --> 00:34:12,560
+See's Candy for $20 million.
+
+1005
+00:34:10,320 --> 00:34:15,560
+That's our first acquisition.
+
+1006
+00:34:12,560 --> 00:34:16,679
+And we found out fairly quickly
+
+1007
+00:34:15,560 --> 00:34:18,879
+that
+
+1008
+00:34:16,679 --> 00:34:21,600
+we could raise the price every year
+
+1009
+00:34:18,879 --> 00:34:23,320
+by 10% and nobody cared.
+
+1010
+00:34:21,600 --> 00:34:24,879
+We didn't make the volumes go up or
+
+1011
+00:34:23,320 --> 00:34:26,280
+anything like that.
+
+1012
+00:34:24,879 --> 00:34:27,800
+Just made the
+
+1013
+00:34:26,280 --> 00:34:29,679
+profits go up.
+
+1014
+00:34:27,800 --> 00:34:30,960
+So we've been raising the price by 10% a
+
+1015
+00:34:29,679 --> 00:34:33,359
+year for
+
+1016
+00:34:30,960 --> 00:34:35,320
+all these 40 years or so.
+
+1017
+00:34:33,359 --> 00:34:36,520
+Wow. It's been a very satisfactory
+
+1018
+00:34:35,320 --> 00:34:38,520
+company.
+
+1019
+00:34:36,520 --> 00:34:40,640
+It didn't then require any new capital.
+
+1020
+00:34:38,520 --> 00:34:42,280
+That's what was so good about it. Very
+
+1021
+00:34:40,640 --> 00:34:44,600
+little new capital.
+
+1022
+00:34:42,280 --> 00:34:46,159
+We had two big kitchens
+
+1023
+00:34:44,600 --> 00:34:47,200
+and a bunch of retail stores when we
+
+1024
+00:34:46,159 --> 00:34:50,040
+bought it.
+
+1025
+00:34:47,200 --> 00:34:52,159
+And now it's got two big kitchens
+
+1026
+00:34:50,040 --> 00:34:54,080
+and a bunch of retail stores.
+
+1027
+00:34:52,159 --> 00:34:56,120
+Well,
+
+1028
+00:34:54,080 --> 00:34:58,200
+Charlie See was a playboy.
+
+1029
+00:34:56,120 --> 00:34:59,720
+And he his brother ran the company, his
+
+1030
+00:34:58,200 --> 00:35:02,520
+older brother.
+
+1031
+00:34:59,720 --> 00:35:04,200
+And dominated it completely.
+
+1032
+00:35:02,520 --> 00:35:06,320
+But when he died, Charlie made his
+
+1033
+00:35:04,200 --> 00:35:08,359
+brother his executor.
+
+1034
+00:35:06,320 --> 00:35:09,760
+And now he needs a lot of money to pay
+
+1035
+00:35:08,359 --> 00:35:11,480
+death taxes.
+
+1036
+00:35:09,760 --> 00:35:13,160
+He doesn't have it.
+
+1037
+00:35:11,480 --> 00:35:15,040
+And it's due, you know, eight months or
+
+1038
+00:35:13,160 --> 00:35:16,760
+something later and
+
+1039
+00:35:15,040 --> 00:35:18,240
+and so
+
+1040
+00:35:16,760 --> 00:35:21,400
+they really wanted to sell so they could
+
+1041
+00:35:18,240 --> 00:35:21,400
+pay the death taxes.
+
+1042
+00:35:21,440 --> 00:35:25,560
+And See's was only making $4 million
+
+1043
+00:35:23,520 --> 00:35:27,280
+pre-tax when we bought it.
+
+1044
+00:35:25,560 --> 00:35:28,840
+And so that buying opportunity only came
+
+1045
+00:35:27,280 --> 00:35:31,240
+about because the family needed
+
+1046
+00:35:28,840 --> 00:35:33,400
+liquidity to pay death taxes.
+
+1047
+00:35:31,240 --> 00:35:35,800
+We only found out about it because
+
+1048
+00:35:33,400 --> 00:35:36,920
+Charlie See was on his cruise to Hawaii
+
+1049
+00:35:35,800 --> 00:35:38,120
+or something
+
+1050
+00:35:36,920 --> 00:35:40,240
+with this
+
+1051
+00:35:38,120 --> 00:35:42,280
+guy who was a client of and doesn't
+
+1052
+00:35:40,240 --> 00:35:43,920
+counsel who also worked for
+
+1053
+00:35:42,280 --> 00:35:45,720
+Blue Chip Stamps who was the company
+
+1054
+00:35:43,920 --> 00:35:48,000
+that bought it.
+
+1055
+00:35:45,720 --> 00:35:49,720
+And
+
+1056
+00:35:48,000 --> 00:35:50,640
+anyway, that's how we found out about
+
+1057
+00:35:49,720 --> 00:35:53,080
+it.
+
+1058
+00:35:50,640 --> 00:35:55,080
+We paid that guy a finder's fee even.
+
+1059
+00:35:53,080 --> 00:35:57,359
+Who've never paid one cent. You always
+
+1060
+00:35:55,080 --> 00:35:59,560
+say that so it was worth it.
+
+1061
+00:35:57,359 --> 00:36:01,240
+Of course, but
+
+1062
+00:35:59,560 --> 00:36:02,640
+you don't want to build a reputation for
+
+1063
+00:36:01,240 --> 00:36:03,920
+paying finder's fees or everybody in the
+
+1064
+00:36:02,640 --> 00:36:05,600
+world will be bothering you all day
+
+1065
+00:36:03,920 --> 00:36:06,720
+long.
+
+1066
+00:36:05,600 --> 00:36:11,440
+So what do you think so there are
+
+1067
+00:36:06,720 --> 00:36:14,200
+categories like See's or like Hermes
+
+1068
+00:36:11,440 --> 00:36:16,720
+where brands lead to pricing power? I
+
+1069
+00:36:14,200 --> 00:36:17,960
+think your chances of buying one of them
+
+1070
+00:36:16,720 --> 00:36:20,080
+is so
+
+1071
+00:36:17,960 --> 00:36:21,240
+low, I wouldn't even look.
+
+1072
+00:36:20,080 --> 00:36:23,320
+I don't even believe in looking at
+
+1073
+00:36:21,240 --> 00:36:24,640
+things that I might find.
+
+1074
+00:36:23,320 --> 00:36:26,120
+You're not going to get a chance to buy
+
+1075
+00:36:24,640 --> 00:36:29,000
+a really good company. You're wasting
+
+1076
+00:36:26,120 --> 00:36:31,560
+your time. Yeah, yeah. So why do you
+
+1077
+00:36:29,000 --> 00:36:33,359
+think there are extremely well-known
+
+1078
+00:36:31,560 --> 00:36:35,640
+brands in other categories, maybe
+
+1079
+00:36:33,359 --> 00:36:37,120
+packaged food or something where Well,
+
+1080
+00:36:35,640 --> 00:36:39,480
+there are a lot there are a lot of
+
+1081
+00:36:37,120 --> 00:36:41,440
+original investors that buy nothing but
+
+1082
+00:36:39,480 --> 00:36:43,840
+branded goods. And the one they usually
+
+1083
+00:36:41,440 --> 00:36:44,960
+start with is Nestle.
+
+1084
+00:36:43,840 --> 00:36:47,480
+And
+
+1085
+00:36:44,960 --> 00:36:49,720
+it is filled rather They they've done
+
+1086
+00:36:47,480 --> 00:36:52,080
+two or three points better than average.
+
+1087
+00:36:49,720 --> 00:36:53,880
+But it's not a bonanza.
+
+1088
+00:36:52,080 --> 00:36:56,359
+After that, our conversation turned to
+
+1089
+00:36:53,880 --> 00:36:59,520
+Kraft Heinz and why Heinz is able to
+
+1090
+00:36:56,359 --> 00:37:01,840
+have pricing power while Kraft is not.
+
+1091
+00:36:59,520 --> 00:37:03,520
+It's very interesting.
+
+1092
+00:37:01,840 --> 00:37:05,960
+There's something about the
+
+1093
+00:37:03,520 --> 00:37:07,440
+flavor of ketchup on a god damn fried
+
+1094
+00:37:05,960 --> 00:37:09,280
+potato.
+
+1095
+00:37:07,440 --> 00:37:12,240
+It makes people really willing to change
+
+1096
+00:37:09,280 --> 00:37:14,640
+brands over. They want Heinz.
+
+1097
+00:37:12,240 --> 00:37:16,520
+And so we could raise the price of Heinz
+
+1098
+00:37:14,640 --> 00:37:18,280
+pretty much.
+
+1099
+00:37:16,520 --> 00:37:19,760
+Hey, but you try to raise the price of
+
+1100
+00:37:18,280 --> 00:37:22,359
+Kraft cheese
+
+1101
+00:37:19,760 --> 00:37:24,160
+and everybody goes in a rebellion.
+
+1102
+00:37:22,359 --> 00:37:25,480
+Including the final final customer, the
+
+1103
+00:37:24,160 --> 00:37:26,840
+housewife.
+
+1104
+00:37:25,480 --> 00:37:28,760
+They don't care that much about whether
+
+1105
+00:37:26,840 --> 00:37:30,480
+the cheese is Kraft or not.
+
+1106
+00:37:28,760 --> 00:37:32,840
+Why do you think that is that some
+
+1107
+00:37:30,480 --> 00:37:34,760
+Well, they want the sauce flavor.
+
+1108
+00:37:32,840 --> 00:37:37,400
+It's happened elsewhere. In Korea, one
+
+1109
+00:37:34,760 --> 00:37:39,160
+guy, some Chinese guy controls all the
+
+1110
+00:37:37,400 --> 00:37:41,160
+sauces.
+
+1111
+00:37:39,160 --> 00:37:43,480
+Every single major sauce, he controls
+
+1112
+00:37:41,160 --> 00:37:45,440
+nothing at least 95% of. And it's
+
+1113
+00:37:43,480 --> 00:37:47,359
+because sauces have such a particular
+
+1114
+00:37:45,440 --> 00:37:49,880
+flavor that no one can imitate the trade
+
+1115
+00:37:47,359 --> 00:37:50,480
+secret. Yeah. Huh. And that gives
+
+1116
+00:37:49,880 --> 00:37:52,920
+pricing
+
+1117
+00:37:50,480 --> 00:37:55,840
+get used to it and they like it. Is that
+
+1118
+00:37:52,920 --> 00:37:58,040
+Coca-Cola as well? Yeah, sure.
+
+1119
+00:37:55,840 --> 00:38:00,440
+Charlie, I'm curious
+
+1120
+00:37:58,040 --> 00:38:03,760
+at age 99, what is something that you
+
+1121
+00:38:00,440 --> 00:38:06,640
+believe today that 70-year-old Charlie
+
+1122
+00:38:03,760 --> 00:38:09,440
+would have disagreed with?
+
+1123
+00:38:06,640 --> 00:38:10,400
+I think I I I knew when I was 70 that it
+
+1124
+00:38:09,440 --> 00:38:12,080
+was
+
+1125
+00:38:10,400 --> 00:38:14,840
+Well, I got to have it. It is just so
+
+1126
+00:38:12,080 --> 00:38:17,440
+hard. I know how hard it is now.
+
+1127
+00:38:14,840 --> 00:38:20,160
+And all these people
+
+1128
+00:38:17,440 --> 00:38:22,040
+who are getting this two and 20 or three
+
+1129
+00:38:20,160 --> 00:38:23,800
+and 30 or whatever
+
+1130
+00:38:22,040 --> 00:38:24,840
+they all talk as though it was easy and
+
+1131
+00:38:23,800 --> 00:38:26,160
+they get to believing their own
+
+1132
+00:38:24,840 --> 00:38:27,480
+
+1133
+00:38:26,160 --> 00:38:29,960
+And of course
+
+1134
+00:38:27,480 --> 00:38:32,680
+it's not a bit easy.
+
+1135
+00:38:29,960 --> 00:38:34,480
+It's very hard.
+
+1136
+00:38:32,680 --> 00:38:36,680
+If you were back 30 or 40 years old
+
+1137
+00:38:34,480 --> 00:38:38,200
+again today, would you decide to go into
+
+1138
+00:38:36,680 --> 00:38:41,320
+the investment business again? Oh,
+
+1139
+00:38:38,200 --> 00:38:44,000
+probably because it suits my nature.
+
+1140
+00:38:41,320 --> 00:38:45,240
+But I didn't really enjoy
+
+1141
+00:38:44,000 --> 00:38:47,080
+the
+
+1142
+00:38:45,240 --> 00:38:48,520
+three and 30 business. Once I had enough
+
+1143
+00:38:47,080 --> 00:38:50,080
+money of my own
+
+1144
+00:38:48,520 --> 00:38:52,000
+I'd rather just operate with my own
+
+1145
+00:38:50,080 --> 00:38:54,960
+money. That is a much better way of
+
+1146
+00:38:52,000 --> 00:38:56,080
+doing it Mhm. than
+
+1147
+00:38:54,960 --> 00:38:57,760
+Because of the
+
+1148
+00:38:56,080 --> 00:39:00,160
+to deal with be forced to deal with
+
+1149
+00:38:57,760 --> 00:39:01,400
+investment bankers. Be forced to deal
+
+1150
+00:39:00,160 --> 00:39:03,320
+with
+
+1151
+00:39:01,400 --> 00:39:05,320
+investment consultants. Be forced to
+
+1152
+00:39:03,320 --> 00:39:06,960
+deal with venture capital.
+
+1153
+00:39:05,320 --> 00:39:09,200
+The hell with Who needs Who wants to You
+
+1154
+00:39:06,960 --> 00:39:10,400
+don't want to need other people.
+
+1155
+00:39:09,200 --> 00:39:12,040
+The point of getting rich is so you
+
+1156
+00:39:10,400 --> 00:39:13,760
+don't have to need other You don't have
+
+1157
+00:39:12,040 --> 00:39:15,920
+to get along with other people.
+
+1158
+00:39:13,760 --> 00:39:18,240
+Charlie, if you started with Warren
+
+1159
+00:39:15,920 --> 00:39:20,040
+today and you're both 30 years old, do
+
+1160
+00:39:18,240 --> 00:39:23,560
+you think you guys would build anything
+
+1161
+00:39:20,040 --> 00:39:23,560
+close to what Berkshire is today?
+
+1162
+00:39:24,080 --> 00:39:28,840
+The answer is no, we wouldn't.
+
+1163
+00:39:27,160 --> 00:39:32,440
+We had
+
+1164
+00:39:28,840 --> 00:39:34,080
+everybody that has unusually good result
+
+1165
+00:39:32,440 --> 00:39:35,600
+almost everything has
+
+1166
+00:39:34,080 --> 00:39:37,080
+three things.
+
+1167
+00:39:35,600 --> 00:39:38,520
+They're very intelligent, they worked
+
+1168
+00:39:37,080 --> 00:39:40,240
+very hard.
+
+1169
+00:39:38,520 --> 00:39:41,960
+And they were very lucky.
+
+1170
+00:39:40,240 --> 00:39:44,160
+It takes all three to get them on this
+
+1171
+00:39:41,960 --> 00:39:45,680
+list of the silver successful.
+
+1172
+00:39:44,160 --> 00:39:48,000
+How can you arrange to have two or three
+
+1173
+00:39:45,680 --> 00:39:49,960
+answers of good luck? The answer is you
+
+1174
+00:39:48,000 --> 00:39:52,920
+can start early and keep trying a long
+
+1175
+00:39:49,960 --> 00:39:54,400
+time and maybe you'll get one or two.
+
+1176
+00:39:52,920 --> 00:39:55,800
+If you were starting again today, do you
+
+1177
+00:39:54,400 --> 00:39:58,800
+think insurance would still be the
+
+1178
+00:39:55,800 --> 00:40:00,680
+vehicle? It depends on your temperament.
+
+1179
+00:39:58,800 --> 00:40:02,640
+Insurance would be ideal for a certain
+
+1180
+00:40:00,680 --> 00:40:03,680
+kind of a temperament. Mhm.
+
+1181
+00:40:02,640 --> 00:40:05,920
+And
+
+1182
+00:40:03,680 --> 00:40:08,040
+it takes a very patient person to get
+
+1183
+00:40:05,920 --> 00:40:10,000
+rich in insurance.
+
+1184
+00:40:08,040 --> 00:40:11,400
+It takes forever to get anything in it.
+
+1185
+00:40:10,000 --> 00:40:12,800
+It takes forever to push everybody
+
+1186
+00:40:11,400 --> 00:40:15,920
+aside.
+
+1187
+00:40:12,800 --> 00:40:18,160
+It's very hard to make money.
+
+1188
+00:40:15,920 --> 00:40:19,680
+I've heard you say as soon as you're
+
+1189
+00:40:18,160 --> 00:40:21,400
+wealthy enough to self-insure you
+
+1190
+00:40:19,680 --> 00:40:23,520
+should. Is there any insurance
+
+1191
+00:40:21,400 --> 00:40:25,640
+it. I'm practically everything
+
+1192
+00:40:23,520 --> 00:40:28,160
+thinkable. All the crumb bums of the
+
+1193
+00:40:25,640 --> 00:40:29,560
+world that drink too much and file big
+
+1194
+00:40:28,160 --> 00:40:30,520
+claims the insurance company where the
+
+1195
+00:40:29,560 --> 00:40:32,760
+place
+
+1196
+00:40:30,520 --> 00:40:35,800
+gets on fire or something.
+
+1197
+00:40:32,760 --> 00:40:38,120
+Why would you want to pay that?
+
+1198
+00:40:35,800 --> 00:40:39,600
+Your share of their stupidity.
+
+1199
+00:40:38,120 --> 00:40:40,920
+Not to mention the overhead. Of course,
+
+1200
+00:40:39,600 --> 00:40:41,840
+the insurance company needs to pay all
+
+1201
+00:40:40,920 --> 00:40:44,480
+the people that work there.
+
+1202
+00:40:41,840 --> 00:40:46,400
+Yeah, yeah. No, no, I I
+
+1203
+00:40:44,480 --> 00:40:48,320
+It's crazy. Is there any insurance that
+
+1204
+00:40:46,400 --> 00:40:51,160
+you carry today?
+
+1205
+00:40:48,320 --> 00:40:53,360
+I carry no fire insurance anywhere.
+
+1206
+00:40:51,160 --> 00:40:55,040
+Do you carry auto insurance?
+
+1207
+00:40:53,360 --> 00:40:55,160
+Yeah, I have to. Well, you're legally
+
+1208
+00:40:55,040 --> 00:40:56,680
+required
+
+1209
+00:40:55,160 --> 00:40:58,880
+Yeah, yeah.
+
+1210
+00:40:56,680 --> 00:41:01,000
+I don't know. Charlie could
+
+1211
+00:40:58,880 --> 00:41:03,320
+No, I have to and I do.
+
+1212
+00:41:01,000 --> 00:41:04,360
+I'm curious being that since these guys
+
+1213
+00:41:03,320 --> 00:41:06,160
+are
+
+1214
+00:41:04,360 --> 00:41:07,640
+very tech-focused, I'm curious not being
+
+1215
+00:41:06,160 --> 00:41:10,000
+a tech person, how did you think about
+
+1216
+00:41:07,640 --> 00:41:12,480
+the Apple investment and what gave you
+
+1217
+00:41:10,000 --> 00:41:15,920
+the conviction to be so big?
+
+1218
+00:41:12,480 --> 00:41:18,080
+What everybody has learned is that
+
+1219
+00:41:15,920 --> 00:41:19,760
+everybody needs some significant
+
+1220
+00:41:18,080 --> 00:41:21,040
+participation in the
+
+1221
+00:41:19,760 --> 00:41:23,080
+12 companies that do better than
+
+1222
+00:41:21,040 --> 00:41:24,320
+everybody else.
+
+1223
+00:41:23,080 --> 00:41:27,840
+And
+
+1224
+00:41:24,320 --> 00:41:29,640
+you need two or three of them at least.
+
+1225
+00:41:27,840 --> 00:41:32,880
+And
+
+1226
+00:41:29,640 --> 00:41:35,320
+if you have that mindset
+
+1227
+00:41:32,880 --> 00:41:36,560
+Apple was a logical candidate to be
+
+1228
+00:41:35,320 --> 00:41:38,560
+on the list here for which you're going
+
+1229
+00:41:36,560 --> 00:41:40,520
+to select your companies.
+
+1230
+00:41:38,560 --> 00:41:41,680
+And it's not very hard to come with the
+
+1231
+00:41:40,520 --> 00:41:44,000
+idea that
+
+1232
+00:41:41,680 --> 00:41:46,080
+it may be okay.
+
+1233
+00:41:44,000 --> 00:41:48,240
+Making the list doesn't sound too hard.
+
+1234
+00:41:46,080 --> 00:41:50,400
+In fact, there are these acronyms Fang
+
+1235
+00:41:48,240 --> 00:41:53,840
+or Mama, you know, Microsoft, Apple,
+
+1236
+00:41:50,400 --> 00:41:56,080
+Google, Facebook. But selecting the one
+
+1237
+00:41:53,840 --> 00:41:58,240
+and putting hundreds of billions of
+
+1238
+00:41:56,080 --> 00:42:00,640
+dollars into it We didn't put hundreds
+
+1239
+00:41:58,240 --> 00:42:02,840
+of billions We put 10 billion into it.
+
+1240
+00:42:00,640 --> 00:42:05,360
+To create hundreds of billions of value,
+
+1241
+00:42:02,840 --> 00:42:07,120
+that to me sounds hard to pick the one.
+
+1242
+00:42:05,360 --> 00:42:10,120
+How did you guys pick the one? We
+
+1243
+00:42:07,120 --> 00:42:11,960
+couldn't find anything else.
+
+1244
+00:42:10,120 --> 00:42:13,680
+Was it valuation or
+
+1245
+00:42:11,960 --> 00:42:16,360
+Yeah, we got cheap. It got down to about
+
+1246
+00:42:13,680 --> 00:42:18,680
+10 times earnings when we bought it.
+
+1247
+00:42:16,360 --> 00:42:19,560
+2015, I believe, was the first.
+
+1248
+00:42:18,680 --> 00:42:21,400
+Yeah.
+
+1249
+00:42:19,560 --> 00:42:22,920
+It's fascinating to me this concept of
+
+1250
+00:42:21,400 --> 00:42:24,600
+if you look at distressed debt or you
+
+1251
+00:42:22,920 --> 00:42:26,080
+look at I think Warren in the last
+
+1252
+00:42:24,600 --> 00:42:28,600
+Berkshire letter pointed out it's been a
+
+1253
+00:42:26,080 --> 00:42:29,720
+handful of really good decisions or you
+
+1254
+00:42:28,600 --> 00:42:31,840
+look at venture capital that's
+
+1255
+00:42:29,720 --> 00:42:34,440
+classically power law distributed. Any
+
+1256
+00:42:31,840 --> 00:42:36,280
+of these asset classes comes down to a
+
+1257
+00:42:34,440 --> 00:42:38,680
+few really good decisions with high
+
+1258
+00:42:36,280 --> 00:42:40,720
+conviction over an entire career. Yeah,
+
+1259
+00:42:38,680 --> 00:42:42,160
+that's exactly what I It's exactly the
+
+1260
+00:42:40,720 --> 00:42:44,280
+way it works.
+
+1261
+00:42:42,160 --> 00:42:47,320
+It's not smoothed. There's no asset
+
+1262
+00:42:44,280 --> 00:42:48,840
+class where you can repeatedly just do
+
+1263
+00:42:47,320 --> 00:42:51,560
+there's the
+
+1264
+00:42:48,840 --> 00:42:55,080
+The low-hanging fruit for the idiot is
+
+1265
+00:42:51,560 --> 00:42:57,440
+it's not gone, but it's very small.
+
+1266
+00:42:55,080 --> 00:43:00,760
+You mentioned this idea that when we're
+
+1267
+00:42:57,440 --> 00:43:01,920
+talking about Apple, there's a few
+
+1268
+00:43:00,760 --> 00:43:04,480
+companies that it's just really
+
+1269
+00:43:01,920 --> 00:43:06,960
+important to be in. Do you think these
+
+1270
+00:43:04,480 --> 00:43:09,760
+big tech companies being the winners
+
+1271
+00:43:06,960 --> 00:43:11,920
+where all of the pensions and Berkshire
+
+1272
+00:43:09,760 --> 00:43:13,720
+and university endowments and everyone's
+
+1273
+00:43:11,920 --> 00:43:15,080
+401(k)s being concentrated in these
+
+1274
+00:43:13,720 --> 00:43:16,840
+companies, do you think that was the
+
+1275
+00:43:15,080 --> 00:43:18,120
+natural outcome?
+
+1276
+00:43:16,840 --> 00:43:19,840
+Did we have to end up this way?
+
+1277
+00:43:18,120 --> 00:43:21,200
+Yeah, it was natural.
+
+1278
+00:43:19,840 --> 00:43:23,640
+That's why it happened. It was the
+
+1279
+00:43:21,200 --> 00:43:25,520
+natural outcome.
+
+1280
+00:43:23,640 --> 00:43:27,720
+What causes that?
+
+1281
+00:43:25,520 --> 00:43:29,640
+Well, it's just it's just
+
+1282
+00:43:27,720 --> 00:43:31,880
+that's what human nature and
+
+1283
+00:43:29,640 --> 00:43:34,280
+competition, that's what it causes.
+
+1284
+00:43:31,880 --> 00:43:36,680
+Will we eventually have one?
+
+1285
+00:43:34,280 --> 00:43:39,360
+Eventually, this craziness in venture
+
+1286
+00:43:36,680 --> 00:43:42,400
+capital when they're all all gone stupid
+
+1287
+00:43:39,360 --> 00:43:45,240
+that's a natural outcome.
+
+1288
+00:43:42,400 --> 00:43:47,200
+Will we have one 20 trillion dollar
+
+1289
+00:43:45,240 --> 00:43:47,680
+companies and then the next biggest
+
+1290
+00:43:47,200 --> 00:43:49,320
+company
+
+1291
+00:43:47,680 --> 00:43:50,400
+the world's going to
+
+1292
+00:43:49,320 --> 00:43:52,240
+I don't know where we're going to end up
+
+1293
+00:43:50,400 --> 00:43:55,240
+eventually we did.
+
+1294
+00:43:52,240 --> 00:43:58,120
+They just they just happened.
+
+1295
+00:43:55,240 --> 00:44:00,240
+Would you continue investing in China?
+
+1296
+00:43:58,120 --> 00:44:03,400
+What's your position with that? Well, my
+
+1297
+00:44:00,240 --> 00:44:05,560
+position in China has been
+
+1298
+00:44:03,400 --> 00:44:08,480
+that the Chinese
+
+1299
+00:44:05,560 --> 00:44:10,480
+economy has better future prospects for
+
+1300
+00:44:08,480 --> 00:44:12,200
+the next 20 years than almost any other
+
+1301
+00:44:10,480 --> 00:44:13,920
+big economy.
+
+1302
+00:44:12,200 --> 00:44:15,440
+That's number one.
+
+1303
+00:44:13,920 --> 00:44:17,320
+Number two
+
+1304
+00:44:15,440 --> 00:44:18,920
+the leading companies of China are
+
+1305
+00:44:17,320 --> 00:44:21,359
+stronger and better
+
+1306
+00:44:18,920 --> 00:44:23,280
+than practically any other
+
+1307
+00:44:21,359 --> 00:44:24,840
+leading companies anywhere.
+
+1308
+00:44:23,280 --> 00:44:25,960
+And they're available at a much cheaper
+
+1309
+00:44:24,840 --> 00:44:29,240
+price.
+
+1310
+00:44:25,960 --> 00:44:31,840
+So, naturally, I'm willing to have some
+
+1311
+00:44:29,240 --> 00:44:33,800
+China risk in the Munger portfolio.
+
+1312
+00:44:31,840 --> 00:44:35,640
+How much China risk? Well, that's not a
+
+1313
+00:44:33,800 --> 00:44:37,960
+scientific subject.
+
+1314
+00:44:35,640 --> 00:44:39,200
+But I don't mind whatever it is, 18% or
+
+1315
+00:44:37,960 --> 00:44:41,080
+something. Whatever whatever is worked
+
+1316
+00:44:39,200 --> 00:44:42,960
+out in the Munger family. So, it's okay
+
+1317
+00:44:41,080 --> 00:44:44,560
+with me.
+
+1318
+00:44:42,960 --> 00:44:46,840
+What about other geopolitical
+
+1319
+00:44:44,560 --> 00:44:48,480
+considerations? Like would you hold TSMC
+
+1320
+00:44:46,840 --> 00:44:49,960
+at this point?
+
+1321
+00:44:48,480 --> 00:44:51,600
+Well, I don't like that as well as I
+
+1322
+00:44:49,960 --> 00:44:54,280
+like something with a real consumer
+
+1323
+00:44:51,600 --> 00:44:56,960
+brand of its own like Apple.
+
+1324
+00:44:54,280 --> 00:44:58,200
+I'm curious what major companies that
+
+1325
+00:44:56,960 --> 00:44:59,720
+haven't been mentioned do you think
+
+1326
+00:44:58,200 --> 00:45:01,600
+people would do well to study the
+
+1327
+00:44:59,720 --> 00:45:02,280
+virtues of like studying the virtues of
+
+1328
+00:45:01,600 --> 00:45:03,680
+Costco?
+
+1329
+00:45:02,280 --> 00:45:05,200
+Well, I only study two kinds of
+
+1330
+00:45:03,680 --> 00:45:08,400
+companies.
+
+1331
+00:45:05,200 --> 00:45:10,200
+One, I'm a big Ben Graham
+
+1332
+00:45:08,400 --> 00:45:12,200
+follower.
+
+1333
+00:45:10,200 --> 00:45:14,280
+If something is really cheap, even
+
+1334
+00:45:12,200 --> 00:45:16,000
+though it's a crappy company, I'm I'm
+
+1335
+00:45:14,280 --> 00:45:17,840
+I'm willing to consider buying it for a
+
+1336
+00:45:16,000 --> 00:45:20,560
+while anyway.
+
+1337
+00:45:17,840 --> 00:45:22,040
+And I do that occasionally.
+
+1338
+00:45:20,560 --> 00:45:23,720
+And I've done it with great success a
+
+1339
+00:45:22,040 --> 00:45:24,840
+time or two, but I'm like Groucho Marx,
+
+1340
+00:45:23,720 --> 00:45:26,600
+I don't do it once or twice in my
+
+1341
+00:45:24,840 --> 00:45:28,840
+lifetime for
+
+1342
+00:45:26,600 --> 00:45:30,880
+big gains and that's it.
+
+1343
+00:45:28,840 --> 00:45:33,359
+It's not like I'd If Apple was nothing,
+
+1344
+00:45:30,880 --> 00:45:35,320
+you know, I've done it 100 times.
+
+1345
+00:45:33,359 --> 00:45:37,960
+So, it isn't a bit easy.
+
+1346
+00:45:35,320 --> 00:45:39,680
+Yeah, 100 times easy money is almost
+
+1347
+00:45:37,960 --> 00:45:41,880
+non-existent.
+
+1348
+00:45:39,680 --> 00:45:45,280
+One type of company is the cigar butt.
+
+1349
+00:45:41,880 --> 00:45:45,280
+What's the other type of company?
+
+1350
+00:45:45,440 --> 00:45:47,520
+The companies that people would do well
+
+1351
+00:45:46,880 --> 00:45:49,320
+to
+
+1352
+00:45:47,520 --> 00:45:51,200
+to study the virtues of Great brand
+
+1353
+00:45:49,320 --> 00:45:52,640
+companies are of course are good.
+
+1354
+00:45:51,200 --> 00:45:54,640
+Get them at the right price. The whole
+
+1355
+00:45:52,640 --> 00:45:55,880
+trick is getting them on the few rare
+
+1356
+00:45:54,640 --> 00:45:57,840
+occasions
+
+1357
+00:45:55,880 --> 00:46:01,400
+when they're really cheap.
+
+1358
+00:45:57,840 --> 00:46:04,720
+But buying Costco at its present price
+
+1359
+00:46:01,400 --> 00:46:06,840
+it may work out all right, but that's
+
+1360
+00:46:04,720 --> 00:46:08,320
+again, it's getting hard.
+
+1361
+00:46:06,840 --> 00:46:09,760
+Yeah. Forgetting the prospects of the
+
+1362
+00:46:08,320 --> 00:46:12,000
+stock, how do you think about the next
+
+1363
+00:46:09,760 --> 00:46:13,880
+10 years for the business? I think it'll
+
+1364
+00:46:12,000 --> 00:46:17,359
+do pretty well.
+
+1365
+00:46:13,880 --> 00:46:19,600
+One more question for you in this area.
+
+1366
+00:46:17,359 --> 00:46:21,240
+What is your favorite advice to give to
+
+1367
+00:46:19,600 --> 00:46:23,680
+young people?
+
+1368
+00:46:21,240 --> 00:46:25,760
+Well, I don't give advice to just any
+
+1369
+00:46:23,680 --> 00:46:27,160
+young people. I give it to some. I pick
+
+1370
+00:46:25,760 --> 00:46:29,000
+my spots.
+
+1371
+00:46:27,160 --> 00:46:32,359
+I don't want to be more of a guru to the
+
+1372
+00:46:29,000 --> 00:46:32,359
+young people than they already are.
+
+1373
+00:46:32,480 --> 00:46:36,680
+It's getting hard out there.
+
+1374
+00:46:35,240 --> 00:46:37,880
+And there's all this and
+
+1375
+00:46:36,680 --> 00:46:40,960
+craziness.
+
+1376
+00:46:37,880 --> 00:46:42,400
+Of course, it's going to be hard.
+
+1377
+00:46:40,960 --> 00:46:43,400
+Where do the attractive opportunities
+
+1378
+00:46:42,400 --> 00:46:44,440
+hang out anymore? It sounds like
+
+1379
+00:46:43,400 --> 00:46:46,400
+everything in the whole world is
+
+1380
+00:46:44,440 --> 00:46:47,840
+overpriced. Is Could that be possible?
+
+1381
+00:46:46,400 --> 00:46:50,040
+Damn near. Of course, it could be
+
+1382
+00:46:47,840 --> 00:46:51,920
+possible. It's not only possible, it's
+
+1383
+00:46:50,040 --> 00:46:53,440
+likely and it's actually happened. How
+
+1384
+00:46:51,920 --> 00:46:55,800
+did the world get so rich if we have all
+
+1385
+00:46:53,440 --> 00:46:57,920
+this capital for so few opportunities?
+
+1386
+00:46:55,800 --> 00:47:00,200
+It's the nature of things.
+
+1387
+00:46:57,920 --> 00:47:02,000
+Look at biology produces a very advanced
+
+1388
+00:47:00,200 --> 00:47:03,800
+creature like us.
+
+1389
+00:47:02,000 --> 00:47:05,560
+We can sit around and talk intelligently
+
+1390
+00:47:03,800 --> 00:47:07,480
+on all these subjects.
+
+1391
+00:47:05,560 --> 00:47:09,920
+But it does it by killing everybody off
+
+1392
+00:47:07,480 --> 00:47:13,200
+in brutal competition one with the other
+
+1393
+00:47:09,920 --> 00:47:14,760
+for hundreds of thousands of years.
+
+1394
+00:47:13,200 --> 00:47:17,560
+In other words, the system of nature
+
+1395
+00:47:14,760 --> 00:47:19,560
+uses to get smart is kind of unpleasant
+
+1396
+00:47:17,560 --> 00:47:21,359
+to the people who are losing.
+
+1397
+00:47:19,560 --> 00:47:23,720
+So, over the last 100 years, we've
+
+1398
+00:47:21,359 --> 00:47:25,520
+brutally shifted all this value from
+
+1399
+00:47:23,720 --> 00:47:27,160
+labor to capital and now capital's all
+
+1400
+00:47:25,520 --> 00:47:29,520
+competing to get into a very small set
+
+1401
+00:47:27,160 --> 00:47:31,960
+of opportunities.
+
+1402
+00:47:29,520 --> 00:47:34,480
+Well, capital never had Capital You
+
+1403
+00:47:31,960 --> 00:47:37,160
+would It wasn't that it was all that
+
+1404
+00:47:34,480 --> 00:47:39,720
+easy you you bought a long time It just
+
+1405
+00:47:37,160 --> 00:47:41,400
+was a lot easier.
+
+1406
+00:47:39,720 --> 00:47:43,920
+And if you continues to get harder, the
+
+1407
+00:47:41,400 --> 00:47:46,640
+natural end is that you have Yes, an
+
+1408
+00:47:43,920 --> 00:47:48,240
+unpleasant blowup of some kind.
+
+1409
+00:47:46,640 --> 00:47:50,400
+And God knows what happens after the
+
+1410
+00:47:48,240 --> 00:47:52,080
+unpleasant blowup with our modern
+
+1411
+00:47:50,400 --> 00:47:53,640
+democracies.
+
+1412
+00:47:52,080 --> 00:47:55,960
+You would get to be a lot like Europe,
+
+1413
+00:47:53,640 --> 00:47:58,320
+which is quite dysfunctional.
+
+1414
+00:47:55,960 --> 00:48:00,880
+Is it too pessimistic of a view to say
+
+1415
+00:47:58,320 --> 00:48:03,040
+that the world seems to be out of good
+
+1416
+00:48:00,880 --> 00:48:05,640
+ideas to match the amount of capital out
+
+1417
+00:48:03,040 --> 00:48:07,840
+there looking for good ideas?
+
+1418
+00:48:05,640 --> 00:48:09,480
+It was never easy.
+
+1419
+00:48:07,840 --> 00:48:11,920
+If thoroughly understood, it was never
+
+1420
+00:48:09,480 --> 00:48:14,480
+easy and it's harder now. Those are the
+
+1421
+00:48:11,920 --> 00:48:15,760
+two I would
+
+1422
+00:48:14,480 --> 00:48:17,680
+And you pay attention to how you're
+
+1423
+00:48:15,760 --> 00:48:19,080
+handling the people you deal with.
+
+1424
+00:48:17,680 --> 00:48:20,760
+You want a good reputation when you're
+
+1425
+00:48:19,080 --> 00:48:22,520
+old and not a bad one.
+
+1426
+00:48:20,760 --> 00:48:24,440
+And I don't think you're saying there no
+
+1427
+00:48:22,520 --> 00:48:27,920
+opportunities whatsoever. I think No,
+
+1428
+00:48:24,440 --> 00:48:30,840
+it's just low low expectations and
+
+1429
+00:48:27,920 --> 00:48:33,440
+fewer bonanzas. Now, the beauty of it is
+
+1430
+00:48:30,840 --> 00:48:35,040
+you only have to get rich once.
+
+1431
+00:48:33,440 --> 00:48:36,520
+You don't have to climb this mountain
+
+1432
+00:48:35,040 --> 00:48:38,080
+four times.
+
+1433
+00:48:36,520 --> 00:48:39,800
+You just have to do it once. Well,
+
+1434
+00:48:38,080 --> 00:48:41,280
+that's sort of your philosophy on both
+
+1435
+00:48:39,800 --> 00:48:42,800
+sides is you got to be patient for the
+
+1436
+00:48:41,280 --> 00:48:44,680
+great opportunities, but when they you
+
+1437
+00:48:42,800 --> 00:48:46,520
+got to recognize them when they come and
+
+1438
+00:48:44,680 --> 00:48:48,160
+and pounce.
+
+1439
+00:48:46,520 --> 00:48:49,680
+We turned off the mics to have dinner
+
+1440
+00:48:48,160 --> 00:48:51,720
+and then recorded a little bit more
+
+1441
+00:48:49,680 --> 00:48:53,960
+later in the evening about Costco and
+
+1442
+00:48:51,720 --> 00:48:55,640
+some life advice from Charlie.
+
+1443
+00:48:53,960 --> 00:48:57,320
+So, one Costco question that I've been
+
+1444
+00:48:55,640 --> 00:49:00,000
+wanting to ask you is all the puzzle
+
+1445
+00:48:57,320 --> 00:49:02,359
+pieces of the low SKU count and the high
+
+1446
+00:49:00,000 --> 00:49:03,800
+inventory turnover and there's just so
+
+1447
+00:49:02,359 --> 00:49:04,560
+many things that fit together so
+
+1448
+00:49:03,800 --> 00:49:06,880
+beautifully.
+
+1449
+00:49:04,560 --> 00:49:08,680
+They're pretty obvious, though.
+
+1450
+00:49:06,880 --> 00:49:09,640
+But how come no one else can pull it off
+
+1451
+00:49:08,680 --> 00:49:12,800
+if they're so obvious?
+
+1452
+00:49:09,640 --> 00:49:14,720
+takes a lot of good execution to do it.
+
+1453
+00:49:12,800 --> 00:49:16,400
+You really have to set out to do it and
+
+1454
+00:49:14,720 --> 00:49:19,440
+then do it with an assiduousness every
+
+1455
+00:49:16,400 --> 00:49:23,440
+day, every week, every year for
+
+1456
+00:49:19,440 --> 00:49:25,120
+40 years. It's not so damn easy.
+
+1457
+00:49:23,440 --> 00:49:28,160
+So, you think the success is the magic
+
+1458
+00:49:25,120 --> 00:49:30,320
+of the business model and culture? Yes
+
+1459
+00:49:28,160 --> 00:49:33,680
+and yes, culture plus model. Yes,
+
+1460
+00:49:30,320 --> 00:49:35,320
+absolutely. And very reliable
+
+1461
+00:49:33,680 --> 00:49:39,080
+hard working
+
+1462
+00:49:35,320 --> 00:49:40,280
+determined execution for 40 years.
+
+1463
+00:49:39,080 --> 00:49:41,720
+I mean, they talk about the story of the
+
+1464
+00:49:40,280 --> 00:49:43,760
+ketchup that
+
+1465
+00:49:41,720 --> 00:49:46,600
+you could increase the price of ketchup
+
+1466
+00:49:43,760 --> 00:49:48,600
+by 3% and nobody would notice.
+
+1467
+00:49:46,600 --> 00:49:50,680
+But that would destroy everything if you
+
+1468
+00:49:48,600 --> 00:49:53,760
+did that, right?
+
+1469
+00:49:50,680 --> 00:49:56,640
+I would say the the central norm was
+
+1470
+00:49:53,760 --> 00:50:00,080
+don't raise the margin.
+
+1471
+00:49:56,640 --> 00:50:02,880
+Get it low and keep it there forever.
+
+1472
+00:50:00,080 --> 00:50:06,640
+Which brings us to the hot dogs.
+
+1473
+00:50:02,880 --> 00:50:08,800
+Is it true the story that when Craig
+
+1474
+00:50:06,640 --> 00:50:10,360
+took over as CEO,
+
+1475
+00:50:08,800 --> 00:50:12,840
+he did try to raise the price of the hot
+
+1476
+00:50:10,360 --> 00:50:15,120
+dogs?
+
+1477
+00:50:12,840 --> 00:50:17,120
+I don't know. I had no conversations
+
+1478
+00:50:15,120 --> 00:50:19,160
+with him on that subject.
+
+1479
+00:50:17,120 --> 00:50:20,920
+And Jim forbade him.
+
+1480
+00:50:19,160 --> 00:50:22,280
+Well, I'm sure Jim would have forbidden
+
+1481
+00:50:20,920 --> 00:50:24,680
+it.
+
+1482
+00:50:22,280 --> 00:50:26,560
+Absolutely. There was no board-level
+
+1483
+00:50:24,680 --> 00:50:27,600
+discussion of the hot dog.
+
+1484
+00:50:26,560 --> 00:50:29,080
+No.
+
+1485
+00:50:27,600 --> 00:50:31,240
+Those two would not have thought it was
+
+1486
+00:50:29,080 --> 00:50:32,760
+a board matter to discuss the price of
+
+1487
+00:50:31,240 --> 00:50:34,160
+hot dogs.
+
+1488
+00:50:32,760 --> 00:50:36,640
+The one thing that fascinates me about
+
+1489
+00:50:34,160 --> 00:50:39,000
+Costco is they seem to only be able to
+
+1490
+00:50:36,640 --> 00:50:42,000
+grow 10% per year because they're not
+
+1491
+00:50:39,000 --> 00:50:43,760
+capital constrained. No amount of money,
+
+1492
+00:50:42,000 --> 00:50:44,440
+if they were to access it for free,
+
+1493
+00:50:43,760 --> 00:50:46,600
+could help them.
+
+1494
+00:50:44,440 --> 00:50:49,320
+it is. It's hard
+
+1495
+00:50:46,600 --> 00:50:51,880
+to open too many stores a year.
+
+1496
+00:50:49,320 --> 00:50:55,240
+New store, new manager, new this, new
+
+1497
+00:50:51,880 --> 00:50:57,320
+politics, new it. It's hard.
+
+1498
+00:50:55,240 --> 00:50:59,760
+Plus a lot of stuff has to be learned
+
+1499
+00:50:57,320 --> 00:51:01,600
+and taught and put in place.
+
+1500
+00:50:59,760 --> 00:51:04,040
+And so they didn't want to do more than
+
+1501
+00:51:01,600 --> 00:51:05,880
+they could comfortably handle.
+
+1502
+00:51:04,040 --> 00:51:09,520
+To start opening you mentioned China
+
+1503
+00:51:05,880 --> 00:51:11,160
+earlier. Was it 12 No, 20 years that
+
+1504
+00:51:09,520 --> 00:51:11,640
+Costco had the license to operate in
+
+1505
+00:51:11,160 --> 00:51:12,480
+China?
+
+1506
+00:51:11,640 --> 00:51:13,360
+Well, let me tell you what happened
+
+1507
+00:51:12,480 --> 00:51:15,440
+there.
+
+1508
+00:51:13,360 --> 00:51:17,920
+The first store
+
+1509
+00:51:15,440 --> 00:51:19,440
+they tried to open in China,
+
+1510
+00:51:17,920 --> 00:51:21,680
+the first store somebody wanted a
+
+1511
+00:51:19,440 --> 00:51:23,880
+$30,000 bribe.
+
+1512
+00:51:21,680 --> 00:51:26,000
+You know, Chinese culture.
+
+1513
+00:51:23,880 --> 00:51:27,640
+And they just wouldn't pay it. And that
+
+1514
+00:51:26,000 --> 00:51:29,680
+made such a bad impression on Jim
+
+1515
+00:51:27,640 --> 00:51:31,360
+Sinegal, he wouldn't even talk to
+
+1516
+00:51:29,680 --> 00:51:34,080
+anybody going into China for about 30
+
+1517
+00:51:31,360 --> 00:51:36,360
+years thereafter. Ah. So what changed?
+
+1518
+00:51:34,080 --> 00:51:39,280
+Why finally go in? Well, finally the
+
+1519
+00:51:36,360 --> 00:51:41,760
+board started making enough noises
+
+1520
+00:51:39,280 --> 00:51:43,640
+You started agitating. Yeah. Yeah. Yeah,
+
+1521
+00:51:41,760 --> 00:51:44,920
+but who on the board could be excited
+
+1522
+00:51:43,640 --> 00:51:49,200
+about the Chinese market?
+
+1523
+00:51:44,920 --> 00:51:49,200
+Yeah. Who can Who knows?
+
+1524
+00:51:50,560 --> 00:51:54,280
+Oh, that's so great.
+
+1525
+00:51:52,960 --> 00:51:56,640
+One thing I found fascinating about
+
+1526
+00:51:54,280 --> 00:51:58,680
+Costco was the fact that even though
+
+1527
+00:51:56,640 --> 00:51:59,920
+they're at you know, the lowest possible
+
+1528
+00:51:58,680 --> 00:52:02,960
+prices,
+
+1529
+00:51:59,920 --> 00:52:04,920
+their audience skews wealthy. Was that
+
+1530
+00:52:02,960 --> 00:52:06,360
+an accident that they figured out over
+
+1531
+00:52:04,920 --> 00:52:09,000
+time or did they know that?
+
+1532
+00:52:06,360 --> 00:52:10,480
+they they figured out to announce.
+
+1533
+00:52:09,000 --> 00:52:12,320
+All the way back in the Price Club days?
+
+1534
+00:52:10,480 --> 00:52:14,080
+Yes.
+
+1535
+00:52:12,320 --> 00:52:15,600
+You always wanted the rich man trying to
+
+1536
+00:52:14,080 --> 00:52:17,200
+save money.
+
+1537
+00:52:15,600 --> 00:52:19,440
+Well, and it's not just that they're the
+
+1538
+00:52:17,200 --> 00:52:21,280
+wealthiest customers, they're smart
+
+1539
+00:52:19,440 --> 00:52:23,680
+wealthy customers. Yeah, they're picky
+
+1540
+00:52:21,280 --> 00:52:26,080
+wealthy customers. On some topics that
+
+1541
+00:52:23,680 --> 00:52:27,840
+are outside of Costco, you mentioned in
+
+1542
+00:52:26,080 --> 00:52:30,280
+the Daily Journal annual meeting this
+
+1543
+00:52:27,840 --> 00:52:32,560
+year that a young man knows the rules
+
+1544
+00:52:30,280 --> 00:52:34,680
+and an old man knows the exceptions.
+
+1545
+00:52:32,560 --> 00:52:36,920
+Yeah, it's an old saying of Peters. Oh,
+
+1546
+00:52:34,680 --> 00:52:39,280
+is that Peter Kaufman? Yeah. What are
+
+1547
+00:52:36,920 --> 00:52:42,480
+some of the exceptions that you've found
+
+1548
+00:52:39,280 --> 00:52:44,720
+the most useful in life?
+
+1549
+00:52:42,480 --> 00:52:47,120
+Well, take those goddamn Costco hot
+
+1550
+00:52:44,720 --> 00:52:49,440
+dogs.
+
+1551
+00:52:47,120 --> 00:52:51,040
+That's an exception. Anybody else want
+
+1552
+00:52:49,440 --> 00:52:52,520
+to raise the price of hot dogs a long
+
+1553
+00:52:51,040 --> 00:52:54,120
+time ago.
+
+1554
+00:52:52,520 --> 00:52:55,920
+They just don't do it.
+
+1555
+00:52:54,120 --> 00:52:57,520
+They just know that it's a
+
+1556
+00:52:55,920 --> 00:52:59,160
+half famous
+
+1557
+00:52:57,520 --> 00:53:00,640
+People bring their kids in to have hot
+
+1558
+00:52:59,160 --> 00:53:02,040
+They they know they've got something
+
+1559
+00:53:00,640 --> 00:53:03,400
+going there that's
+
+1560
+00:53:02,040 --> 00:53:04,720
+worth extra money to them and they just
+
+1561
+00:53:03,400 --> 00:53:06,000
+don't destroy it.
+
+1562
+00:53:04,720 --> 00:53:07,920
+A thing that I've never fully
+
+1563
+00:53:06,000 --> 00:53:10,400
+understood. I know you're a big fan of
+
+1564
+00:53:07,920 --> 00:53:12,120
+the company BYD that of course makes the
+
+1565
+00:53:10,400 --> 00:53:13,760
+the Chinese company that makes batteries
+
+1566
+00:53:12,120 --> 00:53:16,880
+and electric vehicles.
+
+1567
+00:53:13,760 --> 00:53:18,920
+I may be a big fan, but I'm sort of
+
+1568
+00:53:16,880 --> 00:53:21,240
+hanging on by my hat while he lurches
+
+1569
+00:53:18,920 --> 00:53:23,600
+around the track.
+
+1570
+00:53:21,240 --> 00:53:25,560
+And they they make me nervous. It's so
+
+1571
+00:53:23,600 --> 00:53:28,000
+aggressive.
+
+1572
+00:53:25,560 --> 00:53:29,360
+Is that dangerous in a company? Well,
+
+1573
+00:53:28,000 --> 00:53:31,720
+that's what makes me nervous. Of course
+
+1574
+00:53:29,360 --> 00:53:34,000
+it's dangerous.
+
+1575
+00:53:31,720 --> 00:53:38,000
+So do you think that companies should
+
+1576
+00:53:34,000 --> 00:53:41,040
+try to grow at a lower rate than they're
+
+1577
+00:53:38,000 --> 00:53:43,080
+capable of in order to be more durable?
+
+1578
+00:53:41,040 --> 00:53:47,480
+Well, if it's Of course you do that if
+
+1579
+00:53:43,080 --> 00:53:50,120
+it's safer and easier and so forth. But
+
+1580
+00:53:47,480 --> 00:53:51,280
+I would argue that Costco where they've
+
+1581
+00:53:50,120 --> 00:53:53,359
+done some of these things that are
+
+1582
+00:53:51,280 --> 00:53:55,080
+extreme like the hot dog,
+
+1583
+00:53:53,359 --> 00:53:57,800
+it's been a plus and they were it was
+
+1584
+00:53:55,080 --> 00:53:59,760
+smart to not to change their ways
+
+1585
+00:53:57,800 --> 00:54:01,400
+on one item or two.
+
+1586
+00:53:59,760 --> 00:54:04,280
+And it seems like there's a spectrum
+
+1587
+00:54:01,400 --> 00:54:06,400
+where on the one side there's Costco
+
+1588
+00:54:04,280 --> 00:54:08,600
+that is just not a fast-growing company
+
+1589
+00:54:06,400 --> 00:54:10,120
+cuz it's very difficult to. And on BYD
+
+1590
+00:54:08,600 --> 00:54:13,320
+like you're saying, they grew like
+
+1591
+00:54:10,120 --> 00:54:13,320
+crazy. I mean, you turned
+
+1592
+00:54:14,440 --> 00:54:17,920
+this year has sold at least two and a
+
+1593
+00:54:16,120 --> 00:54:19,800
+half million cars.
+
+1594
+00:54:17,920 --> 00:54:20,880
+Most of them electric. That's unheard
+
+1595
+00:54:19,800 --> 00:54:22,280
+of.
+
+1596
+00:54:20,880 --> 00:54:23,920
+Well, I've never heard of them. They've
+
+1597
+00:54:22,280 --> 00:54:25,760
+sold way more than Mercedes for
+
+1598
+00:54:23,920 --> 00:54:28,200
+instance. More than Tesla, right?
+
+1599
+00:54:25,760 --> 00:54:30,440
+Yeah, more than anybody. Yeah. Lots of
+
+1600
+00:54:28,200 --> 00:54:32,880
+troubles and losses.
+
+1601
+00:54:30,440 --> 00:54:34,440
+They ran into terrible trouble. They
+
+1602
+00:54:32,880 --> 00:54:36,560
+They created all kind of They made lots
+
+1603
+00:54:34,440 --> 00:54:38,920
+of mistakes.
+
+1604
+00:54:36,560 --> 00:54:41,280
+They were lucky to be on the cutting
+
+1605
+00:54:38,920 --> 00:54:42,840
+edge of this electric car business. It's
+
+1606
+00:54:41,280 --> 00:54:44,720
+way more acceleration than most
+
+1607
+00:54:42,840 --> 00:54:46,400
+vehicles. So you got a car with more
+
+1608
+00:54:44,720 --> 00:54:48,280
+oomph than most vehicles. So the young
+
+1609
+00:54:46,400 --> 00:54:50,400
+macho male
+
+1610
+00:54:48,280 --> 00:54:52,600
+has a real
+
+1611
+00:54:50,400 --> 00:54:54,440
+lively car.
+
+1612
+00:54:52,600 --> 00:54:57,240
+There are a lot of things where where
+
+1613
+00:54:54,440 --> 00:54:58,680
+electric car really works in some ways
+
+1614
+00:54:57,240 --> 00:55:00,800
+that is better.
+
+1615
+00:54:58,680 --> 00:55:02,200
+They're making a 90° turn.
+
+1616
+00:55:00,800 --> 00:55:04,320
+You go right opposite a parallel park
+
+1617
+00:55:02,200 --> 00:55:07,280
+you basically just move this way.
+
+1618
+00:55:04,320 --> 00:55:09,280
+Turn the wheels 90° and go in. Yeah.
+
+1619
+00:55:07,280 --> 00:55:12,359
+Well, nobody's ever done that.
+
+1620
+00:55:09,280 --> 00:55:14,280
+If your car goes flat, you can run 100
+
+1621
+00:55:12,359 --> 00:55:15,920
+miles on three other wheels or
+
+1622
+00:55:14,280 --> 00:55:17,359
+something.
+
+1623
+00:55:15,920 --> 00:55:19,680
+And do they have better economics cuz
+
+1624
+00:55:17,359 --> 00:55:22,000
+they don't have nearly as many parts?
+
+1625
+00:55:19,680 --> 00:55:23,440
+It's simpler.
+
+1626
+00:55:22,000 --> 00:55:25,200
+Have you ever had an investment like
+
+1627
+00:55:23,440 --> 00:55:27,400
+that before? I think you've invested
+
+1628
+00:55:25,200 --> 00:55:30,800
+something like 270 million that's now
+
+1629
+00:55:27,400 --> 00:55:31,920
+worth something like 8 billion in BYD.
+
+1630
+00:55:30,800 --> 00:55:34,040
+Well,
+
+1631
+00:55:31,920 --> 00:55:35,359
+very few people have a investment type
+
+1632
+00:55:34,040 --> 00:55:37,000
+of
+
+1633
+00:55:35,359 --> 00:55:38,760
+It's a venture capital type investment.
+
+1634
+00:55:37,000 --> 00:55:40,359
+It happened to be a suddenly traded
+
+1635
+00:55:38,760 --> 00:55:43,200
+public company when we bought it instead
+
+1636
+00:55:40,359 --> 00:55:46,280
+of a venture capital type company.
+
+1637
+00:55:43,200 --> 00:55:48,080
+It was a venture capital type play.
+
+1638
+00:55:46,280 --> 00:55:50,480
+And they just went put the foot right to
+
+1639
+00:55:48,080 --> 00:55:51,960
+the floorboard and played it hard.
+
+1640
+00:55:50,480 --> 00:55:54,720
+Had they manufactured
+
+1641
+00:55:51,960 --> 00:55:56,760
+way, both BYD and
+
+1642
+00:55:54,720 --> 00:55:58,400
+and we
+
+1643
+00:55:56,760 --> 00:55:59,920
+tried to talk him out of going into the
+
+1644
+00:55:58,400 --> 00:56:01,440
+car business. They were going to buy a
+
+1645
+00:55:59,920 --> 00:56:03,040
+bankrupt car business and go into the
+
+1646
+00:56:01,440 --> 00:56:05,400
+car business.
+
+1647
+00:56:03,040 --> 00:56:07,880
+I said, "That's a great idea for you and
+
+1648
+00:56:05,400 --> 00:56:08,840
+all, but why would you want to do that?"
+
+1649
+00:56:07,880 --> 00:56:10,520
+And
+
+1650
+00:56:08,840 --> 00:56:11,800
+he paid no attention to us and went
+
+1651
+00:56:10,520 --> 00:56:13,359
+right ahead.
+
+1652
+00:56:11,800 --> 00:56:15,200
+Had you invested already when he told
+
+1653
+00:56:13,359 --> 00:56:17,880
+you this plan?
+
+1654
+00:56:15,200 --> 00:56:20,200
+And it worked fabulously well.
+
+1655
+00:56:17,880 --> 00:56:21,960
+After huge mistakes that they were
+
+1656
+00:56:20,200 --> 00:56:23,680
+almost went broke with their early
+
+1657
+00:56:21,960 --> 00:56:27,240
+dealership building
+
+1658
+00:56:23,680 --> 00:56:29,200
+system. Almost went broke.
+
+1659
+00:56:27,240 --> 00:56:31,120
+What captivated you about BYD?
+
+1660
+00:56:29,200 --> 00:56:33,400
+was a genius.
+
+1661
+00:56:31,120 --> 00:56:35,520
+He was had a PhD in engineering and he
+
+1662
+00:56:33,400 --> 00:56:37,440
+could look at somebody's part. He could
+
+1663
+00:56:35,520 --> 00:56:38,880
+make that part, you know,
+
+1664
+00:56:37,440 --> 00:56:41,320
+look at it in the morning and look at it
+
+1665
+00:56:38,880 --> 00:56:43,880
+in the I've known he could make it.
+
+1666
+00:56:41,320 --> 00:56:46,160
+I've never seen anybody like that.
+
+1667
+00:56:43,880 --> 00:56:48,359
+He could do anything. He is a natural
+
+1668
+00:56:46,160 --> 00:56:50,359
+engineer and a
+
+1669
+00:56:48,359 --> 00:56:52,080
+get-it-done type
+
+1670
+00:56:50,359 --> 00:56:53,960
+production executive.
+
+1671
+00:56:52,080 --> 00:56:56,120
+And that's a big thing. That's a big lot
+
+1672
+00:56:53,960 --> 00:56:58,080
+of talent to have in one place.
+
+1673
+00:56:56,120 --> 00:57:00,040
+And it's very useful.
+
+1674
+00:56:58,080 --> 00:57:01,160
+They've solved all these problems on
+
+1675
+00:57:00,040 --> 00:57:03,000
+these
+
+1676
+00:57:01,160 --> 00:57:04,800
+electric cars and the motors and the
+
+1677
+00:57:03,000 --> 00:57:07,720
+acceleration and the
+
+1678
+00:57:04,800 --> 00:57:09,880
+braking and the so on.
+
+1679
+00:57:07,720 --> 00:57:11,880
+How would you compare him and BYD to
+
+1680
+00:57:09,880 --> 00:57:13,960
+Elon and Tesla?
+
+1681
+00:57:11,880 --> 00:57:15,720
+Well, he's a fanatic that knows how to
+
+1682
+00:57:13,960 --> 00:57:17,600
+actually make things with his hands if
+
+1683
+00:57:15,720 --> 00:57:19,400
+he has to.
+
+1684
+00:57:17,600 --> 00:57:20,640
+He's closer to ground zero in other
+
+1685
+00:57:19,400 --> 00:57:23,480
+words.
+
+1686
+00:57:20,640 --> 00:57:27,160
+The guy at BYD is better at actually
+
+1687
+00:57:23,480 --> 00:57:30,120
+making things than than Elon is.
+
+1688
+00:57:27,160 --> 00:57:32,200
+Charlie, you turn 100,
+
+1689
+00:57:30,120 --> 00:57:34,880
+which is an unbelievable statement, on
+
+1690
+00:57:32,200 --> 00:57:36,960
+January 1st of next year.
+
+1691
+00:57:34,880 --> 00:57:39,480
+Do you have any plans? I'm going to a
+
+1692
+00:57:36,960 --> 00:57:39,480
+party.
+
+1693
+00:57:40,240 --> 00:57:43,880
+Where's the party going to be?
+
+1694
+00:57:41,720 --> 00:57:45,880
+The California Club.
+
+1695
+00:57:43,880 --> 00:57:48,920
+But I've totally maxed out the room. I
+
+1696
+00:57:45,880 --> 00:57:48,920
+can't squeeze another person
+
+1697
+00:57:49,359 --> 00:57:52,520
+What captivates you these days? What's
+
+1698
+00:57:50,960 --> 00:57:55,640
+fun?
+
+1699
+00:57:52,520 --> 00:57:57,520
+Well, practically everything is.
+
+1700
+00:57:55,640 --> 00:57:59,040
+Even politics, bad as it is, is kind of
+
+1701
+00:57:57,520 --> 00:58:00,960
+interesting.
+
+1702
+00:57:59,040 --> 00:58:02,320
+When you look back at your your and
+
+1703
+00:58:00,960 --> 00:58:04,320
+Warren's time together, when did you
+
+1704
+00:58:02,320 --> 00:58:05,840
+have the most fun?
+
+1705
+00:58:04,320 --> 00:58:08,240
+We had about the same amount of fun all
+
+1706
+00:58:05,840 --> 00:58:10,680
+the way through.
+
+1707
+00:58:08,240 --> 00:58:12,560
+We're having fun now.
+
+1708
+00:58:10,680 --> 00:58:14,320
+Is there a particular era that you
+
+1709
+00:58:12,560 --> 00:58:15,960
+remember the most fondly that feels like
+
+1710
+00:58:14,320 --> 00:58:17,600
+the good old days?
+
+1711
+00:58:15,960 --> 00:58:19,640
+Well, I we remember we were sweating
+
+1712
+00:58:17,600 --> 00:58:21,400
+blood in some of those good old days.
+
+1713
+00:58:19,640 --> 00:58:23,160
+Oh, I mean, Salomon Brothers.
+
+1714
+00:58:21,400 --> 00:58:25,400
+Salomon Brothers, Yeah. Yeah.
+
+1715
+00:58:23,160 --> 00:58:27,359
+There were a lot of close misses.
+
+1716
+00:58:25,400 --> 00:58:29,960
+We got out of a big problem at Salomon.
+
+1717
+00:58:27,359 --> 00:58:31,280
+We could have had a big loss.
+
+1718
+00:58:29,960 --> 00:58:33,120
+You could have had
+
+1719
+00:58:31,280 --> 00:58:34,000
+more problems than just a loss with
+
+1720
+00:58:33,120 --> 00:58:35,720
+Salomon, right?
+
+1721
+00:58:34,000 --> 00:58:37,280
+Well, actually on on our when we
+
+1722
+00:58:35,720 --> 00:58:40,520
+examined Berkshire Hathaway on our
+
+1723
+00:58:37,280 --> 00:58:43,080
+podcast, our takeaway was that the whole
+
+1724
+00:58:40,520 --> 00:58:44,760
+franchise was at risk during Salomon
+
+1725
+00:58:43,080 --> 00:58:46,840
+Brothers, the entire Berkshire Hathaway
+
+1726
+00:58:44,760 --> 00:58:49,480
+name and future. Would you agree with
+
+1727
+00:58:46,840 --> 00:58:51,080
+that? Not so much. I think we would have
+
+1728
+00:58:49,480 --> 00:58:52,760
+survived.
+
+1729
+00:58:51,080 --> 00:58:54,160
+If you would let the whole investment in
+
+1730
+00:58:52,760 --> 00:58:57,600
+Salomon go to zero, it would have
+
+1731
+00:58:54,160 --> 00:58:59,960
+If If it all blown up and went to zero,
+
+1732
+00:58:57,600 --> 00:59:02,440
+we would have written it off and gone on
+
+1733
+00:58:59,960 --> 00:59:03,640
+and done pretty well.
+
+1734
+00:59:02,440 --> 00:59:06,480
+What do you consider it to be your
+
+1735
+00:59:03,640 --> 00:59:06,480
+finest hour?
+
+1736
+00:59:07,400 --> 00:59:11,560
+Well,
+
+1737
+00:59:09,040 --> 00:59:13,200
+we like to remember the close misses
+
+1738
+00:59:11,560 --> 00:59:15,480
+where we were really getting into real
+
+1739
+00:59:13,200 --> 00:59:16,680
+terrible problems.
+
+1740
+00:59:15,480 --> 00:59:18,320
+We had a terrible problem with the
+
+1741
+00:59:16,680 --> 00:59:19,720
+Buffalo News.
+
+1742
+00:59:18,320 --> 00:59:20,520
+The Buffalo Evening News.
+
+1743
+00:59:19,720 --> 00:59:22,080
+Yeah. Well,
+
+1744
+00:59:20,520 --> 00:59:23,800
+yeah, it was There were two newspapers
+
+1745
+00:59:22,080 --> 00:59:26,080
+in that town and we started a Sunday
+
+1746
+00:59:23,800 --> 00:59:28,480
+edition and that started a holy war and
+
+1747
+00:59:26,080 --> 00:59:30,040
+the other guy went broke.
+
+1748
+00:59:28,480 --> 00:59:33,080
+Well, we could We could have had a lot
+
+1749
+00:59:30,040 --> 00:59:34,920
+of bad publicity over that.
+
+1750
+00:59:33,080 --> 00:59:36,440
+And you were you were both pretty young
+
+1751
+00:59:34,920 --> 00:59:38,520
+and enterprising at that point. I mean
+
+1752
+00:59:36,440 --> 00:59:40,320
+you weren't the Warren and Charlie of
+
+1753
+00:59:38,520 --> 00:59:41,680
+No, but I was very aggressive about
+
+1754
+00:59:40,320 --> 00:59:43,720
+wanting to
+
+1755
+00:59:41,680 --> 00:59:45,360
+have a good Sunday edition.
+
+1756
+00:59:43,720 --> 00:59:46,800
+I didn't want to own the paper for 50
+
+1757
+00:59:45,360 --> 00:59:48,840
+years and no Sunday edition and the
+
+1758
+00:59:46,800 --> 00:59:50,280
+other guy had one.
+
+1759
+00:59:48,840 --> 00:59:52,040
+What made the newspaper business so
+
+1760
+00:59:50,280 --> 00:59:53,920
+attractive at that point in history?
+
+1761
+00:59:52,040 --> 00:59:54,600
+It was a gold mine.
+
+1762
+00:59:53,920 --> 00:59:56,840
+That's attractive.
+
+1763
+00:59:54,600 --> 00:59:58,600
+time, total gold mine. Well, and the
+
+1764
+00:59:56,840 --> 01:00:00,560
+play in particular with the Buffalo
+
+1765
+00:59:58,600 --> 01:00:02,560
+Evening News and the Sunday edition was
+
+1766
+01:00:00,560 --> 01:00:03,880
+playing for the local monopoly, right?
+
+1767
+01:00:02,560 --> 01:00:05,760
+To
+
+1768
+01:00:03,880 --> 01:00:09,360
+Yeah, sure. Be the game the game in town
+
+1769
+01:00:05,760 --> 01:00:12,520
+and with newspapers you could do that.
+
+1770
+01:00:09,360 --> 01:00:14,760
+I mean, newspapers for decades had
+
+1771
+01:00:12,520 --> 01:00:16,440
+EBITDA margins in the
+
+1772
+01:00:14,760 --> 01:00:17,320
+50-60%
+
+1773
+01:00:16,440 --> 01:00:19,040
+range, right?
+
+1774
+01:00:17,320 --> 01:00:20,760
+No, only the little ones. Only the
+
+1775
+01:00:19,040 --> 01:00:21,760
+little ones. Oh. Yeah, the big ones were
+
+1776
+01:00:20,760 --> 01:00:24,600
+less.
+
+1777
+01:00:21,760 --> 01:00:26,200
+30 or 40 or 25 or
+
+1778
+01:00:24,600 --> 01:00:27,720
+I'm sorry. I I said EBITDA in your
+
+1779
+01:00:26,200 --> 01:00:30,560
+presence. I apologize. Cash flow
+
+1780
+01:00:27,720 --> 01:00:32,160
+margins. Actually, do you still feel as
+
+1781
+01:00:30,560 --> 01:00:33,600
+uh that EBITDA is
+
+1782
+01:00:32,160 --> 01:00:35,960
+a criminal the way that you've demonized
+
+1783
+01:00:33,600 --> 01:00:38,160
+it in the past? Yeah, I do. I think I
+
+1784
+01:00:35,960 --> 01:00:39,080
+think so. You got a big truck company
+
+1785
+01:00:38,160 --> 01:00:40,800
+and
+
+1786
+01:00:39,080 --> 01:00:43,000
+take the depreciation out of the trucks
+
+1787
+01:00:40,800 --> 01:00:45,440
+out of the earnings, you're really lying
+
+1788
+01:00:43,000 --> 01:00:46,320
+about the earnings.
+
+1789
+01:00:45,440 --> 01:00:48,960
+I mean,
+
+1790
+01:00:46,320 --> 01:00:50,600
+you witnessed its rise with Malone and
+
+1791
+01:00:48,960 --> 01:00:52,800
+TCI and Liberty like
+
+1792
+01:00:50,600 --> 01:00:55,640
+when EBITDA was invented as a concept,
+
+1793
+01:00:52,800 --> 01:00:57,240
+right? Like what were you thinking?
+
+1794
+01:00:55,640 --> 01:01:00,400
+Well, I've never liked John Malone's
+
+1795
+01:00:57,240 --> 01:01:01,840
+extreme manipulations.
+
+1796
+01:01:00,400 --> 01:01:05,840
+I don't want to be known as the great
+
+1797
+01:01:01,840 --> 01:01:08,120
+manipulator like John Malone is.
+
+1798
+01:01:05,840 --> 01:01:09,680
+He paid less income taxes than anybody.
+
+1799
+01:01:08,120 --> 01:01:12,560
+He just pushed everything to the
+
+1800
+01:01:09,680 --> 01:01:15,480
+driver's extreme. In many ways, EBITDA
+
+1801
+01:01:12,560 --> 01:01:17,240
+was the community adjusted earnings of
+
+1802
+01:01:15,480 --> 01:01:19,400
+its era. Are you familiar with the
+
+1803
+01:01:17,240 --> 01:01:21,720
+community adjustment No,
+
+1804
+01:01:19,400 --> 01:01:21,720
+WeWork.
+
+1805
+01:01:22,920 --> 01:01:26,760
+Maybe um
+
+1806
+01:01:24,520 --> 01:01:28,880
+final question to wrap up.
+
+1807
+01:01:26,760 --> 01:01:30,920
+What are the set of companies that you
+
+1808
+01:01:28,880 --> 01:01:32,400
+think are the greatest that you've ever
+
+1809
+01:01:30,920 --> 01:01:34,240
+seen? Either that you've owned or that
+
+1810
+01:01:32,400 --> 01:01:35,440
+you've not owned.
+
+1811
+01:01:34,240 --> 01:01:36,880
+Well, there are a lot of great
+
+1812
+01:01:35,440 --> 01:01:40,680
+companies.
+
+1813
+01:01:36,880 --> 01:01:40,680
+Hermès is a great company.
+
+1814
+01:01:40,960 --> 01:01:45,560
+In its heyday, General Motors was a
+
+1815
+01:01:42,840 --> 01:01:45,560
+great company.
+
+1816
+01:01:45,800 --> 01:01:50,200
+It just gradually went to hell one
+
+1817
+01:01:47,720 --> 01:01:51,000
+contract at a time.
+
+1818
+01:01:50,200 --> 01:01:52,760
+What do you think about the
+
+1819
+01:01:51,000 --> 01:01:54,280
+predictability of
+
+1820
+01:01:52,760 --> 01:01:55,400
+There were a number of companies back
+
+1821
+01:01:54,280 --> 01:01:56,920
+when you started where you could have
+
+1822
+01:01:55,400 --> 01:02:00,000
+said this business will be the same in
+
+1823
+01:01:56,920 --> 01:02:01,440
+10 years. You think that number is the
+
+1824
+01:02:00,000 --> 01:02:02,040
+same today or do you think it's much
+
+1825
+01:02:01,440 --> 01:02:04,720
+harder today?
+
+1826
+01:02:02,040 --> 01:02:06,880
+most places have a lot of change in
+
+1827
+01:02:04,720 --> 01:02:08,200
+threat in their future.
+
+1828
+01:02:06,880 --> 01:02:09,560
+Do you think most places had a lot of
+
+1829
+01:02:08,200 --> 01:02:11,240
+change and threat in their future even
+
+1830
+01:02:09,560 --> 01:02:11,600
+50 years ago and this story is
+
+1831
+01:02:11,240 --> 01:02:13,000
+overblown?
+
+1832
+01:02:11,600 --> 01:02:15,120
+There's a difference. Some of what I
+
+1833
+01:02:13,000 --> 01:02:17,560
+call the specialized industrial company,
+
+1834
+01:02:15,120 --> 01:02:19,040
+and Berkshire has a lot of them.
+
+1835
+01:02:17,560 --> 01:02:20,640
+We have a lot of companies that are
+
+1836
+01:02:19,040 --> 01:02:23,320
+quite insulated from really tough
+
+1837
+01:02:20,640 --> 01:02:23,320
+competition.
+
+1838
+01:02:24,240 --> 01:02:27,000
+Just because they've been so long and
+
+1839
+01:02:25,600 --> 01:02:29,040
+they're so good at what they do and they
+
+1840
+01:02:27,000 --> 01:02:31,080
+have a good reputation and high value
+
+1841
+01:02:29,040 --> 01:02:32,680
+and so on and so forth.
+
+1842
+01:02:31,080 --> 01:02:34,720
+What companies can you see today where
+
+1843
+01:02:32,680 --> 01:02:37,000
+you can confidently say, Berkshire
+
+1844
+01:02:34,720 --> 01:02:39,120
+aside, Costco aside, you can confidently
+
+1845
+01:02:37,000 --> 01:02:42,880
+say the business will be
+
+1846
+01:02:39,120 --> 01:02:44,240
+as good as it is today in 10 years?
+
+1847
+01:02:42,880 --> 01:02:45,720
+Well, I think a lot of companies are
+
+1848
+01:02:44,240 --> 01:02:47,680
+pretty good, but you can't confidently
+
+1849
+01:02:45,720 --> 01:02:49,200
+say what's going to happen
+
+1850
+01:02:47,680 --> 01:02:51,160
+because
+
+1851
+01:02:49,200 --> 01:02:53,160
+you may get some guy like Iger in that
+
+1852
+01:02:51,160 --> 01:02:55,200
+just wants to push everything and do the
+
+1853
+01:02:53,160 --> 01:02:56,640
+right public relations and
+
+1854
+01:02:55,200 --> 01:02:58,520
+so no matter how good the business is,
+
+1855
+01:02:56,640 --> 01:03:00,160
+it'll be kind of phony.
+
+1856
+01:02:58,520 --> 01:03:02,240
+Mhm.
+
+1857
+01:03:00,160 --> 01:03:05,880
+Charlie, I have a personal question for
+
+1858
+01:03:02,240 --> 01:03:08,320
+you. David has a 2-year-old and I'm
+
+1859
+01:03:05,880 --> 01:03:11,080
+going to have my first child in a month.
+
+1860
+01:03:08,320 --> 01:03:14,160
+What advice do you have for us about
+
+1861
+01:03:11,080 --> 01:03:14,160
+building families?
+
+1862
+01:03:14,400 --> 01:03:19,360
+Well, of course you got to get along
+
+1863
+01:03:16,840 --> 01:03:20,920
+with everybody. You got to
+
+1864
+01:03:19,360 --> 01:03:23,480
+help them through their tough times and
+
+1865
+01:03:20,920 --> 01:03:25,480
+they help you and so forth. Yeah. But I
+
+1866
+01:03:23,480 --> 01:03:27,280
+think it's not as hard as it looks.
+
+1867
+01:03:25,480 --> 01:03:29,840
+I think half of the marriages in America
+
+1868
+01:03:27,280 --> 01:03:31,280
+work pretty damn well.
+
+1869
+01:03:29,840 --> 01:03:32,760
+And we would have worked just as well if
+
+1870
+01:03:31,280 --> 01:03:35,360
+both of us had to marry somebody else,
+
+1871
+01:03:32,760 --> 01:03:35,360
+by the way.
+
+1872
+01:03:36,920 --> 01:03:40,800
+Well, you've said that the best way to
+
+1873
+01:03:38,720 --> 01:03:43,200
+have a great spouse is to deserve one.
+
+1874
+01:03:40,800 --> 01:03:45,080
+Yeah, sure. As long as both parties feel
+
+1875
+01:03:43,200 --> 01:03:48,200
+that way, then it's a recipe for
+
+1876
+01:03:45,080 --> 01:03:49,160
+success. Of course it is.
+
+1877
+01:03:48,200 --> 01:03:51,240
+And
+
+1878
+01:03:49,160 --> 01:03:52,800
+you got to have trust with your spouse
+
+1879
+01:03:51,240 --> 01:03:54,960
+when it gets to things like education of
+
+1880
+01:03:52,800 --> 01:03:56,080
+the children and so forth.
+
+1881
+01:03:54,960 --> 01:03:57,720
+Yeah.
+
+1882
+01:03:56,080 --> 01:03:59,600
+I love that. Well, Charlie, thank you.
+
+1883
+01:03:57,720 --> 01:04:00,800
+Yeah. Thank you, Charlie.
+
+1884
+01:03:59,600 --> 01:04:02,720
+Well, good luck to you guys.
+
+1885
+01:04:00,800 --> 01:04:04,240
+Charlie, this has been a lot of people
+
+1886
+01:04:02,720 --> 01:04:06,240
+are going to benefit a lot from hearing
+
+1887
+01:04:04,240 --> 01:04:08,160
+this and your your wisdom and they're
+
+1888
+01:04:06,240 --> 01:04:09,320
+going to learn so much. Well, you know,
+
+1889
+01:04:08,160 --> 01:04:11,040
+if you start to think about it, it's
+
+1890
+01:04:09,320 --> 01:04:13,120
+pretty hard. It doesn't look so damn
+
+1891
+01:04:11,040 --> 01:04:15,000
+easy just to go out.
+
+1892
+01:04:13,120 --> 01:04:16,840
+If you go to the ordinary person trying
+
+1893
+01:04:15,000 --> 01:04:18,760
+to promote himself as an investment
+
+1894
+01:04:16,840 --> 01:04:20,320
+advisor or some guy
+
+1895
+01:04:18,760 --> 01:04:21,920
+he just thinks he knows everything about
+
+1896
+01:04:20,320 --> 01:04:23,640
+everything and
+
+1897
+01:04:21,920 --> 01:04:24,760
+how the Federal Reserve should be run
+
+1898
+01:04:23,640 --> 01:04:26,480
+and so on.
+
+1899
+01:04:24,760 --> 01:04:28,160
+We don't feel that way.
+
+1900
+01:04:26,480 --> 01:04:30,480
+I will say with the people we get to
+
+1901
+01:04:28,160 --> 01:04:33,760
+talk to who've built great things, every
+
+1902
+01:04:30,480 --> 01:04:35,480
+single one of them says it was so hard.
+
+1903
+01:04:33,760 --> 01:04:38,240
+It's so hard. You can't build something
+
+1904
+01:04:35,480 --> 01:04:39,480
+great without it being so hard.
+
+1905
+01:04:38,240 --> 01:04:41,600
+Charlie, thanks so much for doing this
+
+1906
+01:04:39,480 --> 01:04:43,120
+with us. Glad to do it.
+
+1907
+01:04:41,600 --> 01:04:45,080
+It'll be an interesting life you're
+
+1908
+01:04:43,120 --> 01:04:47,880
+leading. You'll do pretty well at it,
+
+1909
+01:04:45,080 --> 01:04:49,880
+but it's not going to be that damn easy.
+
+1910
+01:04:47,880 --> 01:04:51,640
+David, total life experience and
+
+1911
+01:04:49,880 --> 01:04:53,320
+complete boondoggle. I mean, I can't
+
+1912
+01:04:51,640 --> 01:04:54,880
+believe we got to do this. I'm still
+
+1913
+01:04:53,320 --> 01:04:57,080
+pinching myself. It's now a couple weeks
+
+1914
+01:04:54,880 --> 01:04:58,760
+after it actually happened. I know, with
+
+1915
+01:04:57,080 --> 01:05:01,040
+autograph copies of poor Charlie's
+
+1916
+01:04:58,760 --> 01:05:03,640
+Almanac to prove it.
+
+1917
+01:05:01,040 --> 01:05:05,680
+As if the podcast wasn't enough.
+
+1918
+01:05:03,640 --> 01:05:08,680
+And actually, for those of you who
+
+1919
+01:05:05,680 --> 01:05:12,160
+haven't listened back what, in 2021, so
+
+1920
+01:05:08,680 --> 01:05:14,000
+2 years ago, we did a whole three-part
+
+1921
+01:05:12,160 --> 01:05:16,840
+series just us covering the whole
+
+1922
+01:05:14,000 --> 01:05:18,760
+history of Berkshire Hathaway. Part one
+
+1923
+01:05:16,840 --> 01:05:20,680
+is on Warren, part two is on Charlie,
+
+1924
+01:05:18,760 --> 01:05:23,440
+part three is on Berkshire and Ted and
+
+1925
+01:05:20,680 --> 01:05:24,640
+Todd all the way up through to today. I
+
+1926
+01:05:23,440 --> 01:05:25,880
+assume many of you have listened to
+
+1927
+01:05:24,640 --> 01:05:27,480
+that, but there probably are a bunch of
+
+1928
+01:05:25,880 --> 01:05:30,400
+folks who haven't. So, if you want
+
+1929
+01:05:27,480 --> 01:05:32,080
+another 9 or 10 hours of Acquired
+
+1930
+01:05:30,400 --> 01:05:34,440
+content on Berkshire, I really think
+
+1931
+01:05:32,080 --> 01:05:36,320
+it's some of if not our best work. Go
+
+1932
+01:05:34,440 --> 01:05:39,000
+check those out. With that, listeners, a
+
+1933
+01:05:36,320 --> 01:05:41,520
+huge thank you to Tiny for being the
+
+1934
+01:05:39,000 --> 01:05:44,040
+sole presenting sponsor of this episode.
+
+1935
+01:05:41,520 --> 01:05:45,960
+If you have or you know of a wonderful
+
+1936
+01:05:44,040 --> 01:05:48,960
+internet business, you should reach out.
+
+1937
+01:05:45,960 --> 01:05:51,200
+hi@tiny.com and just tell them that Ben,
+
+1938
+01:05:48,960 --> 01:05:52,960
+David, and Charlie sent you.
+
+1939
+01:05:51,200 --> 01:05:55,600
+You can sign up for notifications of new
+
+1940
+01:05:52,960 --> 01:05:57,920
+emails every time an episode drops and
+
+1941
+01:05:55,600 --> 01:05:59,760
+we'll be including little tidbits as we
+
+1942
+01:05:57,920 --> 01:06:02,120
+learn things after releasing episodes,
+
+1943
+01:05:59,760 --> 01:06:04,560
+corrections, updates, things like that,
+
+1944
+01:06:02,120 --> 01:06:07,080
+and teasing the next episode.
+
+1945
+01:06:04,560 --> 01:06:09,359
+acquired.fm/email.
+
+1946
+01:06:07,080 --> 01:06:10,840
+Listen to ACQ2. This is typically where
+
+1947
+01:06:09,359 --> 01:06:12,160
+we talk about more up-and-coming
+
+1948
+01:06:10,840 --> 01:06:14,520
+companies who are earlier in their
+
+1949
+01:06:12,160 --> 01:06:17,960
+journeys or CEOs who are topic experts
+
+1950
+01:06:14,520 --> 01:06:20,720
+in important areas like AI. Search ACQ2
+
+1951
+01:06:17,960 --> 01:06:23,520
+in any podcast player. After you finish
+
+1952
+01:06:20,720 --> 01:06:25,080
+this, join the Slack. acquired.fm/slack
+
+1953
+01:06:23,520 --> 01:06:26,640
+and discuss with the whole Acquired
+
+1954
+01:06:25,080 --> 01:06:28,040
+community. And if you want to get some
+
+1955
+01:06:26,640 --> 01:06:29,560
+of that sweet Acquired merch that
+
+1956
+01:06:28,040 --> 01:06:32,560
+everyone's talking about, go to
+
+1957
+01:06:29,560 --> 01:06:33,960
+acquired.fm/store.
+
+1958
+01:06:32,560 --> 01:06:36,400
+With that, listeners, we'll see you next
+
+1959
+01:06:33,960 --> 01:06:38,800
+time. We'll see you next time. Who got
+
+1960
+01:06:36,400 --> 01:06:41,440
+the truth?
+
+1961
+01:06:38,800 --> 01:06:44,320
+Is it you? Is it you? Is it you? Who got
+
+1962
+01:06:41,440 --> 01:06:44,320
+the truth now?
+
