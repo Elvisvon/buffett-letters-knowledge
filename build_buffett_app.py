@@ -672,12 +672,14 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
   border-radius:14px;cursor:pointer;transition:transform .12s,box-shadow .12s}
 .chat-entry:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(90,70,30,.12)}
 .chat-entry .ce-ic{font-size:32px;line-height:1}
+.chat-entry .ce-img{width:42px;height:42px;border-radius:12px;box-shadow:0 2px 8px rgba(139,111,71,.25);flex:0 0 auto}
 .chat-entry .ce-body{flex:1;min-width:0}
 .chat-entry .ce-title{font:700 18px var(--serif);color:var(--accent);margin-bottom:3px}
 .chat-entry .ce-desc{font-size:13px;color:var(--ink2);line-height:1.7}
 .chat-entry .ce-arrow{font-size:14px;color:var(--accent2);font-weight:600;white-space:nowrap}
 .chat-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .chat-title{font:700 19px var(--serif);flex:1;min-width:220px}
+.chat-title .chat-img{width:26px;height:26px;border-radius:7px;vertical-align:-5px;margin-right:8px}
 .chat-title .chat-sub{display:block;font:400 12px var(--sans);color:var(--ink3);margin-top:3px}
 .chat-intro{background:#faf6ea;border:1px solid #e3d5b8;border-radius:10px;padding:10px 15px;
   font-size:12.5px;color:#4d4638;line-height:1.8;margin:12px 0}
@@ -1609,7 +1611,11 @@ function renderHome(){
       '<div class="hh-chart-wrap"><div class="hh-chart" id="heroChart"></div><div class="chart-note">口径：每股账面价值（Book Value）</div></div>'+
       '<div class="hh-search"><input id="homeQ" placeholder="搜索文章、概念、公司、人物…" autocomplete="off"><button id="homeQGo">搜索</button></div>'+
     '</div>'+
-    '<div class="chat-entry" data-chat="1"><span class="ce-ic">🗣</span><div class="ce-body"><div class="ce-title">与巴菲特对话</div><div class="ce-desc">以 celebrity-buffett 人格回答你的投资问题——护城河 / 安全边际 / 能力圈 / 决策启发式，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
+    '<div class="chat-entry" data-chat="1">'+
+      (typeof APP_ICON_B64!=='undefined'
+        ? '<img class="ce-img" src="data:image/png;base64,'+APP_ICON_B64+'" alt="巴菲特">'
+        : '<span class="ce-ic">🗣</span>')+
+      '<div class="ce-body"><div class="ce-title">与巴菲特对话</div><div class="ce-desc">以 celebrity-buffett 人格回答你的投资问题——护城河 / 安全边际 / 能力圈 / 决策启发式，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
     '<section class="home-sec"><h2>📚 快速浏览</h2><div class="home-grid">'+
       tiles.map(t=>'<button class="home-tile" data-go=\''+JSON.stringify({cat:t[3].split(':')[1]})+'\'><div class="ht-ic">'+t[1]+'</div><div class="ht-name">'+t[0]+'</div><div class="ht-desc">'+t[2]+'</div></button>').join('')+
     '</div></section>'+
@@ -3355,7 +3361,7 @@ __CSS__
     <div id="chatView" hidden>
       <div class="chat-head">
         <button class="tbtn" id="chatBack">← 返回</button>
-        <div class="chat-title">🗣 与巴菲特对话
+        <div class="chat-title">__CHAT_ICON__与巴菲特对话
           <span class="chat-sub">基于 celebrity-buffett 人格（致股东信知识库蒸馏）· 仅供参考，不构成投资建议</span>
         </div>
         <button class="tbtn" id="chatClear" title="清空本对话记录">清空对话</button>
@@ -3586,6 +3592,8 @@ def build_html(data_json: str, css: str, js: str, icon_b64: str = "",
                echarts_js: str = "", returns_js: str = "null") -> str:
     brand_icon = ('<img class="brand-img" src="data:image/png;base64,' + icon_b64
                   + '" alt="">' if icon_b64 else "🏛 ")
+    chat_icon = ('<img class="chat-img" src="data:image/png;base64,' + icon_b64
+                 + '" alt="">' if icon_b64 else "🗣 ")
     # 内嵌第三方 JS 必须转义 </script（压缩代码里可能出现）
     echarts_js = echarts_js.replace("</", "<\\/")
     return (
@@ -3594,6 +3602,7 @@ def build_html(data_json: str, css: str, js: str, icon_b64: str = "",
         .replace("__CSS__", css)
         .replace("__JS__", js)
         .replace("__BRAND_ICON__", brand_icon)
+        .replace("__CHAT_ICON__", chat_icon)
         .replace("__ECHARTS__", echarts_js)
         .replace("__RETURNS__", returns_js)
     )
