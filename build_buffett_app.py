@@ -565,6 +565,11 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
 #layout{display:flex;align-items:flex-start;gap:0}
 #sidebar{width:236px;flex:0 0 236px;position:sticky;top:57px;height:calc(100vh - 57px);
   overflow-y:auto;padding:16px 14px 40px;border-right:1px solid var(--line);background:var(--panel)}
+#sbToggle{display:none}
+@media (min-width:861px){
+  #sbToggle{display:inline-flex}
+  #sidebar.collapsed{display:none}
+}
 .sb-sec{margin-bottom:18px}
 .sb-title{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:1px;margin-bottom:8px;
   display:flex;justify-content:space-between;align-items:center}
@@ -2912,6 +2917,24 @@ $('#sbFav').onchange=e=>{ state.favOnly=e.target.checked; renderAll(); };
 $('#sbNoted').onchange=e=>{ state.notedOnly=e.target.checked; renderAll(); };
 $('#menuBtn').onclick=()=>{ $('#sidebar').classList.toggle('open'); $('#sidebarBackdrop').classList.toggle('show'); };
 $('#sidebarBackdrop').onclick=()=>{ $('#sidebar').classList.remove('open'); $('#sidebarBackdrop').classList.remove('show'); };
+
+/* 左侧栏隐藏/显示（桌面端）：点击一次隐藏，再点一次显示，正文随之伸缩 */
+const SB_KEY='bf_sidebar_show';
+const sbToggleEl=$('#sbToggle');
+const applySidebar = show => {
+  $('#sidebar').classList.toggle('collapsed', !show);
+  if(sbToggleEl) sbToggleEl.textContent = show ? '◧' : '◨';
+};
+if(sbToggleEl){
+  applySidebar(store.get(SB_KEY,1)!==0);
+  sbToggleEl.onclick=()=>{
+    const nowCollapsed = $('#sidebar').classList.toggle('collapsed');
+    const show = !nowCollapsed;
+    store.set(SB_KEY, show?1:0);
+    applySidebar(show);
+    window.dispatchEvent(new Event('resize'));   // hero 图等随正文宽度自适应
+  };
+}
 $('#notesExport').onclick=exportNotes;
 $('#brandBtn').onclick=()=>{ if(location.hash!=='#/') location.hash='#/'; else showHome(); };
 document.addEventListener('keydown',e=>{
@@ -3271,6 +3294,7 @@ __CSS__
 <body>
 <header id="topbar">
   <button class="tbtn" id="menuBtn" title="筛选面板">☰</button>
+  <button class="tbtn" id="sbToggle" title="隐藏/显示左侧栏">◧</button>
   <div class="brand" id="brandBtn" title="回到主页"><span class="logo">__BRAND_ICON__巴菲特<em>投资智慧</em></span><span class="sub">致股东信知识库</span></div>
   <div class="search-wrap">
     <input id="q" type="search" placeholder="搜索文章、概念、公司、人物…（/ 聚焦）" autocomplete="off">
