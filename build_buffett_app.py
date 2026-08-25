@@ -31,12 +31,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 KB_ROOT = os.path.join(HERE, "巴菲特致股东信知识库")
 
 
-def load_icon_b64():
-    """主页标志：assets/buffett-128.png → base64（单文件内嵌，离线可用）。
-
-    缺失时返回空串，主页回退为原 🏛 emoji。
-    """
-    p = os.path.join(HERE, "assets", "buffett-128.png")
+def load_icon_b64(name="buffett-128.png"):
+    """assets/<name> → base64（单文件内嵌，离线可用）。缺失时返回空串。"""
+    p = os.path.join(HERE, "assets", name)
     try:
         with open(p, "rb") as f:
             return base64.b64encode(f.read()).decode("ascii")
@@ -1644,9 +1641,11 @@ function renderHome(){
         : '<span class="ce-ic">🗣</span>')+
       '<div class="ce-body"><div class="ce-title">与巴菲特对话</div><div class="ce-desc">以 celebrity-buffett 人格回答你的投资问题——护城河 / 安全边际 / 能力圈 / 决策启发式，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
     '<div class="chat-entry" data-chat="2">'+
-      (typeof APP_ICON_B64!=='undefined'
-        ? '<img class="ce-img" src="data:image/png;base64,'+APP_ICON_B64+'" alt="芒格" style="filter:hue-rotate(210deg) saturate(1.2)">'
-        : '<span class="ce-ic">🧠</span>')+
+      (typeof MUNGER_ICON_B64!=='undefined'
+        ? '<img class="ce-img" src="data:image/png;base64,'+MUNGER_ICON_B64+'" alt="芒格">'
+        : (typeof APP_ICON_B64!=='undefined'
+            ? '<img class="ce-img" src="data:image/png;base64,'+APP_ICON_B64+'" alt="芒格" style="filter:hue-rotate(210deg) saturate(1.2)">'
+            : '<span class="ce-ic">🧠</span>'))+
       '<div class="ce-body"><div class="ce-title">与芒格对话</div><div class="ce-desc">以 celebrity-charlie-munger 人格回答投资与人生问题——多元思维模型 / 逆向思维 / 误判心理学，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
     '<section class="home-sec"><h2>📚 快速浏览</h2><div class="home-grid">'+
       tiles.map(t=>'<button class="home-tile" data-go=\''+JSON.stringify({cat:t[3].split(':')[1]})+'\'><div class="ht-ic">'+t[1]+'</div><div class="ht-name">'+t[0]+'</div><div class="ht-desc">'+t[2]+'</div></button>').join('')+
@@ -2585,6 +2584,14 @@ function renderChatView(){
   const meta=CHAT_META[chatMode];
   const tName=$('#chatTitleName'); if(tName) tName.textContent=meta.title;
   const tSub=$('#chatSub'); if(tSub) tSub.textContent='基于 '+ (chatMode==='buffett'?'celebrity-buffett':'celebrity-charlie-munger') +' 人格 · 仅供参考，不构成投资建议';
+  const tIcon=$('#chatTitleIcon');
+  if(tIcon){
+    const b64 = chatMode==='munger'
+      ? (typeof MUNGER_ICON_B64!=='undefined'?MUNGER_ICON_B64:'')
+      : (typeof APP_ICON_B64!=='undefined'?APP_ICON_B64:'');
+    if(b64){ tIcon.style.display=''; tIcon.src='data:image/png;base64,'+b64; }
+    else tIcon.style.display='none';
+  }
   const tBox=$('#chatInputBox'); if(tBox) tBox.placeholder=meta.placeholder;
   const intro=$('#chatIntro');
   const hasPersona=!!((chatMode==='buffett'?DATA.buffettPersona:DATA.mungerPersona)||'').trim();
@@ -3647,7 +3654,7 @@ def build_html(data_json: str, css: str, js: str, icon_b64: str = "",
                echarts_js: str = "", returns_js: str = "null") -> str:
     brand_icon = ('<img class="brand-img" src="data:image/png;base64,' + icon_b64
                   + '" alt="">' if icon_b64 else "🏛 ")
-    chat_icon = ('<img class="chat-img" src="data:image/png;base64,' + icon_b64
+    chat_icon = ('<img class="chat-img" id="chatTitleIcon" src="data:image/png;base64,' + icon_b64
                  + '" alt="">' if icon_b64 else "🗣 ")
     # 内嵌第三方 JS 必须转义 </script（压缩代码里可能出现）
     echarts_js = echarts_js.replace("</", "<\\/")
@@ -3721,11 +3728,14 @@ def main():
     data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     data_json = data_json.replace("</", "<\\/")
 
-    # 主页标志：注入 buffett.png 的 base64（APP_ICON_B64 常量，前置到 APP_JS）
+    # 主页标志：注入 buffett.png / munger.png 的 base64（常量前置到 APP_JS）
     icon_b64 = load_icon_b64()
+    munger_b64 = load_icon_b64("munger-128.png")
     js = APP_JS
     if icon_b64:
         js = "const APP_ICON_B64='" + icon_b64 + "';\n" + js
+    if munger_b64:
+        js = "const MUNGER_ICON_B64='" + munger_b64 + "';\n" + js
 
     html = build_html(data_json, APP_CSS, js, icon_b64,
                       echarts_js=load_echarts(), returns_js=load_returns())
