@@ -475,6 +475,7 @@ def build():
         "articles": articles,
         "idx": idx,
         "buffettPersona": load_buffett_persona(),
+        "mungerPersona": load_munger_persona(),
     }
     return data, tag_count
 
@@ -509,6 +510,32 @@ def load_buffett_persona():
         if ok:
             return "\n\n".join(parts)
     print("[warn] 未找到 celebrity-buffett 人格文件，跳过「与巴菲特对话」内容嵌入", file=sys.stderr)
+    return ""
+
+
+def load_munger_persona():
+    """加载 distilly 生成的 celebrity-charlie-munger 人格内容（构建时嵌入，供「与芒格对话」专栏使用）。
+
+    候选路径：
+      1. 项目级副本（随项目打包移动）：skills/celebrity-charlie-munger/{persona,work}.md
+      2. 用户级 DSH 技能源：~/.agents/skills/celebrity/charlie-munger/{persona,work}.md
+    全部缺失时返回空串（应用内会显示提示）。
+    """
+    candidates = [
+        (os.path.join(HERE, "skills", "celebrity-charlie-munger"), ["persona.md", "work.md"]),
+        (os.path.expanduser("~/.agents/skills/celebrity/charlie-munger"), ["persona.md", "work.md"]),
+    ]
+    for base, files in candidates:
+        parts, ok = [], True
+        for fn in files:
+            p = os.path.join(base, fn)
+            if not os.path.isfile(p):
+                ok = False
+                break
+            parts.append(open(p, encoding="utf-8").read())
+        if ok:
+            return "\n\n".join(parts)
+    print("[warn] 未找到 celebrity-charlie-munger 人格文件，跳过「与芒格对话」内容嵌入", file=sys.stderr)
     return ""
 
 
@@ -1616,6 +1643,11 @@ function renderHome(){
         ? '<img class="ce-img" src="data:image/png;base64,'+APP_ICON_B64+'" alt="巴菲特">'
         : '<span class="ce-ic">🗣</span>')+
       '<div class="ce-body"><div class="ce-title">与巴菲特对话</div><div class="ce-desc">以 celebrity-buffett 人格回答你的投资问题——护城河 / 安全边际 / 能力圈 / 决策启发式，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
+    '<div class="chat-entry" data-chat="2">'+
+      (typeof APP_ICON_B64!=='undefined'
+        ? '<img class="ce-img" src="data:image/png;base64,'+APP_ICON_B64+'" alt="芒格" style="filter:hue-rotate(210deg) saturate(1.2)">'
+        : '<span class="ce-ic">🧠</span>')+
+      '<div class="ce-body"><div class="ce-title">与芒格对话</div><div class="ce-desc">以 celebrity-charlie-munger 人格回答投资与人生问题——多元思维模型 / 逆向思维 / 误判心理学，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
     '<section class="home-sec"><h2>📚 快速浏览</h2><div class="home-grid">'+
       tiles.map(t=>'<button class="home-tile" data-go=\''+JSON.stringify({cat:t[3].split(':')[1]})+'\'><div class="ht-ic">'+t[1]+'</div><div class="ht-name">'+t[0]+'</div><div class="ht-desc">'+t[2]+'</div></button>').join('')+
     '</div></section>'+
@@ -1727,7 +1759,7 @@ function initHeroChart(){
 }
 homeEl.addEventListener('click',e=>{
   const ce=e.target.closest('[data-chat]');
-  if(ce){ location.hash='#/chat'; return; }
+  if(ce){ chatMode=(ce.dataset.chat==='2'?'munger':'buffett'); location.hash='#/chat'; return; }
   const art=e.target.closest('[data-art]');
   if(art){ location.hash='#/a/'+art.dataset.art; return; }
   const tg=e.target.closest('[data-tag]');
@@ -2524,29 +2556,46 @@ $('#aiInputBox').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendAi(); }
 });
 
-/* ================= 与巴菲特对话（celebrity-buffett）================= */
+/* ================= 与巴菲特对话 / 与芒格对话（celebrity 双人格）================= */
+let chatMode='buffett';
 const chatViewEl = $('#chatView');
-const BUFFETT_CHAT_KEY = 'bf_buffett_chat';
-const buffettChat = () => store.get(BUFFETT_CHAT_KEY, []);
-const saveBuffettChat = msgs => { store.set(BUFFETT_CHAT_KEY, msgs); pushRemoteState(); };
+const CHAT_KEYS={buffett:'bf_buffett_chat', munger:'bf_munger_chat'};
+const chatMsgs = () => store.get(CHAT_KEYS[chatMode], []);
+const saveChatMsgs = msgs => { store.set(CHAT_KEYS[chatMode], msgs); pushRemoteState(); };
+const CHAT_META={
+  buffett:{name:'巴菲特',title:'与巴菲特对话',
+    loaded:'🧬 巴菲特人格已加载（celebrity-buffett：6 个心智模型 / 8 条决策启发式 / Agentic Protocol 先研究再回答）。回答严格基于致股东信语料与人格框架，超出语料的推断会明确标注；发送「退出」结束对话。',
+    missing:'⚠️ 未嵌入 celebrity-buffett 人格数据——请先运行 distilly 生成技能并重新构建本应用。',
+    status:'巴菲特思考中…',placeholder:'用巴菲特的方式问我任何投资问题…（发送「退出」结束对话）',
+    chips:['用巴菲特框架评估：我该集中持有还是分散？','如何看待当前 A 股的市场波动？','什么是护城河？怎么判断一家公司有没有？','如果我只能记住三条投资原则，应该是什么？','你犯过最大的错误是什么？学到了什么？']},
+  munger:{name:'芒格',title:'与芒格对话',
+    loaded:'🧬 芒格人格已加载（celebrity-charlie-munger：6 个心智模型 / 8 条决策启发式 / Agentic Protocol 先研究再回答）。回答严格基于芒格语料（演讲/Wesco 信/年会问答）与人格框架，超出语料的推断会明确标注；发送「退出」结束对话。',
+    missing:'⚠️ 未嵌入 celebrity-charlie-munger 人格数据——请先运行 distilly 生成技能并重新构建本应用。',
+    status:'芒格思考中…',placeholder:'用芒格的方式问我任何投资或人生问题…（发送「退出」结束对话）',
+    chips:['怎么避免犯错？','多元思维模型怎么入门？','市场波动时应该怎么做？','你怎么看比特币和 AI？','如果我 30 岁，你会给我什么人生建议？']}
+};
 function showChatView(){
   readerEl.hidden = true; libEl.hidden = true; homeEl.hidden = true; idxEl.hidden = true;
   layoutEl.hidden = false; chatViewEl.hidden = false;
-  document.title = '与巴菲特对话 · '+DATA.title;
+  document.title = CHAT_META[chatMode].title+' · '+DATA.title;
   renderChatView();
   window.scrollTo(0,0);
 }
 function renderChatView(){
+  const meta=CHAT_META[chatMode];
+  const tName=$('#chatTitleName'); if(tName) tName.textContent=meta.title;
+  const tSub=$('#chatSub'); if(tSub) tSub.textContent='基于 '+ (chatMode==='buffett'?'celebrity-buffett':'celebrity-charlie-munger') +' 人格 · 仅供参考，不构成投资建议';
+  const tBox=$('#chatInputBox'); if(tBox) tBox.placeholder=meta.placeholder;
   const intro=$('#chatIntro');
-  const hasPersona=!!(DATA.buffettPersona||'').trim();
+  const hasPersona=!!((chatMode==='buffett'?DATA.buffettPersona:DATA.mungerPersona)||'').trim();
   intro.innerHTML = hasPersona
-    ? '<div class="chat-intro"><b>🧬 巴菲特人格已加载</b>（celebrity-buffett：6 个心智模型 / 8 条决策启发式 / Agentic Protocol 先研究再回答）。回答严格基于致股东信语料与人格框架，超出语料的推断会明确标注；发送「退出」结束对话。</div>'
-    : '<div class="chat-intro warn">⚠️ 未嵌入 celebrity-buffett 人格数据——请先运行 distilly 生成技能并重新构建本应用。</div>';
+    ? '<div class="chat-intro">'+meta.loaded+'</div>'
+    : '<div class="chat-intro warn">'+meta.missing+'</div>';
   const box=$('#chatMsgs');
   box.innerHTML='';
-  const msgs=buffettChat();
+  const msgs=chatMsgs();
   if(!settingsOk()){
-    box.innerHTML='<div class="ai-welcome">🤖 「与巴菲特对话」需要配置大模型接口（DeepSeek 等 OpenAI 兼容接口）。<br><br><button class="btn primary" id="chatOpenSettings" style="font-size:13px">⚙ 打开设置</button></div>';
+    box.innerHTML='<div class="ai-welcome">🤖 「'+meta.title+'」需要配置大模型接口（DeepSeek 等 OpenAI 兼容接口）。<br><br><button class="btn primary" id="chatOpenSettings" style="font-size:13px">⚙ 打开设置</button></div>';
     const b=$('#chatOpenSettings'); if(b) b.onclick=openSettings;
     $('#chatChips').innerHTML=''; $('#chatInput').style.display='none'; $('#chatStatus').textContent='';
     return;
@@ -2559,80 +2608,86 @@ function renderChatView(){
     box.appendChild(d);
   });
   if(!msgs.length){
-    $('#chatChips').innerHTML=[
-      '用巴菲特框架评估：我该集中持有还是分散？',
-      '如何看待当前 A 股的市场波动？',
-      '什么是护城河？怎么判断一家公司有没有？',
-      '如果我只能记住三条投资原则，应该是什么？',
-      '你犯过最大的错误是什么？学到了什么？',
-    ].map(t=>'<button class="ai-chip">'+esc(t)+'</button>').join('');
-    $('#chatChips').onclick=e=>{ const c=e.target.closest('.ai-chip'); if(c){ $('#chatInputBox').value=c.textContent; sendBuffett(); } };
+    $('#chatChips').innerHTML=meta.chips.map(t=>'<button class="ai-chip">'+esc(t)+'</button>').join('');
+    $('#chatChips').onclick=e=>{ const c=e.target.closest('.ai-chip'); if(c){ $('#chatInputBox').value=c.textContent; sendChat(); } };
   } else $('#chatChips').innerHTML='';
   box.scrollTop=box.scrollHeight;
 }
-function buildBuffettMessages(userText){
-  const persona=(DATA.buffettPersona||'').slice(0,14000);
+function buildChatMessages(userText){
+  const isM=chatMode==='munger';
+  const persona=((isM?DATA.mungerPersona:DATA.buffettPersona)||'').slice(0,14000);
   const sys=[
-    '你正在扮演「巴菲特（celebrity-buffett）」——一个基于巴菲特致股东信知识库（1956–2025，81 封信件 + 35 概念 + 61 公司案例）蒸馏的投资决策与判断框架助手。',
+    isM
+      ? '你正在扮演「查理·芒格（celebrity-charlie-munger）」——一个基于芒格演讲文集（1986–2017）、Wesco 致股东信（1997–2009）与 Wesco/DJCO 年会问答（1999–2023）蒸馏的决策与判断框架助手。'
+      : '你正在扮演「巴菲特（celebrity-buffett）」——一个基于巴菲特致股东信知识库（1956–2025，81 封信件 + 35 概念 + 61 公司案例）蒸馏的投资决策与判断框架助手。',
     '【角色与人格（persona）】',
     persona,
     '【附加规则】',
-    '1. 用巴菲特的口吻与框架回答：生意比喻（护城河/裸泳/称重机）、"我们"体、先讲道理后给结论、自嘲式承认局限；',
-    '2. 先按 Agentic Protocol 研究再回答：可预测性（能力圈）→ 护城河 → 管理层 → 价格安全边际 → 叙事触发器 → 错误清单反查；',
-    '3. 涉及具体事实/数字/年份必须来自上述语料；语料没有的，明确说"语料中没有，这是我的框架推演"；绝不编造巴菲特说过的具体话；',
-    '4. 回答不构成投资建议；涉及用户具体持仓时给出分析框架而非买卖指令；',
-    '5. 中文回答，结构清晰；用户说「退出」时简短告别。',
+    isM ? (
+      '1. 用芒格的口吻与框架回答：毒舌直白、三连词（"自大、愚蠢、疯狂"）、格言化收尾、自嘲式认错（"我和沃伦犯过很多错"）、政治不正确；',
+      '2. 先按 Agentic Protocol 研究再回答：逆向思维（怎样会失败）→ 激励机制 → 能力圈 → 25 种误判清单 → 机会成本 → 复利时间视角；',
+      '3. 涉及具体事实/数字/年份必须来自上述语料；语料没有的，明确说"语料中没有，这是我的框架推演"；绝不编造芒格说过的具体话；',
+      '4. 被问 2024 年后的新事物（AI 大爆发、2026 年世界），先承认"我 2023 年就去世了，后面的世界没看到"，再给框架外推；',
+      '5. 回答不构成投资建议；中文回答，结构清晰；用户说「退出」时简短告别。'
+    ) : (
+      '1. 用巴菲特的口吻与框架回答：生意比喻（护城河/裸泳/称重机）、"我们"体、先讲道理后给结论、自嘲式承认局限；',
+      '2. 先按 Agentic Protocol 研究再回答：可预测性（能力圈）→ 护城河 → 管理层 → 价格安全边际 → 叙事触发器 → 错误清单反查；',
+      '3. 涉及具体事实/数字/年份必须来自上述语料；语料没有的，明确说"语料中没有，这是我的框架推演"；绝不编造巴菲特说过的具体话；',
+      '4. 回答不构成投资建议；涉及用户具体持仓时给出分析框架而非买卖指令；',
+      '5. 中文回答，结构清晰；用户说「退出」时简短告别。'
+    ),
   ].join('\n');
   const msgs=[{role:'system',content:sys}];
-  buffettChat().filter(m=>(m.role==='user'||(m.role==='assistant'&&!m.pending))).slice(-12)
+  chatMsgs().filter(m=>(m.role==='user'||(m.role==='assistant'&&!m.pending))).slice(-12)
     .forEach(m=>msgs.push({role:m.role,content:m.content.slice(0,3000)}));
   msgs.push({role:'user',content:userText});
   return msgs;
 }
-let buffettBusy=false;
-async function sendBuffett(){
-  if(buffettBusy) return;
+let chatBusy=false;
+async function sendChat(){
+  if(chatBusy) return;
+  const meta=CHAT_META[chatMode];
   const box=$('#chatInputBox');
   const text=box.value.trim();
   if(!text){ toast('请输入问题'); return; }
   if(!settingsOk()){ openSettings(); return; }
-  const msgs=buffettChat();
+  const msgs=chatMsgs();
   msgs.push({role:'user',content:text,ts:Date.now()});
   const aidMsg={role:'assistant',content:'',pending:true,ts:Date.now()};
   msgs.push(aidMsg);
-  saveBuffettChat(msgs);
+  saveChatMsgs(msgs);
   box.value='';
   renderChatView();
-  buffettBusy=true;
+  chatBusy=true;
   $('#chatSend').disabled=true;
-  $('#chatStatus').textContent='巴菲特思考中…（'+(settings().model.split('/').pop()||'')+'）';
+  $('#chatStatus').textContent=meta.status+'（'+(settings().model.split('/').pop()||'')+'）';
   let saveTimer=null;
   try{
-    const reply=await callLLMStream(buildBuffettMessages(text), acc=>{
+    const reply=await callLLMStream(buildChatMessages(text), acc=>{
       aidMsg.content=acc;
       const el=$('#chatMsgs .ai-msg.assistant:last-of-type');
       if(el) el.innerHTML=mdRich(acc);
-      if(!saveTimer){ saveTimer=setTimeout(()=>{ saveBuffettChat(msgs); saveTimer=null; },500); }
+      if(!saveTimer){ saveTimer=setTimeout(()=>{ saveChatMsgs(msgs); saveTimer=null; },500); }
     });
     aidMsg.content=reply; aidMsg.pending=false;
     clearTimeout(saveTimer);
-    saveBuffettChat(msgs);
+    saveChatMsgs(msgs);
     renderChatView();
   }catch(err){
     clearTimeout(saveTimer);
-    const msgs2=buffettChat().filter(m=>!(m.role==='assistant'&&m.pending));
+    const msgs2=chatMsgs().filter(m=>!(m.role==='assistant'&&m.pending));
     msgs2.push({role:'err',content:'请求失败：'+err.message,ts:Date.now()});
-    saveBuffettChat(msgs2);
+    saveChatMsgs(msgs2);
     renderChatView();
   }
-  buffettBusy=false;
+  chatBusy=false;
   $('#chatSend').disabled=false;
   $('#chatStatus').textContent='';
 }
-$('#chatSend').onclick=sendBuffett;
-$('#chatInputBox').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendBuffett(); } });
+$('#chatSend').onclick=sendChat;
+$('#chatInputBox').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); } });
 $('#chatBack').onclick=()=>{ location.hash='#/'; };
-$('#chatClear').onclick=()=>{ saveBuffettChat([]); renderChatView(); toast('对话已清空'); };
+$('#chatClear').onclick=()=>{ saveChatMsgs([]); renderChatView(); toast('对话已清空'); };
 
 /* ================= 背景解释 ================= */
 const bgState = { term:'', ctx:'', msgs:[], busy:false, saved:false };
@@ -3361,8 +3416,8 @@ __CSS__
     <div id="chatView" hidden>
       <div class="chat-head">
         <button class="tbtn" id="chatBack">← 返回</button>
-        <div class="chat-title">__CHAT_ICON__与巴菲特对话
-          <span class="chat-sub">基于 celebrity-buffett 人格（致股东信知识库蒸馏）· 仅供参考，不构成投资建议</span>
+        <div class="chat-title">__CHAT_ICON__<span id="chatTitleName">与巴菲特对话</span>
+          <span class="chat-sub" id="chatSub">基于 celebrity-buffett 人格（致股东信知识库蒸馏）· 仅供参考，不构成投资建议</span>
         </div>
         <button class="tbtn" id="chatClear" title="清空本对话记录">清空对话</button>
       </div>
