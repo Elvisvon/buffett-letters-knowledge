@@ -621,7 +621,7 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
   border-radius:16px;border:1px solid var(--line2)}
 .home-hero .hh-icon{font-size:46px;line-height:1}
 .home-hero .hh-img{width:96px;height:96px;border-radius:18px;box-shadow:0 4px 16px rgba(139,111,71,.28);margin-bottom:2px}
-.home-hero .hh-chart{width:min(880px,100%);height:310px;margin:10px auto 4px}
+.home-hero .hh-chart{width:min(1280px,100%);height:310px;margin:10px auto 4px}
 .home-hero h1{font:700 34px/1.4 var(--serif);color:var(--accent);margin:10px 0 6px}
 .home-hero .hh-sub{color:var(--ink2);font-size:14px}
 .hh-stats{display:flex;justify-content:center;gap:38px;margin:24px 0 20px;flex-wrap:wrap}
@@ -1644,11 +1644,9 @@ function initHeroChart(){
   _heroChart.setOption({
     backgroundColor:'transparent',
     title:{
-      right:6, top:0,
-      text:'口径：每股账面价值（Book Value）',
-      subtext:'2019–2025 官方年报 · 2025 +10.5%',
-      textStyle:{fontSize:10,color:'#9a917f',fontWeight:'normal'},
-      subtextStyle:{fontSize:9,color:'#b5ab97'}
+      right:8, top:2, textAlign:'right',
+      text:'口径：每股账面价值（Book Value）· 2019–2025 官方年报 · 2025 +10.5%',
+      textStyle:{fontSize:10,color:'#9a917f',fontWeight:'normal'}
     },
     tooltip:{
       trigger:'axis',
