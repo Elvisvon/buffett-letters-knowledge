@@ -1679,11 +1679,10 @@ function initHeroChart(){
        textStyle:{color:'#9a917f',fontSize:9}}
     ],
     series:[
-      {name:'年收益率', type:'line', data:R.map(r=>r[1]),
-       smooth:true, symbol:'circle', symbolSize:4,
-       lineStyle:{color:'#a16207',width:1.8},
-       itemStyle:{color:'#a16207'},
-       areaStyle:{color:'rgba(161,98,7,.08)'},
+      {name:'年收益率', type:'bar', data:R.map(r=>r[1]),
+       barWidth:'52%',
+       itemStyle:{color:function(p){ return p.value<0?'#7c1d1d':'#a16207'; },
+                  borderRadius:[2,2,0,0]},
        markLine:{silent:true, symbol:'none',
          data:[{yAxis:0}], lineStyle:{color:'#c9bfa8',type:'dashed',width:1}},
        markPoint:{
