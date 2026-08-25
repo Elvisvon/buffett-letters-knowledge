@@ -1650,12 +1650,12 @@ function initHeroChart(){
       axisPointer:{type:'cross',lineStyle:{color:'#c9bfa8'},label:{backgroundColor:'#8a7a5c'}}
     },
     legend:{
-      top:0, left:8, itemWidth:16, itemHeight:8, itemGap:18,
+      top:0, left:72, itemWidth:16, itemHeight:8, itemGap:18,
       textStyle:{color:'#6f675a',fontSize:11},
       data:['年收益率','累计净值','年化收益'],
       selected:{'年收益率':true,'累计净值':true,'年化收益':false}
     },
-    grid:{left:50, right:62, top:32, bottom:46},
+    grid:{left:50, right:62, top:46, bottom:46},
     xAxis:{
       type:'category', data:years,
       axisLine:{lineStyle:{color:'#c9bfa8'}},
