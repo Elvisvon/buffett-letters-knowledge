@@ -1698,7 +1698,9 @@ function initHeroChart(){
        itemStyle:{color:'#4a6a8a'},
        markPoint:{
          symbol:'pin', symbolSize:44, label:{fontSize:10,color:'#fff'},
-         data:[{coord:[2018,last[2]], label:{formatter:'77,549×'}, itemStyle:{color:'#4a6a8a'}}]}},
+         data:[{coord:[last[0],last[2]],
+                label:{formatter:function(p){ return Math.round(p.value).toLocaleString()+'×'; }},
+                itemStyle:{color:'#4a6a8a'}}]}},
       {name:'年化收益', type:'line', data:R.map(r=>r[3]),
        smooth:true, symbol:'none',
        lineStyle:{color:'#9a917f',width:1.2,type:'dashed'},
