@@ -621,6 +621,7 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
   border-radius:16px;border:1px solid var(--line2)}
 .home-hero .hh-icon{font-size:46px;line-height:1}
 .home-hero .hh-img{width:96px;height:96px;border-radius:18px;box-shadow:0 4px 16px rgba(139,111,71,.28);margin-bottom:2px}
+.home-hero .hh-chart{width:min(880px,100%);height:310px;margin:10px auto 4px}
 .home-hero h1{font:700 34px/1.4 var(--serif);color:var(--accent);margin:10px 0 6px}
 .home-hero .hh-sub{color:var(--ink2);font-size:14px}
 .hh-stats{display:flex;justify-content:center;gap:38px;margin:24px 0 20px;flex-wrap:wrap}
@@ -1598,6 +1599,7 @@ function renderHome(){
         '<div><b>'+nLetters+'</b><span>封信件</span></div>'+
         '<div><b>'+nTags.size+'</b><span>主题标签</span></div>'+
       '</div>'+
+      '<div class="hh-chart" id="heroChart" aria-label="巴菲特历年收益率交互图"></div>'+
       '<div class="hh-search"><input id="homeQ" placeholder="搜索文章、概念、公司、人物…" autocomplete="off"><button id="homeQGo">搜索</button></div>'+
     '</div>'+
     '<div class="chat-entry" data-chat="1"><span class="ce-ic">🗣</span><div class="ce-body"><div class="ce-title">与巴菲特对话</div><div class="ce-desc">以 celebrity-buffett 人格回答你的投资问题——护城河 / 安全边际 / 能力圈 / 决策启发式，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
@@ -1623,6 +1625,90 @@ function renderHome(){
     hq.addEventListener('keydown',e=>{ if(e.key==='Enter'){ goLibrary({q:hq.value.trim()}); } });
     const go=$('#homeQGo');
     if(go) go.onclick=()=>goLibrary({q:hq.value.trim()});
+  }
+  initHeroChart();
+}
+
+/* ============ 主页 Hero 交互图（ECharts，巴菲特历年收益率） ============ */
+let _heroChart=null, _heroChartResize=false;
+function initHeroChart(){
+  const el=document.getElementById('heroChart');
+  if(!el) return;
+  const R=window.BUFFETT_RETURNS;
+  if(!R || !R.length || typeof echarts==='undefined'){ el.style.display='none'; return; }
+  el.style.display='';
+  if(_heroChart) _heroChart.dispose();
+  _heroChart=echarts.init(el);
+  const years=R.map(r=>r[0]);
+  const last=R[R.length-1];
+  _heroChart.setOption({
+    backgroundColor:'transparent',
+    tooltip:{
+      trigger:'axis',
+      backgroundColor:'#fffdf8', borderColor:'#e6dfd1', borderWidth:1,
+      padding:[8,12], textStyle:{color:'#2a2620',fontSize:12},
+      axisPointer:{type:'cross',lineStyle:{color:'#c9bfa8'},label:{backgroundColor:'#8a7a5c'}}
+    },
+    legend:{
+      top:0, left:8, itemWidth:16, itemHeight:8, itemGap:18,
+      textStyle:{color:'#6f675a',fontSize:11},
+      data:['年收益率','累计净值','年化收益'],
+      selected:{'年收益率':true,'累计净值':true,'年化收益':false}
+    },
+    grid:{left:50, right:62, top:32, bottom:46},
+    xAxis:{
+      type:'category', data:years,
+      axisLine:{lineStyle:{color:'#c9bfa8'}},
+      axisTick:{show:false},
+      axisLabel:{color:'#9a917f',fontSize:10,interval:4}
+    },
+    yAxis:[
+      {type:'value', name:'年收益率 %', nameTextStyle:{color:'#9a917f',fontSize:10,padding:[0,0,0,30]},
+       splitLine:{lineStyle:{color:'#efe9dd'}},
+       axisLabel:{color:'#9a917f',fontSize:10}},
+      {type:'log', name:'累计净值', nameTextStyle:{color:'#9a917f',fontSize:10},
+       splitLine:{show:false},
+       axisLabel:{color:'#9a917f',fontSize:10,
+         formatter:function(v){ return v>=10000?Math.round(v/1000)+'k':v; }}}
+    ],
+    dataZoom:[
+      {type:'inside', xAxisIndex:0, start:0, end:100},
+      {type:'slider', xAxisIndex:0, height:16, bottom:4,
+       borderColor:'#e6dfd1', backgroundColor:'#fffdf8',
+       fillerColor:'rgba(161,98,7,.14)', handleStyle:{color:'#a16207'},
+       textStyle:{color:'#9a917f',fontSize:9}}
+    ],
+    series:[
+      {name:'年收益率', type:'line', data:R.map(r=>r[1]),
+       smooth:true, symbol:'circle', symbolSize:4,
+       lineStyle:{color:'#a16207',width:1.8},
+       itemStyle:{color:'#a16207'},
+       areaStyle:{color:'rgba(161,98,7,.08)'},
+       markLine:{silent:true, symbol:'none',
+         data:[{yAxis:0}], lineStyle:{color:'#c9bfa8',type:'dashed',width:1}},
+       markPoint:{
+         symbol:'pin', symbolSize:44,
+         label:{fontSize:10,color:'#fff'},
+         data:[
+           {coord:[1976,59.3], label:{formatter:'+59.3%'}, itemStyle:{color:'#b45309'}},
+           {coord:[2008,-9.6], label:{formatter:'-9.6%'}, itemStyle:{color:'#7c1d1d'}}
+         ]}},
+      {name:'累计净值', type:'line', yAxisIndex:1, data:R.map(r=>r[2]),
+       smooth:true, symbol:'none',
+       lineStyle:{color:'#4a6a8a',width:2},
+       itemStyle:{color:'#4a6a8a'},
+       markPoint:{
+         symbol:'pin', symbolSize:44, label:{fontSize:10,color:'#fff'},
+         data:[{coord:[2018,last[2]], label:{formatter:'77,549×'}, itemStyle:{color:'#4a6a8a'}}]}},
+      {name:'年化收益', type:'line', data:R.map(r=>r[3]),
+       smooth:true, symbol:'none',
+       lineStyle:{color:'#9a917f',width:1.2,type:'dashed'},
+       itemStyle:{color:'#9a917f'}}
+    ]
+  });
+  if(!_heroChartResize){
+    _heroChartResize=true;
+    window.addEventListener('resize',()=>{ if(_heroChart) _heroChart.resize(); });
   }
 }
 homeEl.addEventListener('click',e=>{
@@ -3426,6 +3512,12 @@ window.BUFFETT_DATA = __DATA__;
 </script>
 <script src="llm-config.js" onerror="window.__noLlmCfg=1"></script>
 <script>
+__ECHARTS__
+</script>
+<script>
+window.BUFFETT_RETURNS = __RETURNS__;
+</script>
+<script>
 __JS__
 </script>
 </body>
@@ -3435,15 +3527,48 @@ __JS__
 
 # ---------------------------------------------------------------- 组装
 
-def build_html(data_json: str, css: str, js: str, icon_b64: str = "") -> str:
+def load_echarts():
+    """读取 vendor/echarts.min.js（缺失时返回空串 → 主页图表隐藏）。"""
+    p = os.path.join(HERE, "vendor", "echarts.min.js")
+    try:
+        with open(p, encoding="utf-8") as f:
+            return f.read()
+    except OSError:
+        return ""
+
+
+def load_returns():
+    """读取 buffet_return_data.csv（巴菲特历年收益率，OCR 提取并经复算校验）。
+
+    返回 JSON 数组 [[年份, 年收益率%, 累计净值, 年化%], ...]；缺失时返回 "null"。
+    """
+    p = os.path.join(HERE, "buffet_return_data.csv")
+    try:
+        import csv as _csv
+        rows = []
+        with open(p, encoding="utf-8-sig") as f:
+            for row in _csv.DictReader(f):
+                rows.append([int(row["年份"]), float(row["年收益率%"]),
+                             float(row["模拟累计净值"]), float(row["年化收益%"])])
+        return json.dumps(rows, ensure_ascii=False)
+    except (OSError, KeyError, ValueError):
+        return "null"
+
+
+def build_html(data_json: str, css: str, js: str, icon_b64: str = "",
+               echarts_js: str = "", returns_js: str = "null") -> str:
     brand_icon = ('<img class="brand-img" src="data:image/png;base64,' + icon_b64
                   + '" alt="">' if icon_b64 else "🏛 ")
+    # 内嵌第三方 JS 必须转义 </script（压缩代码里可能出现）
+    echarts_js = echarts_js.replace("</", "<\\/")
     return (
         HTML_TEMPLATE
         .replace("__DATA__", data_json)
         .replace("__CSS__", css)
         .replace("__JS__", js)
         .replace("__BRAND_ICON__", brand_icon)
+        .replace("__ECHARTS__", echarts_js)
+        .replace("__RETURNS__", returns_js)
     )
 
 
@@ -3511,7 +3636,8 @@ def main():
     if icon_b64:
         js = "const APP_ICON_B64='" + icon_b64 + "';\n" + js
 
-    html = build_html(data_json, APP_CSS, js, icon_b64)
+    html = build_html(data_json, APP_CSS, js, icon_b64,
+                      echarts_js=load_echarts(), returns_js=load_returns())
     with open(OUT_HTML, "w", encoding="utf-8") as f:
         f.write(html)
 
