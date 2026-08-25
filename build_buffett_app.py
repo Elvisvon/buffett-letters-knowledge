@@ -1601,7 +1601,7 @@ function renderHome(){
         '<div><b>'+nLetters+'</b><span>封信件</span></div>'+
         '<div><b>'+nTags.size+'</b><span>主题标签</span></div>'+
       '</div>'+
-      '<div class="hh-chart-wrap"><div class="hh-chart" id="heroChart"></div><div class="chart-note">口径：每股账面价值（Book Value）· 2019–2025 官方年报 · 2025 +10.5%</div></div>'+
+      '<div class="hh-chart-wrap"><div class="hh-chart" id="heroChart"></div><div class="chart-note">口径：每股账面价值（Book Value）</div></div>'+
       '<div class="hh-search"><input id="homeQ" placeholder="搜索文章、概念、公司、人物…" autocomplete="off"><button id="homeQGo">搜索</button></div>'+
     '</div>'+
     '<div class="chat-entry" data-chat="1"><span class="ce-ic">🗣</span><div class="ce-body"><div class="ce-title">与巴菲特对话</div><div class="ce-desc">以 celebrity-buffett 人格回答你的投资问题——护城河 / 安全边际 / 能力圈 / 决策启发式，先研究再回答</div></div><span class="ce-arrow">开始对话 →</span></div>'+
