@@ -1643,6 +1643,13 @@ function initHeroChart(){
   const last=R[R.length-1];
   _heroChart.setOption({
     backgroundColor:'transparent',
+    title:{
+      right:6, top:0,
+      text:'口径：每股账面价值（Book Value）',
+      subtext:'2019–2025 官方年报 · 2025 +10.5%',
+      textStyle:{fontSize:10,color:'#9a917f',fontWeight:'normal'},
+      subtextStyle:{fontSize:9,color:'#b5ab97'}
+    },
     tooltip:{
       trigger:'axis',
       backgroundColor:'#fffdf8', borderColor:'#e6dfd1', borderWidth:1,
