@@ -40,7 +40,7 @@ python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/�
 
 ```bash
 python3 package_windows.py      # 生成 dist/巴菲特投资智慧-vX.Y-Setup.exe（安装时自动生成 uninstall.exe 卸载器）
-brew install makensis           # 一次性前置依赖（NSIS 3.x；首次打包还会下载 vendor 缓存）
+brew install makensis mingw-w64 # 一次性前置依赖（NSIS 3.x + MinGW 交叉编译器；首次打包还会下载 vendor 缓存）
 ```
 
 - **安装**：双击 `巴菲特投资智慧-vX.Y-Setup.exe` → 按用户安装到 `%LOCALAPPDATA%\巴菲特投资智慧`（无需管理员权限），创建开始菜单/桌面快捷方式与「应用和功能」卸载条目；未签名 SmartScreen 提示点「更多信息 → 仍要运行」即可
@@ -110,7 +110,7 @@ python3 release.py --version 2.1 --dry-run  # 演练：只打印将执行的操�
 ├── 启动巴菲特知识库.command           # macOS 一键启动（终端方式）
 ├── macapp/main.swift                 # 原生窗口壳（Swift + WKWebView，Dock 图标）
 ├── package_app.py                    # App/DMG 打包器（Mac）
-├── winapp/                           # Windows 版源文件：启动器/停止服务 VBS、NSIS 模板、使用说明
+├── winapp/                           # Windows 版源文件：C 启动器/停止服务（launcher.c/stopsvc.c）、NSIS 模板、使用说明
 ├── package_windows.py                # NSIS 安装器打包器（Windows，macOS 上交叉打包）
 ├── release.py                        # 一键发布 GitHub Release（Mac DMG + Windows Setup.exe）
 ├── assets/                           # buffett.png / munger.png（128px 内嵌图标源）

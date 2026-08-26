@@ -78,9 +78,9 @@ VIAddVersionKey /LANG=2052 "LegalCopyright" "仅供个人学习研究使用"
 
 !insertmacro MUI_LANGUAGE "SimpChinese"
 
-; 完成页「立即启动」：wscript 运行启动器（参数带引号，兼容含空格的安装路径）
+; 完成页「立即启动」：直接运行编译版启动器
 Function LaunchApp
-  Exec '"$WINDIR\System32\wscript.exe" "$INSTDIR\巴菲特投资智慧.vbs"'
+  Exec '"$INSTDIR\巴菲特投资智慧.exe"'
 FunctionEnd
 
 ; ---------- 安装段 ----------
@@ -89,12 +89,15 @@ Section "应用文件（必需）" SecMain
   SetOutPath "$INSTDIR"
   File /r "@STAGE_ABS@\巴菲特投资智慧\*.*"
 
-  ; 开始菜单快捷方式
+  ; 开始菜单快捷方式（启动器/停止服务为编译 exe，非脚本）
   CreateDirectory "$SMPROGRAMS\巴菲特投资智慧"
-  CreateShortcut "$SMPROGRAMS\巴菲特投资智慧\巴菲特投资智慧.lnk" "$INSTDIR\巴菲特投资智慧.vbs" "" "$INSTDIR\icon.ico" 0
-  CreateShortcut "$SMPROGRAMS\巴菲特投资智慧\停止服务.lnk" "$INSTDIR\停止服务.vbs" "" "$INSTDIR\icon.ico" 0
+  CreateShortcut "$SMPROGRAMS\巴菲特投资智慧\巴菲特投资智慧.lnk" "$INSTDIR\巴菲特投资智慧.exe" "" "$INSTDIR\icon.ico" 0
+  CreateShortcut "$SMPROGRAMS\巴菲特投资智慧\停止服务.lnk" "$INSTDIR\停止服务.exe" "" "$INSTDIR\icon.ico" 0
   CreateShortcut "$SMPROGRAMS\巴菲特投资智慧\使用说明.lnk" "$INSTDIR\使用说明.txt" "" "$INSTDIR\icon.ico" 0
   CreateShortcut "$SMPROGRAMS\巴菲特投资智慧\卸载巴菲特投资智慧.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\icon.ico" 0
+  ; 清理旧版残留的 VBS 脚本（已被编译版替代，避免杀毒软件继续误报）
+  Delete "$INSTDIR\巴菲特投资智慧.vbs"
+  Delete "$INSTDIR\停止服务.vbs"
 
   ; 卸载器 + 卸载注册（HKCU，随按用户安装）
   WriteUninstaller "$INSTDIR\uninstall.exe"

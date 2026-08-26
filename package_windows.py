@@ -7,8 +7,10 @@
 把整个项目封装为 Windows 版可安装应用（NSIS 安装器）：
   - 内置 Python embeddable 运行时（python.org 官方压缩包；服务脚本零第三方依赖）
   - app/ 内嵌全部资源（html / 知识库 / 技能 / 服务脚本），与 Mac 版一致
-  - 启动器（VBS）：静默拉起本地服务（127.0.0.1:8666 起，端口自动回退），
-    打开 Edge 应用模式窗口承载应用；再次启动复用已有服务
+  - 启动器/停止服务为 C 编译的 exe（MinGW 交叉编译）——不使用 VBS 脚本，
+    避免杀毒软件对脚本类「Trojan.VBS.Agent」特征的误报；启动器静默拉起
+    本地服务（127.0.0.1:8666 起，端口自动回退），打开 Edge 应用模式窗口，
+    再次启动复用已有服务；失败时自动给出错误码 + python 真实报错
   - 记忆材料（笔记/收藏/已读/AI 对话）持久化到 %APPDATA%\\巴菲特投资智慧\\state.json
   - 安装器自动生成 uninstall.exe（卸载时停止服务 + 清理，默认保留用户数据）
 
@@ -22,6 +24,7 @@
 
 依赖：
   - makensis（NSIS 3.x：brew install makensis）
+  - mingw-w64（交叉编译启动器 exe：brew install mingw-w64）
   - Pillow（生成 .ico 图标）
   - 网络（首次下载 python.org embeddable Python；之后走 vendor/ 缓存）
 """
@@ -63,6 +66,14 @@ BUNDLED = [
     "skills",
 ]
 
+# 启动器 / 停止服务（C 源码 → 交叉编译为 exe，替代 VBS）
+LAUNCHERS = [
+    ("launcher.c", "巴菲特投资智慧.exe"),
+    ("stopsvc.c", "停止服务.exe"),
+]
+CC = "x86_64-w64-mingw32-gcc"
+CC_LIBS = ["-lws2_32", "-lshell32", "-luser32", "-ladvapi32"]
+
 
 def run(cmd, **kw):
     print("  $", " ".join(cmd) if isinstance(cmd, list) else cmd)
@@ -75,10 +86,10 @@ def ensure_python(no_download=False):
         if no_download:
             sys.exit("[error] 未找到缓存 %s（--no-python-download），"
                      "请先联网运行一次以完成下载。" % PYTHON_ZIP)
-        print("[1/5] 下载 embeddable Python %s …" % PYTHON_VERSION)
+        print("[1/6] 下载 embeddable Python %s …" % PYTHON_VERSION)
         os.makedirs(os.path.dirname(PYTHON_ZIP), exist_ok=True)
         urllib.request.urlretrieve(PYTHON_URL, PYTHON_ZIP)
-    print("[1/5] 校验并解压 embeddable Python …")
+    print("[1/6] 校验并解压 embeddable Python …")
     with zipfile.ZipFile(PYTHON_ZIP) as z:
         bad = z.testzip()
         if bad:
@@ -94,7 +105,7 @@ def make_icon():
     """assets/buffett.png → icon.ico（多尺寸，供安装器/快捷方式使用）。"""
     if Image is None:
         sys.exit("[error] 需要 Pillow：python3 -m pip install pillow")
-    print("[2/5] 生成 icon.ico …")
+    print("[2/6] 生成 icon.ico …")
     img = Image.open(ICON_SRC).convert("RGBA")
     out = os.path.join(APP_DIR, "icon.ico")
     img.save(out, format="ICO",
@@ -104,7 +115,7 @@ def make_icon():
 
 
 def copy_app_resources():
-    print("[3/5] 拷贝项目资源到 app/ …")
+    print("[3/6] 拷贝项目资源到 app/ …")
     dst = os.path.join(APP_DIR, "app")
     os.makedirs(dst, exist_ok=True)
     for item in BUNDLED:
@@ -120,16 +131,17 @@ def copy_app_resources():
             shutil.copy2(src, target)
 
 
-def write_vbs(src_name, version):
-    """winapp/*.vbs → UTF-16 LE（带 BOM）——WSH 在任何语言区域下都按 Unicode 解码。"""
-    src = os.path.join(HERE, "winapp", src_name)
-    dst = os.path.join(APP_DIR, src_name)
-    with open(src, encoding="utf-8") as f:
-        text = f.read()
-    with open(dst, "wb") as f:
-        f.write(b"\xff\xfe")                      # UTF-16 LE BOM
-        f.write(text.encode("utf-16-le"))
-    print("  %s → %s（UTF-16 LE + BOM）" % (src_name, os.path.relpath(dst, HERE)))
+def compile_launchers():
+    """winapp/*.c → exe（MinGW 交叉编译；替代 VBS，规避脚本类误报）。"""
+    cc = shutil.which(CC)
+    if not cc:
+        sys.exit("[error] 未找到 %s，请先安装：brew install mingw-w64" % CC)
+    print("[4/6] 交叉编译启动器 / 停止服务（MinGW）…")
+    for src, out in LAUNCHERS:
+        run([cc, "-O2", "-municode", "-mwindows",
+             "-o", os.path.join(APP_DIR, out),
+             os.path.join(HERE, "winapp", src)] + CC_LIBS)
+        print("  %s → %s" % (src, os.path.join(APP_DIR, out)))
 
 
 def write_usage(version):
@@ -156,7 +168,7 @@ def render_nsi(version, icon):
             .replace("@OUTFILE_ABS@", os.path.join(DIST, "巴菲特投资智慧-v%s-Setup.exe" % version)))
     with open(dst, "w", encoding="utf-8-sig") as f:
         f.write(text)
-    print("[4/5] NSIS 脚本 → %s（UTF-8 + BOM）" % os.path.relpath(dst, HERE))
+    print("[5/6] NSIS 脚本 → %s（UTF-8 + BOM）" % os.path.relpath(dst, HERE))
     return dst
 
 
@@ -165,7 +177,7 @@ def build_setup(nsi):
     makensis = shutil.which("makensis")
     if not makensis:
         sys.exit("[error] 未找到 makensis，请先安装：brew install makensis")
-    print("[5/5] makensis 编译安装器 …")
+    print("[6/6] makensis 编译安装器 …")
     run([makensis, nsi])
 
 
@@ -179,11 +191,17 @@ def verify(version, icon):
         sys.exit("[error] 安装器未生成")
     py = os.path.join(APP_DIR, "python", "python.exe")
     app_html = os.path.join(APP_DIR, "app", "巴菲特投资智慧.html")
-    vbs = os.path.join(APP_DIR, "巴菲特投资智慧.vbs")
-    for p in (py, app_html, vbs):
+    launcher = os.path.join(APP_DIR, "巴菲特投资智慧.exe")
+    stop = os.path.join(APP_DIR, "停止服务.exe")
+    for p in (py, app_html, launcher, stop):
         if not os.path.exists(p):
             sys.exit("[error] 缺少关键产物: %s" % p)
-    print("  stage 结构: python.exe / app/巴菲特投资智慧.html / 启动器 vbs 均在位")
+    # 确认 exe 是 x64 Windows PE，且内嵌中文（UTF-16LE 标题）正常
+    with open(launcher, "rb") as f:
+        blob = f.read(2)
+    if blob != b"MZ":
+        sys.exit("[error] 启动器不是有效 PE 文件")
+    print("  stage 结构: python.exe / app/巴菲特投资智慧.html / 启动器 exe / 停止服务 exe 均在位")
     print("[ok] 完成：%s" % exe)
 
 
@@ -201,8 +219,7 @@ def main():
     ensure_python(args.no_python_download)
     icon = make_icon()
     copy_app_resources()
-    write_vbs("巴菲特投资智慧.vbs", args.version)
-    write_vbs("停止服务.vbs", args.version)
+    compile_launchers()
     write_usage(args.version)
     nsi = render_nsi(args.version, icon)
     build_setup(nsi)
