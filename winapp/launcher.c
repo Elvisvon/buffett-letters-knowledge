@@ -39,7 +39,6 @@ static wchar_t g_pidfile[MAX_PATH];    /* %APPDATA%\巴菲特投资智慧\server
 static wchar_t g_debuglog[MAX_PATH];   /* %APPDATA%\巴菲特投资智慧\launch-debug.log */
 static HANDLE  g_hOutR = NULL;         /* python 输出管道读端（诊断用） */
 static HANDLE  g_hProc = NULL;         /* python 进程句柄 */
-static DWORD   g_last_err = 0;         /* 最近一次启动失败的错误码 */
 
 /* ---------- 通用 ---------- */
 static void die_msg(const wchar_t *title, const wchar_t *fmt, ...)
@@ -120,11 +119,11 @@ static int probe_port(int port)
 static int wait_server(void)
 {
     int t, p;
-    for (t = 0; t < 20; t++) {                    /* 首选端口（正常启动路径） */
+    for (t = 0; t < 6; t++) {                     /* 首选端口（正常启动路径，3 秒） */
         if (probe_port(START_PORT)) return START_PORT;
         Sleep(500);
     }
-    for (t = 0; t < 10; t++) {                    /* 回退端口扫描 */
+    for (t = 0; t < 5; t++) {                     /* 回退端口扫描（4 秒） */
         for (p = START_PORT + 1; p <= MAX_PORT; p++)
             if (probe_port(p)) return p;
         Sleep(800);
@@ -181,7 +180,6 @@ static int start_python(int visible)
     flags = visible ? 0 : CREATE_NO_WINDOW;
     if (!CreateProcessW(NULL, cmd, NULL, NULL, TRUE, flags,
                         NULL, g_appdir, &si, &pi)) {
-        g_last_err = GetLastError();
         if (hOutW) CloseHandle(hOutW);
         if (hNul) CloseHandle(hNul);
         return 0;
@@ -213,9 +211,7 @@ static int start_python_shell(void)
     swprintf(script, MAX_PATH, L"%ls\\app\\serve_buffett_app.py", g_appdir);
     swprintf(args, 1200, L"-u \"%ls\" --no-browser --port %d", script, START_PORT);
     h = ShellExecuteW(NULL, L"open", py, args, g_appdir, SW_SHOWMINIMIZED);
-    if ((INT_PTR)h > 32) return 1;
-    g_last_err = 2;                       /* ShellExecute 失败，无精确码 */
-    return 0;
+    return (INT_PTR)h > 32;
 }
 
 /* ---------- 启动失败时：把 python 已输出的内容写入调试日志 ---------- */
@@ -237,32 +233,6 @@ static void dump_debug_log(void)
         WriteFile(h, buf, read, &w, NULL);
         CloseHandle(h);
     }
-}
-
-/* 从调试日志解析服务端口（探测异常时的兜底）：找 "127.0.0.1:PORT" */
-static int log_port(void)
-{
-    HANDLE h;
-    char raw[8192];
-    DWORD rd = 0;
-    const char *p, *q;
-    int port = 0;
-
-    h = CreateFileW(g_debuglog, GENERIC_READ, FILE_SHARE_READ, NULL,
-                    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (h == INVALID_HANDLE_VALUE) return 0;
-    ReadFile(h, raw, sizeof raw - 1, &rd, NULL);
-    CloseHandle(h);
-    raw[rd] = 0;
-    p = strstr(raw, "127.0.0.1:");
-    if (!p) return 0;
-    p += 10;
-    q = p;
-    while (*q >= '0' && *q <= '9') q++;
-    if (q == p) return 0;
-    port = atoi(p);
-    if (port < 1 || port > 65535) return 0;
-    return port;
 }
 
 /* ---------- 定位 Edge ---------- */
@@ -321,48 +291,32 @@ static void open_window(int port)
     }
 }
 
-/* 失败弹窗：错误码 + 安装目录 + 调试日志 + 手动复现命令 */
-static void show_failure(void)
+/* 离线模式：直接打开内置 HTML（file://）——本地服务被安全软件拦截时
+ * 也能完整使用阅读/搜索/划线/笔记（数据存浏览器 localStorage） */
+static void open_file_mode(void)
 {
-    wchar_t msg[2500];
-    wchar_t logw[1800] = L"";
-    wchar_t py[MAX_PATH], script[MAX_PATH];
+    wchar_t path[500], url[1300], edge[MAX_PATH], args[1350];
+    int i, j;
 
-    swprintf(py, MAX_PATH, L"%ls\\python\\python.exe", g_appdir);
-    swprintf(script, MAX_PATH, L"%ls\\app\\serve_buffett_app.py", g_appdir);
+    swprintf(path, 500, L"%ls\\app\\巴菲特投资智慧.html", g_appdir);
+    wcscpy(url, L"file:///");
+    j = 8;
+    for (i = 0; path[i] && j < 1280; i++)
+        url[j++] = (path[i] == L'\\') ? L'/' : path[i];
+    url[j] = 0;
 
-    dump_debug_log();
-    {
-        HANDLE h = CreateFileW(g_debuglog, GENERIC_READ, FILE_SHARE_READ, NULL,
-                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-        if (h != INVALID_HANDLE_VALUE) {
-            char raw[1600];
-            DWORD rd = 0;
-            ReadFile(h, raw, sizeof raw - 1, &rd, NULL);
-            CloseHandle(h);
-            raw[rd] = 0;
-            if (rd > 0)
-                MultiByteToWideChar(CP_ACP, 0, raw, -1, logw, 1799);
-        }
+    if (find_edge(edge, MAX_PATH)) {
+        swprintf(args, 1350, L"--app=%ls", url);
+        ShellExecuteW(NULL, L"open", edge, args, NULL, SW_SHOWNORMAL);
+    } else {
+        ShellExecuteW(NULL, L"open", url, NULL, NULL, SW_SHOWNORMAL);
     }
-    swprintf(msg, sizeof msg / sizeof(wchar_t),
-             L"本地服务启动失败。\n\n"
-             L"错误码：%lu\n"
-             L"安装目录：%ls\n"
-             L"%ls%ls%ls"
-             L"手动复现（命令提示符 cmd 中运行）：\n"
-             L"  \"%ls\" -u \"%ls\" --no-browser --port 8666\n"
-             L"（PowerShell 中运行则开头加 & 再加空格）\n\n"
-             L"常见原因：\n"
-             L"  · 安全软件拦截（将安装目录加入信任区，或暂时退出后重试）；\n"
-             L"  · 安装不完整（重新下载安装包并重装）；\n"
-             L"  · 非 64 位系统。",
-             g_last_err, g_appdir,
-             logw[0] ? L"调试日志（python 输出）：\n" : L"",
-             logw[0] ? logw : L"",
-             logw[0] ? L"\n" : L"",
-             py, script);
-    MessageBoxW(NULL, msg, L"巴菲特投资智慧", MB_OK | MB_ICONERROR);
+    MessageBoxW(NULL,
+                L"本地服务未能启动（可能被安全软件拦截），已改用离线模式打开。\n\n"
+                L"阅读、搜索、划线与笔记功能正常；笔记/收藏保存在浏览器本地。\n"
+                L"如需完整功能（数据文件持久化 + 环境变量密钥注入），\n"
+                L"请将安装目录加入杀毒软件信任区后重新启动。",
+                L"巴菲特投资智慧", MB_OK | MB_ICONINFORMATION);
 }
 
 /* ---------- 入口 ---------- */
@@ -390,24 +344,19 @@ int wmain(void)
         port = wait_server();
     }
 
-    /* 3) 失败处理：能从日志解析出服务地址则照常打开，否则弹诊断框 */
-    if (!port) {
-        int lp = log_port();
-        if (lp > 0) {
-            open_window(lp);
-            if (g_hProc) { WaitForSingleObject(g_hProc, 3000); CloseHandle(g_hProc); }
-            if (g_hOutR) CloseHandle(g_hOutR);
-            return 0;
-        }
-        show_failure();
+    /* 3) 服务就绪 → 打开应用窗口；否则转离线模式（文件直开，无需服务） */
+    if (port) {
+        open_window(port);
+    } else {
+        dump_debug_log();                  /* 留痕：%APPDATA%\巴菲特投资智慧\launch-debug.log */
         if (g_hProc) { WaitForSingleObject(g_hProc, 3000); CloseHandle(g_hProc); }
         if (g_hOutR) CloseHandle(g_hOutR);
-        return 2;
+        open_file_mode();
+        return 3;
     }
 
-    /* 4) 打开应用窗口 */
+    /* 4) 清理并返回 */
     if (g_hOutR) CloseHandle(g_hOutR);
     if (g_hProc) CloseHandle(g_hProc);
-    open_window(port);
     return 0;
 }
