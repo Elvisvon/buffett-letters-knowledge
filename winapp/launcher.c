@@ -100,6 +100,10 @@ static int probe_port(int port)
         tv.tv_sec = 1; tv.tv_usec = 500000;
         if (select(0, NULL, &wf, NULL, &tv) <= 0) { closesocket(s); return 0; }
     }
+    /* 关键：连接建立后必须恢复阻塞模式——否则 recv 立即返回 WSAEWOULDBLOCK，
+     * 探测读不到响应、还会在服务器写完前关闭连接（WinError 10053） */
+    nb = 0;
+    ioctlsocket(s, FIONBIO, &nb);
     send(s, req, (int)strlen(req), 0);
     setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char *)&to, sizeof to);
     for (;;) {
