@@ -14,15 +14,40 @@ Unicode true
 
 Name "${APP_NAME}"
 OutFile "@OUTFILE_ABS@"
-InstallDir "$LOCALAPPDATA\巴菲特投资智慧"
-InstallDirRegKey HKCU "${UNINST_KEY}" "InstallLocation"
 RequestExecutionLevel user
 SetCompressor /SOLID lzma
 
 !include "MUI2.nsh"
 !include "FileFunc.nsh"
+!include "LogicLib.nsh"
 !include "StrFunc.nsh"
+${StrTrimNewLines}
 ${UnStrTrimNewLines}
+
+; 安装开始前：确定安装目录（优先记忆上次位置，回退 LOCALAPPDATA/USERPROFILE，
+; 个别精简版 Windows 的 %LOCALAPPDATA% 可能缺失或异常），
+; 并自动停止旧版本正在运行的服务，避免安装时 python\ 文件被占用
+; （报「无法打开要写入的文件」多为此类原因）
+Function .onInit
+  ReadRegStr $0 HKCU "${UNINST_KEY}" "InstallLocation"
+  ${If} $0 != ""
+    StrCpy $INSTDIR $0
+  ${ElseIf} $LOCALAPPDATA != ""
+    StrCpy $INSTDIR "$LOCALAPPDATA\巴菲特投资智慧"
+  ${Else}
+    StrCpy $INSTDIR "$USERPROFILE\AppData\Local\巴菲特投资智慧"
+  ${EndIf}
+  ClearErrors
+  FileOpen $0 "$APPDATA\巴菲特投资智慧\server.pid" r
+  IfErrors oninit_no_pid
+  FileRead $0 $1
+  FileClose $0
+  ${StrTrimNewLines} $1 $1
+  StrCmp $1 "" oninit_no_pid
+  ExecWait 'taskkill /PID $1 /T /F'
+  oninit_no_pid:
+  nsExec::Exec "powershell -NoProfile -NonInteractive -Command $\"Get-CimInstance Win32_Process | Where-Object { $$_.CommandLine -like '*serve_buffett_app.py*' } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force }$\""
+FunctionEnd
 
 ; 版本信息（资源管理器「属性 → 详细信息」）
 VIProductVersion "@VERSION@.0.0"
