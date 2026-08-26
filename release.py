@@ -51,7 +51,7 @@ NOTES_TEMPLATE = """## 巴菲特投资智慧 v{version}（Mac + Windows 安装�
 - **{setup_asset}**：NSIS 安装器，按用户安装到 `%LOCALAPPDATA%\\巴菲特投资智慧`（无需管理员），
   安装时自动生成 `uninstall.exe` 卸载器并注册「应用和功能」
 - 内置 Python 运行时与全部知识库，无需安装任何依赖，完全离线可用
-- 启动自动拉起本地服务（127.0.0.1:8666）并打开 Edge 应用模式窗口；重复启动复用服务
+- 启动自动拉起本地服务（首选 127.0.0.1:8666，回退至 8685）并打开 Edge 应用模式窗口；重复启动复用服务
 - 卸载自动停止服务、清理文件/快捷方式/注册表；默认保留笔记数据（`%APPDATA%\\巴菲特投资智慧`）
 - SmartScreen 未签名提示：更多信息 → 仍要运行
 
@@ -66,16 +66,41 @@ def run(cmd, **kw):
     return subprocess.run(cmd, check=True, capture_output=True, text=True, **kw)
 
 
-def gh(args, check=True):
-    """执行 gh 命令（args 为参数列表），返回 (returncode, stdout)。"""
-    print("  $ gh " + " ".join(args))
-    r = subprocess.run(["gh"] + args, capture_output=True, text=True)
+def gh(args, check=True, repo=None):
+    """执行 gh 命令；repo 仅用于需要明确目标的 release 操作。"""
+    cmd = ["gh"] + args
+    if repo:
+        cmd.extend(["--repo", repo])
+    print("  $ " + " ".join(cmd))
+    r = subprocess.run(cmd, capture_output=True, text=True)
     if check and r.returncode != 0:
-        sys.exit("[error] gh %s 失败：%s" % (" ".join(args), r.stderr.strip()))
+        sys.exit("[error] %s 失败：%s" % (" ".join(cmd), r.stderr.strip()))
     return r
 
 
-def upload_assets(tag, assets):
+def resolve_remote_tag(repo, tag):
+    """返回远端 tag 最终指向的 commit SHA；tag 不存在时返回 None。"""
+    jq = '.object.type + "|" + .object.sha'
+    r = gh(["api", "repos/%s/git/ref/tags/%s" % (repo, tag), "--jq", jq],
+           check=False)
+    if r.returncode != 0:
+        return None
+    target = r.stdout.strip()
+    for _ in range(4):
+        try:
+            kind, sha = target.split("|", 1)
+        except ValueError:
+            sys.exit("[error] 无法解析远端标签 %s：%s" % (tag, target))
+        if kind == "commit":
+            return sha
+        if kind != "tag":
+            sys.exit("[error] 远端标签 %s 指向不支持的对象类型：%s" % (tag, kind))
+        r = gh(["api", "repos/%s/git/tags/%s" % (repo, sha), "--jq", jq])
+        target = r.stdout.strip()
+    sys.exit("[error] 远端标签 %s 嵌套层级异常" % tag)
+
+
+def upload_assets(tag, assets, repo):
     """上传附件。assets: [(本地路径, ASCII 附件名), ...]
 
     GitHub API 会截断非 ASCII 附件名（中文名会变成 "-vX.Y.ext"），
@@ -86,7 +111,7 @@ def upload_assets(tag, assets):
         for local, name in assets:
             tmp = os.path.join(tmpdir, name)
             shutil.copy2(local, tmp)
-            gh(["release", "upload", tag, tmp, "--clobber"])
+            gh(["release", "upload", tag, tmp, "--clobber"], repo=repo)
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -116,6 +141,7 @@ def main():
     tag = "v" + args.version
     dmg, setup = ensure_artifacts(args.version, args.build)
     dmg_asset, setup_asset = DMG_ASSET % args.version, SETUP_ASSET % args.version
+    head_sha = run(["git", "rev-parse", "HEAD"], cwd=HERE).stdout.strip()
 
     # gh 可用性
     if shutil.which("gh") is None:
@@ -126,9 +152,23 @@ def main():
     if r.returncode != 0:
         sys.exit("[error] gh 未登录，请先执行 gh auth login")
 
+    # Release 必须绑定本次实际审查/打包的提交，而不是目标仓库默认分支的最新提交。
+    r = gh(["api", "repos/%s/git/commits/%s" % (args.repos, head_sha), "--silent"],
+           check=False)
+    if r.returncode != 0:
+        sys.exit("[error] 当前 HEAD %s 尚未存在于目标仓库 %s，请先推送该提交。"
+                 % (head_sha[:12], args.repos))
+
     print("[3/4] 检查 Release %s 是否存在…" % tag)
-    r = gh(["release", "view", tag, "--json", "tagName"], check=False)
+    r = gh(["release", "view", tag, "--json", "tagName"],
+           check=False, repo=args.repos)
     exists = r.returncode == 0
+    tag_sha = resolve_remote_tag(args.repos, tag)
+    if exists and tag_sha is None:
+        sys.exit("[error] Release %s 存在，但远端同名标签无法解析。" % tag)
+    if tag_sha and tag_sha != head_sha:
+        sys.exit("[error] 远端标签 %s 指向 %s，不是当前 HEAD %s；拒绝覆盖已有版本。"
+                 % (tag, tag_sha[:12], head_sha[:12]))
 
     notes = NOTES_TEMPLATE.format(version=args.version,
                                   dmg_asset=dmg_asset, setup_asset=setup_asset)
@@ -136,29 +176,35 @@ def main():
     if args.dry_run:
         print("\n[DRY-RUN] 将执行：")
         if exists:
-            print("  gh release edit %s --notes <模板说明>" % tag)
+            print("  gh release edit %s --notes <模板说明> --repo %s" % (tag, args.repos))
             for _, name in assets:
-                print("  gh release upload %s <%s> --clobber（ASCII 临时文件名上传）" % (tag, name))
+                print("  gh release upload %s <%s> --clobber --repo %s（ASCII 临时文件名上传）"
+                      % (tag, name, args.repos))
         else:
-            print("  gh release create %s --title ... --notes <模板说明>" % tag)
+            print("  gh release create %s --target %s --title ... --notes <模板说明> --repo %s"
+                  % (tag, head_sha, args.repos))
             for _, name in assets:
-                print("  gh release upload %s <%s> --clobber（ASCII 临时文件名上传）" % (tag, name))
+                print("  gh release upload %s <%s> --clobber --repo %s（ASCII 临时文件名上传）"
+                      % (tag, name, args.repos))
         print("\n[ok] dry-run 完成，未做任何修改。")
         return
 
     print("[4/4] 发布…")
     if exists:
         print("  Release 已存在 → 更新说明 + 覆盖附件")
-        gh(["release", "edit", tag, "--notes", notes])
+        gh(["release", "edit", tag, "--notes", notes], repo=args.repos)
     else:
         print("  创建 Release %s（标签指向当前 HEAD）" % tag)
         title = "巴菲特投资智慧 v%s（Mac + Windows 安装包）" % args.version
-        gh(["release", "create", tag, "--title", title, "--notes", notes])
-    upload_assets(tag, assets)
+        gh(["release", "create", tag, "--target", head_sha,
+            "--title", title, "--notes", notes],
+           repo=args.repos)
+    upload_assets(tag, assets, args.repos)
 
     # 校验
     r = gh(["release", "view", tag, "--json", "assets",
-            "--jq", ".assets[] | .name + \"|\" + (.size|tostring)"])
+            "--jq", ".assets[] | .name + \"|\" + (.size|tostring)"],
+           repo=args.repos)
     ok = True
     for want, size in ((dmg_asset, os.path.getsize(dmg)),
                        (setup_asset, os.path.getsize(setup))):
@@ -169,7 +215,7 @@ def main():
     if ok:
         print("[ok] 完成：https://github.com/%s/releases/tag/%s" % (args.repos, tag))
     else:
-        print("[error] 发布完成但附件校验异常，请人工检查 Release 页面。")
+        sys.exit("[error] 发布完成但附件校验异常，请人工检查 Release 页面。")
 
 
 if __name__ == "__main__":

@@ -5,11 +5,11 @@
 ==================================================
 
 功能：
-  1. 递归扫描「巴菲特致股东信知识库/」下全部 .md 文章（索引/合伙人信/伯克希尔股东信/特别信件/概念/公司/人物）
+  1. 扫描「巴菲特致股东信知识库/」七个固定分类目录第一层的 .md 文章
   2. 提取元数据：分类、年份、标题、关联主题标签（解析文中交叉链接）
   3. 把原站失效的相对链接（../concepts/xx.html 等）重写为应用内锚点 (#a/<article-id>)
   4. 生成完全自包含的单文件应用「巴菲特投资智慧.html」（无 CDN、无外部依赖，双击即用）
-  5. 可选：从项目根 .env 生成 llm-config.js（预填 DeepSeek API Key，供应用内 LLM 讨论）
+  5. 可选：从项目根 .env 生成无密钥 llm-config.js（仅默认 base/model）
 
 用法：
   python3 build_buffett_app.py            # 构建 html（默认同时生成 llm-config.js）
@@ -278,8 +278,9 @@ def parse_classification_index(letter_years=None, by_id=None):
              "event": events, "method": methods, "year": years}, year_rows)
 
 
-# 文章分类 → 信件系列（用于匹配年度总索引行）
-_SERIES_OF_CAT = {"partnership": "合伙基金信", "berkshire": "伯克希尔信", "special": "伯克希尔信"}
+# 文章分类 → 信件系列（用于匹配年度总索引行）。
+# 特别信件不是当年股东信，不按年份沿用伯克希尔年报摘要和链接。
+_SERIES_OF_CAT = {"partnership": "合伙基金信", "berkshire": "伯克希尔信"}
 
 
 def inject_summary_and_links(by_id, year_rows):
@@ -455,10 +456,10 @@ def build():
             cats.append({"key": cat_key, "name": name, "count": n, "order": order})
 
     years = sorted({a["year"] for a in articles if a["year"]})
-    # 信件类文章按年份分组（年度索引补全早年用）
+    # 年度信件按年份分组（年度索引补全早年用）
     letter_years = {}
     for a in articles:
-        if a["year"] and a["catKey"] in ("berkshire", "partnership", "special"):
+        if a["year"] and a["catKey"] in ("berkshire", "partnership"):
             letter_years.setdefault(a["year"], []).append(a["id"])
     idx, year_rows = parse_classification_index(letter_years, by_id)
     if idx:
@@ -652,7 +653,8 @@ select.tbtn{-webkit-appearance:none;appearance:none;padding-right:24px;
 .home-hero .hh-img{width:96px;height:96px;border-radius:18px;box-shadow:0 4px 16px rgba(139,111,71,.28);margin-bottom:2px}
 .home-hero .hh-chart-wrap{position:relative;width:min(1280px,100%);height:310px;margin:10px auto 4px}
 .home-hero .hh-chart{width:100%;height:100%}
-.home-hero .chart-note{position:absolute;right:10px;top:4px;font-size:10px;color:var(--ink3);white-space:nowrap;z-index:5;pointer-events:none}
+.home-hero .chart-note{position:absolute;right:10px;top:4px;max-width:calc(100% - 20px);font-size:10px;line-height:1.35;
+  text-align:right;color:var(--ink3);z-index:5;pointer-events:none}
 .home-hero h1{font:700 34px/1.4 var(--serif);color:var(--accent);margin:10px 0 6px}
 .home-hero .hh-sub{color:var(--ink2);font-size:14px}
 .hh-stats{display:flex;justify-content:center;gap:38px;margin:24px 0 20px;flex-wrap:wrap}
@@ -1108,26 +1110,57 @@ const store = {
 const NOTES_KEY='bf_notes', FAVS_KEY='bf_favs', SETTINGS_KEY='bf_settings', CHAT_KEY='bf_chat';
 const CAT_NAME = {index:'索引',partnership:'合伙人信',berkshire:'伯克希尔股东信',special:'特别信件',concept:'概念',company:'公司',person:'人物'};
 
+/* 服务启动时的密钥只从同源 JSON API 读入内存，不回写 localStorage。
+   file:// 直接打开时请求失败，继续使用无密钥的 llm-config.js 默认值。 */
+let runtimeLlmConfig=null;
+async function loadRuntimeLlmConfig(){
+  try{
+    const r=await fetch('/api/llm-config',{cache:'no-store'});
+    if(!r.ok) return false;
+    const cfg=await r.json();
+    if(!cfg || cfg.app!=='buffett-wisdom') return false;
+    runtimeLlmConfig={base:cfg.base||'',key:cfg.key||'',model:cfg.model||''};
+    return true;
+  }catch(e){ return false; }
+}
+
 /* ============ 记忆材料本地持久化（经 /api/state 写本地文件） ============
    笔记 / 收藏 / 已读 / AI 对话 存到 serve 端本地文件（默认用户目录，
-   不进 Git）；settings（可能含 API Key）只留在浏览器 localStorage，绝不落盘。 */
+   不进 Git）；settings（可能含手动填写的 API Key）只留在浏览器 localStorage，
+   不写入 state.json 或仓库文件。 */
 const API_STATE='/api/state';
-const STATE_KEYS=['notes','favs','read','chat','buffett_chat'];
-const STATE_LS_MAP={notes:NOTES_KEY,favs:FAVS_KEY,read:'bf_read',chat:CHAT_KEY,buffett_chat:'bf_buffett_chat'};
+const STATE_KEYS=['notes','favs','read','chat','buffett_chat','munger_chat'];
+const STATE_LS_MAP={notes:NOTES_KEY,favs:FAVS_KEY,read:'bf_read',chat:CHAT_KEY,buffett_chat:'bf_buffett_chat',munger_chat:'bf_munger_chat'};
+const STATE_DEFAULTS={notes:{},favs:[],read:[],chat:{},buffett_chat:[],munger_chat:[]};
+const hasOwn=(obj,key)=>Object.prototype.hasOwnProperty.call(obj,key);
 const _nonEmpty = v => { try{ const s=JSON.stringify(v); return s!==undefined && s!=='null' && s!=='{}' && s!=='[]'; }catch(e){ return false; } };
-const pushRemoteState = (()=>{ let t=null; return ()=>{ clearTimeout(t); t=setTimeout(()=>{
+const statePayload=()=>{
   const payload={};
-  STATE_KEYS.forEach(k=>payload[k]=store.get(STATE_LS_MAP[k],null));
-  fetch(API_STATE,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-},300); }; })();
+  STATE_KEYS.forEach(k=>payload[k]=store.get(STATE_LS_MAP[k],STATE_DEFAULTS[k]));
+  return payload;
+};
+const pushRemoteStateNow=async(keepalive=false)=>{
+  try{
+    const r=await fetch(API_STATE,{
+      method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(statePayload()),keepalive
+    });
+    return r.ok;
+  }catch(e){ return false; }
+};
+const pushRemoteState = (()=>{ let t=null; return ()=>{
+  clearTimeout(t);
+  t=setTimeout(()=>pushRemoteStateNow(),300);
+}; })();
 async function loadRemoteState(){
   try{
     const r=await fetch(API_STATE,{cache:'no-store'});
     if(!r.ok) return false;
     const st=await r.json();
-    const fileHas=STATE_KEYS.some(k=>_nonEmpty(st[k]));
-    if(fileHas){                                  // 本地文件为权威 → 覆盖 localStorage
-      STATE_KEYS.forEach(k=>{ if(_nonEmpty(st[k])) store.set(STATE_LS_MAP[k],st[k]); });
+    const fileHas=STATE_KEYS.some(k=>hasOwn(st,k));
+    if(fileHas){                                  // 本地文件为权威，显式空值也要覆盖 localStorage
+      STATE_KEYS.forEach(k=>{ if(hasOwn(st,k)) store.set(STATE_LS_MAP[k],st[k]); });
+      // 旧版文件可能缺新字段；保留其 localStorage 值并补齐六键文件。
+      if(STATE_KEYS.some(k=>!hasOwn(st,k))) pushRemoteState();
       return true;
     }
     if(STATE_KEYS.some(k=>_nonEmpty(store.get(STATE_LS_MAP[k],null)))) pushRemoteState(); // 首次迁移
@@ -1190,7 +1223,7 @@ const chatOf = id => store.get(CHAT_KEY,{})[id] || [];
 const saveChat = (id,msgs) => { const db=store.get(CHAT_KEY,{}); db[id]=msgs; store.set(CHAT_KEY,db); pushRemoteState(); };
 const settings = () => {
   const s = store.get(SETTINGS_KEY,{});
-  const c = window.BUFFETT_LLM_CONFIG || {};
+  const c = runtimeLlmConfig || window.BUFFETT_LLM_CONFIG || {};
   return {
     base: s.base || c.base || 'https://api.deepseek.com/v1',
     key:  s.key  || c.key  || '',
@@ -1632,7 +1665,7 @@ function renderHome(){
         '<div><b>'+nLetters+'</b><span>封信件</span></div>'+
         '<div><b>'+nTags.size+'</b><span>主题标签</span></div>'+
       '</div>'+
-      '<div class="hh-chart-wrap"><div class="hh-chart" id="heroChart"></div><div class="chart-note">口径：每股账面价值（Book Value）</div></div>'+
+      '<div class="hh-chart-wrap"><div class="hh-chart" id="heroChart"></div><div class="chart-note">口径：1957–1964 年为合伙基金收益率；1965–2018 年为伯克希尔每股账面价值变动率（Book Value）</div></div>'+
       '<div class="hh-search"><input id="homeQ" placeholder="搜索文章、概念、公司、人物…" autocomplete="off"><button id="homeQGo">搜索</button></div>'+
     '</div>'+
     '<div class="chat-entry" data-chat="1">'+
@@ -1673,7 +1706,7 @@ function renderHome(){
   initHeroChart();
 }
 
-/* ============ 主页 Hero 交互图（ECharts，巴菲特历年收益率） ============ */
+/* ============ 主页 Hero 交互图（ECharts，巴菲特历年年度表现） ============ */
 let _heroChart=null, _heroChartResize=false;
 function initHeroChart(){
   const el=document.getElementById('heroChart');
@@ -1696,8 +1729,8 @@ function initHeroChart(){
     legend:{
       top:0, left:72, itemWidth:16, itemHeight:8, itemGap:18,
       textStyle:{color:'#6f675a',fontSize:11},
-      data:['年收益率','累计净值','年化收益'],
-      selected:{'年收益率':true,'累计净值':true,'年化收益':false}
+      data:['年度变动率','累计净值','年化收益'],
+      selected:{'年度变动率':true,'累计净值':true,'年化收益':false}
     },
     grid:{left:50, right:62, top:46, bottom:46},
     xAxis:{
@@ -1707,7 +1740,7 @@ function initHeroChart(){
       axisLabel:{color:'#9a917f',fontSize:10,interval:4}
     },
     yAxis:[
-      {type:'value', name:'年收益率 %', nameTextStyle:{color:'#9a917f',fontSize:10,padding:[0,0,0,30]},
+      {type:'value', name:'年度变动率 %', nameTextStyle:{color:'#9a917f',fontSize:10,padding:[0,0,0,30]},
        splitLine:{lineStyle:{color:'#efe9dd'}},
        axisLabel:{color:'#9a917f',fontSize:10}},
       {type:'log', name:'累计净值', nameTextStyle:{color:'#9a917f',fontSize:10},
@@ -1723,7 +1756,7 @@ function initHeroChart(){
        textStyle:{color:'#9a917f',fontSize:9}}
     ],
     series:[
-      {name:'年收益率', type:'bar', data:R.map(r=>r[1]),
+      {name:'年度变动率', type:'bar', data:R.map(r=>r[1]),
        barWidth:'52%',
        itemStyle:{color:function(p){ return p.value<0?'#7c1d1d':'#a16207'; },
                   borderRadius:[2,2,0,0]},
@@ -1890,9 +1923,11 @@ function openArticle(id){
     location.hash='#/library';
   };
   // 年度索引行（信件类文章且有年度总索引条目时显示）
-  const yi = (IDX.year||[]).find(x=>x.y===a.year);
+  const yi = (a.catKey==='partnership'||a.catKey==='berkshire')
+    ? (IDX.year||[]).find(x=>x.y===a.year) : null;
   const idxLine = $('#rIdxLine');
   if (yi){
+    idxLine.style.display='';
     idxLine.innerHTML = '<span>📋 年度索引</span>'+
       (yi.e?'<span class="idx-ev">事件：<b>'+esc(yi.e)+'</b></span>':'')+
       (yi.t&&yi.t.length?'<span class="idx-ev">坎宁安主题：'+(yi.t||[]).map(t=>'<button class="mini-tag" data-ct="'+esc(t)+'">'+esc(t)+'</button>').join(' ')+'</span>':'')+
@@ -1902,7 +1937,10 @@ function openArticle(id){
       if(ct){ if(setIdxByCanonTopic(ct.dataset.ct)){ state.q=''; $('#q').value=''; $('#qCount').textContent=''; location.hash='#/library'; } return; }
       if(e.target.closest('#rIdxYear')){ state.idxDim='year'; state.idxKey=yi.k; location.hash='#/library'; }
     };
-  } else idxLine.innerHTML='';
+  } else {
+    idxLine.innerHTML='';
+    idxLine.style.display='none';
+  }
   $('#rRead').textContent = isRead(id)?'✅ 已读':'📖 未读';
   $('#rRead').classList.toggle('active', isRead(id));
   $('#rRead').onclick = ()=>{
@@ -1931,6 +1969,7 @@ function openArticle(id){
   buildToc(toc);
   renderNotesPanel();
   renderChatPanel();
+  bgRequestSeq++; bgState.busy=false;         // 切文立即使旧背景请求失效，由新文章重新接管状态
   bgState.term=''; bgState.ctx=''; bgState.msgs=[]; bgState.saved=false;
   $('#bgTermInput').value='';
   renderBgPanel();
@@ -2104,9 +2143,27 @@ function saveNoteFromModal(){
   toast('笔记已保存');
   renderNotesPanel();
 }
+let articleNoteSaveTimer=null;
+let pendingArticleNote=null;
+function flushArticleNoteSave(){
+  if(!pendingArticleNote) return;
+  clearTimeout(articleNoteSaveTimer);
+  articleNoteSaveTimer=null;
+  const pending=pendingArticleNote;
+  pendingArticleNote=null;
+  const latest=notesOf(pending.id);
+  latest.articleNote={text:pending.text,ts:Date.now()};
+  saveNotes(pending.id,latest);
+  if(state.cur===pending.id){
+    const saved=$('#noteSaved');
+    if(saved) saved.textContent='已保存 '+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  }
+}
 function renderNotesPanel(){
   const id=state.cur;
   if(!id) return;
+  // 若其他笔记操作触发重绘，先保存用户已输入但尚未到 600ms 的文章笔记。
+  flushArticleNoteSave();
   const n=notesOf(id);
   const hlEl=$('#ntHighlights'), ntEl=$('#ntNotes');
   hlEl.innerHTML='';
@@ -2188,20 +2245,21 @@ function renderNotesPanel(){
   const an=$('#articleNote');
   an.value = (n.articleNote&&n.articleNote.text)||'';
   const saved=$('#noteSaved');
-  let timer=null;
   an.oninput=()=>{
     saved.textContent='保存中…';
-    clearTimeout(timer);
-    timer=setTimeout(()=>{
-      n.articleNote={text:an.value, ts:Date.now()};
-      saveNotes(id,n);
-      saved.textContent='已保存 '+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
-    },600);
+    clearTimeout(articleNoteSaveTimer);
+    pendingArticleNote={id,text:an.value};
+    articleNoteSaveTimer=setTimeout(flushArticleNoteSave,600);
   };
   saved.textContent = n.articleNote&&n.articleNote.text ? '上次保存 '+new Date(n.articleNote.ts).toLocaleString('zh-CN',{hour:'2-digit',minute:'2-digit'}) : '自动保存';
   const clrBtn=$('#clearArticleNote');
   if(clrBtn) clrBtn.onclick=()=>{
     if(!an.value.trim()){ toast('文章笔记为空'); return; }
+    if(pendingArticleNote&&pendingArticleNote.id===id){
+      clearTimeout(articleNoteSaveTimer);
+      articleNoteSaveTimer=null;
+      pendingArticleNote=null;
+    }
     an.value=''; n.articleNote=null; saveNotes(id,n);
     saved.textContent='已清空';
     renderNotesPanel(); toast('已清空文章笔记');
@@ -2432,6 +2490,7 @@ async function sendAi(){
   if(!text){ toast('请输入问题'); return; }
   if(!settingsOk()){ openSettings(); return; }
   const id=state.cur;
+  const requestMessages=buildAiMessages(text); // 此时历史中尚未加入当前问题，避免重复发送
   const msgs=chatOf(id);
   msgs.push({role:'user',content:text,quote:currentSelection()||'',ts:Date.now()});
   const aidMsg={role:'assistant',content:'',pending:true,ts:Date.now()};
@@ -2444,22 +2503,24 @@ async function sendAi(){
   $('#aiStatus').textContent='思考中…（'+(settings().model.split('/').pop()||'')+'）';
   let saveTimer=null;
   try{
-    const reply=await callLLMStream(buildAiMessages(text), acc=>{
+    const reply=await callLLMStream(requestMessages, acc=>{
       aidMsg.content=acc;
-      const el=$('#aiMsgs .ai-msg.assistant:last-of-type');
-      if(el) el.innerHTML=mdRich(acc);
+      if(state.cur===id){
+        const el=$('#aiMsgs .ai-msg.assistant:last-of-type');
+        if(el) el.innerHTML=mdRich(acc);
+      }
       if(!saveTimer){ saveTimer=setTimeout(()=>{ saveChat(id,msgs); saveTimer=null; },500); }
     });
     aidMsg.content=reply; aidMsg.pending=false;
     clearTimeout(saveTimer);
     saveChat(id,msgs);
-    renderChatPanel();
+    if(state.cur===id) renderChatPanel();
   }catch(err){
     clearTimeout(saveTimer);
     const msgs2=chatOf(id).filter(m=>!(m.role==='assistant'&&m.pending));
     msgs2.push({role:'err',content:'请求失败：'+err.message,ts:Date.now()});
     saveChat(id,msgs2);
-    renderChatPanel();
+    if(state.cur===id) renderChatPanel();
   }
   aiBusy=false; sendBtn.disabled=false;
   $('#aiStatus').textContent='';
@@ -2559,8 +2620,8 @@ $('#aiInputBox').addEventListener('keydown',e=>{
 let chatMode='buffett';
 const chatViewEl = $('#chatView');
 const CHAT_KEYS={buffett:'bf_buffett_chat', munger:'bf_munger_chat'};
-const chatMsgs = () => store.get(CHAT_KEYS[chatMode], []);
-const saveChatMsgs = msgs => { store.set(CHAT_KEYS[chatMode], msgs); pushRemoteState(); };
+const chatMsgs = (mode=chatMode) => store.get(CHAT_KEYS[mode], []);
+const saveChatMsgs = (msgs,mode=chatMode) => { store.set(CHAT_KEYS[mode], msgs); pushRemoteState(); };
 const CHAT_META={
   buffett:{name:'巴菲特',title:'与巴菲特对话',
     loaded:'🧬 巴菲特人格已加载（celebrity-buffett：6 个心智模型 / 8 条决策启发式 / Agentic Protocol 先研究再回答）。回答严格基于致股东信语料与人格框架，超出语料的推断会明确标注；发送「退出」结束对话。',
@@ -2582,6 +2643,7 @@ function showChatView(){
 }
 function renderChatView(){
   const meta=CHAT_META[chatMode];
+  $('#chatStatus').textContent='';
   const tName=$('#chatTitleName'); if(tName) tName.textContent=meta.title;
   const tSub=$('#chatSub'); if(tSub) tSub.textContent='基于 '+ (chatMode==='buffett'?'celebrity-buffett':'celebrity-charlie-munger') +' 人格 · 仅供参考，不构成投资建议';
   const tIcon=$('#chatTitleIcon');
@@ -2620,8 +2682,8 @@ function renderChatView(){
   } else $('#chatChips').innerHTML='';
   box.scrollTop=box.scrollHeight;
 }
-function buildChatMessages(userText){
-  const isM=chatMode==='munger';
+function buildChatMessages(userText,mode=chatMode){
+  const isM=mode==='munger';
   const persona=((isM?DATA.mungerPersona:DATA.buffettPersona)||'').slice(0,14000);
   const sys=[
     isM
@@ -2630,74 +2692,94 @@ function buildChatMessages(userText){
     '【角色与人格（persona）】',
     persona,
     '【附加规则】',
-    isM ? (
+    ...(isM ? [
       '1. 用芒格的口吻与框架回答：毒舌直白、三连词（"自大、愚蠢、疯狂"）、格言化收尾、自嘲式认错（"我和沃伦犯过很多错"）、政治不正确；',
       '2. 先按 Agentic Protocol 研究再回答：逆向思维（怎样会失败）→ 激励机制 → 能力圈 → 25 种误判清单 → 机会成本 → 复利时间视角；',
       '3. 涉及具体事实/数字/年份必须来自上述语料；语料没有的，明确说"语料中没有，这是我的框架推演"；绝不编造芒格说过的具体话；',
       '4. 被问 2024 年后的新事物（AI 大爆发、2026 年世界），先承认"我 2023 年就去世了，后面的世界没看到"，再给框架外推；',
       '5. 回答不构成投资建议；中文回答，结构清晰；用户说「退出」时简短告别。'
-    ) : (
+    ] : [
       '1. 用巴菲特的口吻与框架回答：生意比喻（护城河/裸泳/称重机）、"我们"体、先讲道理后给结论、自嘲式承认局限；',
       '2. 先按 Agentic Protocol 研究再回答：可预测性（能力圈）→ 护城河 → 管理层 → 价格安全边际 → 叙事触发器 → 错误清单反查；',
       '3. 涉及具体事实/数字/年份必须来自上述语料；语料没有的，明确说"语料中没有，这是我的框架推演"；绝不编造巴菲特说过的具体话；',
       '4. 回答不构成投资建议；涉及用户具体持仓时给出分析框架而非买卖指令；',
       '5. 中文回答，结构清晰；用户说「退出」时简短告别。'
-    ),
+    ]),
   ].join('\n');
   const msgs=[{role:'system',content:sys}];
-  chatMsgs().filter(m=>(m.role==='user'||(m.role==='assistant'&&!m.pending))).slice(-12)
+  chatMsgs(mode).filter(m=>(m.role==='user'||(m.role==='assistant'&&!m.pending))).slice(-12)
     .forEach(m=>msgs.push({role:m.role,content:m.content.slice(0,3000)}));
   msgs.push({role:'user',content:userText});
   return msgs;
 }
 let chatBusy=false;
+const chatRequestSeq={buffett:0,munger:0};
 async function sendChat(){
   if(chatBusy) return;
-  const meta=CHAT_META[chatMode];
+  const reqMode=chatMode;
+  const meta=CHAT_META[reqMode];
   const box=$('#chatInputBox');
   const text=box.value.trim();
   if(!text){ toast('请输入问题'); return; }
   if(!settingsOk()){ openSettings(); return; }
-  const msgs=chatMsgs();
+  const requestMessages=buildChatMessages(text,reqMode); // 只包含此前历史
+  const msgs=chatMsgs(reqMode);
   msgs.push({role:'user',content:text,ts:Date.now()});
   const aidMsg={role:'assistant',content:'',pending:true,ts:Date.now()};
   msgs.push(aidMsg);
-  saveChatMsgs(msgs);
+  saveChatMsgs(msgs,reqMode);
   box.value='';
   renderChatView();
   chatBusy=true;
+  const reqId=++chatRequestSeq[reqMode];
   $('#chatSend').disabled=true;
   $('#chatStatus').textContent=meta.status+'（'+(settings().model.split('/').pop()||'')+'）';
   let saveTimer=null;
   try{
-    const reply=await callLLMStream(buildChatMessages(text), acc=>{
+    const reply=await callLLMStream(requestMessages, acc=>{
+      if(reqId!==chatRequestSeq[reqMode]) return;
       aidMsg.content=acc;
-      const el=$('#chatMsgs .ai-msg.assistant:last-of-type');
-      if(el) el.innerHTML=mdRich(acc);
-      if(!saveTimer){ saveTimer=setTimeout(()=>{ saveChatMsgs(msgs); saveTimer=null; },500); }
+      if(chatMode===reqMode){
+        const el=$('#chatMsgs .ai-msg.assistant:last-of-type');
+        if(el) el.innerHTML=mdRich(acc);
+      }
+      if(!saveTimer){ saveTimer=setTimeout(()=>{
+        if(reqId===chatRequestSeq[reqMode]) saveChatMsgs(msgs,reqMode);
+        saveTimer=null;
+      },500); }
     });
-    aidMsg.content=reply; aidMsg.pending=false;
     clearTimeout(saveTimer);
-    saveChatMsgs(msgs);
-    renderChatView();
+    if(reqId===chatRequestSeq[reqMode]){
+      aidMsg.content=reply; aidMsg.pending=false;
+      saveChatMsgs(msgs,reqMode);
+      if(chatMode===reqMode) renderChatView();
+    }
   }catch(err){
     clearTimeout(saveTimer);
-    const msgs2=chatMsgs().filter(m=>!(m.role==='assistant'&&m.pending));
-    msgs2.push({role:'err',content:'请求失败：'+err.message,ts:Date.now()});
-    saveChatMsgs(msgs2);
-    renderChatView();
+    if(reqId===chatRequestSeq[reqMode]){
+      const msgs2=chatMsgs(reqMode).filter(m=>!(m.role==='assistant'&&m.pending));
+      msgs2.push({role:'err',content:'请求失败：'+err.message,ts:Date.now()});
+      saveChatMsgs(msgs2,reqMode);
+      if(chatMode===reqMode) renderChatView();
+    }
   }
   chatBusy=false;
   $('#chatSend').disabled=false;
-  $('#chatStatus').textContent='';
+  if(chatMode===reqMode) $('#chatStatus').textContent='';
 }
 $('#chatSend').onclick=sendChat;
 $('#chatInputBox').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); } });
 $('#chatBack').onclick=()=>{ location.hash='#/'; };
-$('#chatClear').onclick=()=>{ saveChatMsgs([]); renderChatView(); toast('对话已清空'); };
+$('#chatClear').onclick=()=>{
+  chatRequestSeq[chatMode]++;               // 使当前人格正在返回的旧回调失效，避免清空后复活
+  saveChatMsgs([],chatMode);
+  renderChatView();
+  toast('对话已清空');
+};
 
 /* ================= 背景解释 ================= */
 const bgState = { term:'', ctx:'', msgs:[], busy:false, saved:false };
+let bgRequestSeq=0;
 
 function switchToBgTab(){
   $$('.rp-tab').forEach(x=>x.classList.remove('active'));
@@ -2720,7 +2802,8 @@ function switchToNotesTab(){
 function buildBgMessages(term, ctx, followUp){
   const a=BYID[state.cur];
   const plain=plainOf(a).slice(0,12000);
-  const yi=(IDX.year||[]).find(x=>x.y===a.year);
+  const yi=(a.catKey==='partnership'||a.catKey==='berkshire')
+    ? (IDX.year||[]).find(x=>x.y===a.year) : null;
   const yearBg = yi ? [
     '写作年份：'+yi.y,
     '市场/经济背景：'+(yi.bg||'（无详细记录）'),
@@ -2763,6 +2846,8 @@ function renderBgPanel(){
   const a=BYID[id];
   const box=$('#bgMsgs');
   const savedBox=$('#bgSaved');
+  $('#bgSend').disabled=bgState.busy;
+  $('#bgExplainBtn').disabled=bgState.busy;
   // 已保存的背景解释（来自笔记中 source='bg' 的条目）
   const n=notesOf(id);
   const saved=(n.notes||[]).filter(x=>x.source==='bg').sort((x,y)=>y.ts-x.ts);
@@ -2830,8 +2915,6 @@ function renderBgPanel(){
     box.appendChild(d);
   });
   box.scrollTop=box.scrollHeight;
-  $('#bgSend').disabled=bgState.busy;
-  $('#bgExplainBtn').disabled=bgState.busy;
 }
 
 async function explainBgTerm(term, ctx){
@@ -2839,6 +2922,7 @@ async function explainBgTerm(term, ctx){
   if(!term){ toast('请输入要解释的词语'); return; }
   if(!settingsOk()){ openSettings(); return; }
   const reqArticle=state.cur;
+  const reqId=++bgRequestSeq;
   bgState.term=term;
   bgState.ctx=ctx||'';
   bgState.msgs=[];
@@ -2849,10 +2933,10 @@ async function explainBgTerm(term, ctx){
   $('#bgStatus').textContent='正在检索背景资料并解释…（'+(settings().model.split('/').pop()||'')+'）';
   try{
     const reply=await callLLM(buildBgMessages(term,ctx));
-    if(state.cur!==reqArticle) return;
+    if(state.cur!==reqArticle||reqId!==bgRequestSeq) return;
     bgState.msgs.push({role:'assistant',content:reply,ts:Date.now()});
   }catch(err){
-    if(state.cur!==reqArticle) return;
+    if(state.cur!==reqArticle||reqId!==bgRequestSeq) return;
     bgState.msgs.push({role:'err',content:'解释失败：'+err.message,ts:Date.now()});
   }
   bgState.busy=false;
@@ -2867,6 +2951,8 @@ async function sendBgFollowUp(){
   if(!text) return;
   if(!settingsOk()){ openSettings(); return; }
   const reqArticle=state.cur;
+  const reqId=++bgRequestSeq;
+  const requestMessages=buildBgMessages(bgState.term,bgState.ctx,text); // 此时历史中尚未加入当前追问
   bgState.msgs.push({role:'user',content:text,ts:Date.now()});
   input.value='';
   bgState.busy=true;
@@ -2874,11 +2960,11 @@ async function sendBgFollowUp(){
   renderBgPanel();
   $('#bgStatus').textContent='思考中…';
   try{
-    const reply=await callLLM(buildBgMessages(bgState.term,bgState.ctx,text));
-    if(state.cur!==reqArticle) return;
+    const reply=await callLLM(requestMessages);
+    if(state.cur!==reqArticle||reqId!==bgRequestSeq) return;
     bgState.msgs.push({role:'assistant',content:reply,ts:Date.now()});
   }catch(err){
-    if(state.cur!==reqArticle) return;
+    if(state.cur!==reqArticle||reqId!==bgRequestSeq) return;
     bgState.msgs.push({role:'err',content:'追问失败：'+err.message,ts:Date.now()});
   }
   bgState.busy=false;
@@ -2925,15 +3011,17 @@ $('#bgInputBox').addEventListener('keydown',e=>{
 /* ================= 设置 ================= */
 function openSettings(){
   const s=settings();
-  const cfg=window.BUFFETT_LLM_CONFIG||null;
+  const local=store.get(SETTINGS_KEY,{});
+  const cfg=runtimeLlmConfig||window.BUFFETT_LLM_CONFIG||null;
   $('#setBase').value=s.base;
-  $('#setKey').value=s.key;
+  // 服务端注入的 Key 只留在内存；输入框只回显用户主动保存的浏览器 Key。
+  $('#setKey').value=local.key||'';
   $('#setModel').value=s.model;
-  $('#setHint').innerHTML = cfg
-    ? (cfg.key
-        ? '已从 llm-config.js 加载默认配置（密钥已由本地服务器从环境变量注入）。保存后会覆盖。'
-        : '已从 llm-config.js 加载默认配置（密钥为空）。用「启动巴菲特知识库.command」启动可自动注入环境变量 DEEPSEEK_API_KEY，或在此手动填写。')
-    : '未检测到 llm-config.js。请填写 API Key（仅保存在本浏览器 localStorage）。';
+  $('#setHint').innerHTML = runtimeLlmConfig&&runtimeLlmConfig.key
+    ? '已从本地服务器的同源 /api/llm-config 加载密钥（只在内存，不会回填或保存到 localStorage）。如需覆盖，可在此手动填写。'
+    : (cfg
+        ? '已加载无密钥默认配置。用本地服务器启动可从环境变量 DEEPSEEK_API_KEY 注入，或在此手动填写。'
+        : '未检测到默认配置。请填写 API Key（仅保存在本浏览器 localStorage）。');
   $('#setTestResult').textContent='';
   $('#settingsModal').hidden=false;
 }
@@ -2941,17 +3029,23 @@ function closeSettings(){ $('#settingsModal').hidden=true; }
 $('#settingsBtn').onclick=openSettings;
 $('#setCancel').onclick=closeSettings;
 $('#setSave').onclick=()=>{
-  store.set(SETTINGS_KEY,{base:$('#setBase').value.trim(),key:$('#setKey').value.trim(),model:$('#setModel').value.trim()});
+  const next={base:$('#setBase').value.trim(),model:$('#setModel').value.trim()};
+  const key=$('#setKey').value.trim();
+  if(key) next.key=key;
+  store.set(SETTINGS_KEY,next);
   closeSettings(); toast('设置已保存');
-  if(state.cur) renderChatPanel();
+  if(!chatViewEl.hidden) renderChatView();
+  else if(state.cur) renderChatPanel();
 };
 $('#setTest').onclick=async ()=>{
   const btn=$('#setTest');
   btn.disabled=true; btn.textContent='测试中…';
   $('#setTestResult').textContent='';
   try{
-    const saved=store.get(SETTINGS_KEY,{});
-    const base=$('#setBase').value.trim(), key=$('#setKey').value.trim(), model=$('#setModel').value.trim();
+    const base=$('#setBase').value.trim();
+    const key=$('#setKey').value.trim()||settings().key;
+    const model=$('#setModel').value.trim();
+    if(!key) throw new Error('未配置 API Key');
     let m=model; if(base.includes('deepseek')&&m.includes('/')) m=m.split('/').pop();
     const resp=await fetch(base.replace(/\/+$/,'')+'/chat/completions',{
       method:'POST',
@@ -3320,6 +3414,7 @@ function renderAll(){
   renderAllNoHash();
 }
 function onHash(){
+  flushArticleNoteSave();
   const m=location.hash.match(/^#\/a\/(.+)$/);
   const id=m?decodeURIComponent(m[1]):null;
   if(id&&BYID[id]) openArticle(id);
@@ -3328,7 +3423,15 @@ function onHash(){
   else if(location.hash==='#/chat') showChatView();
   else showHome();
 }
+async function flushState(){
+  flushArticleNoteSave();
+  return pushRemoteStateNow(false);
+}
 window.addEventListener('hashchange',onHash);
+window.addEventListener('pagehide',()=>{
+  flushArticleNoteSave();
+  pushRemoteStateNow(true);                 // 绕过 300ms debounce，给关闭窗口一次即时落盘机会
+});
 let toastTimer=null;
 function toast(msg){
   const t=$('#toast');
@@ -3339,13 +3442,13 @@ function toast(msg){
 }
 renderSidebar();
 $('#sortSel').value = state.sort;   // 默认排序与状态保持一致
-loadRemoteState().then(onHash);     // 先恢复本地文件中的记忆材料，再渲染当前视图
+Promise.all([loadRemoteState(),loadRuntimeLlmConfig()]).then(onHash); // 先恢复记忆与同源运行时配置，再渲染
 
 /* 测试钩子 */
 window.BUF={state,openArticle,doSearch,visibleList,mdToHtml,toPlain,plainOf,applyHighlights,
   addHighlight,notesOf,saveNotes,settings,callLLM,exportNotes,store,BYID,ART,
   bgState,renderBgPanel,explainBgTerm,sendBgFollowUp,toggleBgNote,toggleAiNote,buildBgMessages,
-  switchToBgTab,switchToNotesTab,selectionContext,renderChatPanel,renderNotesPanel};
+  switchToBgTab,switchToNotesTab,selectionContext,renderChatPanel,renderNotesPanel,flushState};
 """
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -3671,40 +3774,38 @@ def build_html(data_json: str, css: str, js: str, icon_b64: str = "",
 
 
 def find_root_env():
-    """向上查找项目根 .env（解析为 dict，不含则返回 {}）。"""
-    d = HERE
-    for _ in range(6):
-        p = os.path.join(d, ".env")
-        if os.path.isfile(p):
-            env = {}
-            try:
-                for line in open(p, encoding="utf-8"):
-                    line = line.strip()
-                    if line and not line.startswith("#") and "=" in line:
-                        k, v = line.split("=", 1)
-                        env[k.strip()] = v.strip().strip('"').strip("'")
-            except OSError:
-                return {}
-            return env
-        d = os.path.dirname(d)
-    return {}
+    """读取构建脚本同目录的项目 .env（解析为 dict，不含则返回 {}）。"""
+    p = os.path.join(HERE, ".env")
+    if not os.path.isfile(p):
+        return {}
+    env = {}
+    try:
+        with open(p, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    env[k.strip()] = v.strip().strip('"').strip("'")
+    except OSError:
+        return {}
+    return env
 
 
 def build_llm_config() -> bool:
     """生成不含密钥的 llm-config.js（仅默认 base/model）。
 
-    密钥不落盘：由 serve_buffett_app.py 启动本地服务器时从环境变量
-    DEEPSEEK_API_KEY（或项目根 .env）动态注入；也可在应用「设置」面板
-    手动填写（仅存于浏览器 localStorage）。
+    服务端密钥不会写入应用状态或生成物：serve_buffett_app.py 从环境变量
+    DEEPSEEK_API_KEY（或项目根 .env）读取，并通过同源 /api/llm-config
+    仅注入页面内存；在应用「设置」面板手动填写的值则保存在浏览器
+    localStorage。
     """
     env = find_root_env()
     base = env.get("DEEPSEEK_API_BASE", "https://api.deepseek.com/v1")
     model = "deepseek-v4-flash"   # 默认模型（可在设置面板覆盖）
     js = (
         "/* 可选 LLM 默认配置（由 build_buffett_app.py 生成，不含任何密钥）。\n"
-        " * 密钥不落盘：用「启动巴菲特知识库.command」启动时，本地服务器会从\n"
-        " * 环境变量 DEEPSEEK_API_KEY（或项目根 .env）动态注入；也可在应用\n"
-        " * 「设置」面板手动填写（仅保存在本浏览器 localStorage）。\n"
+        " * 服务端密钥不写入应用状态或生成物，仅通过同源 /api/llm-config 注入页面内存；\n"
+        " * 也可在应用「设置」面板手动填写（仅保存在本浏览器 localStorage）。\n"
         " * 修改本文件后刷新页面即可生效。 */\n"
         "window.BUFFETT_LLM_CONFIG = {\n"
         '  base: %s,\n'
