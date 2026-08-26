@@ -87,6 +87,11 @@ FunctionEnd
 Section "应用文件（必需）" SecMain
   SectionIn RO
   SetOutPath "$INSTDIR"
+  ; 先整目录重建 python/ 与 app/：只“新建”文件、绝不“覆盖”已有文件——
+  ; 安全软件会把覆盖已有压缩包/文档文件判为勒索行为（误报），
+  ; 新建文件是正常安装行为；同时规避旧文件被占用导致写入失败
+  RMDir /r "$INSTDIR\python"
+  RMDir /r "$INSTDIR\app"
   File /r "@STAGE_ABS@\巴菲特投资智慧\*.*"
 
   ; 开始菜单快捷方式（启动器/停止服务为编译 exe，非脚本）

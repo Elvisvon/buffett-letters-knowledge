@@ -100,6 +100,18 @@ def ensure_python(no_download=False):
         os.makedirs(dst)
         z.extractall(dst)
 
+    # 把 python312.zip（标准库压缩包）解包为普通目录 Lib/ 并删除原 zip：
+    # 火绒等安全软件会把「程序覆盖/修改已有 .zip 文件」判为勒索行为（误报），
+    # 安装包内不再存在任何 zip 文件即可彻底规避；_pth 改为指向 Lib/ 目录。
+    zip_path = os.path.join(dst, "python312.zip")
+    if os.path.isfile(zip_path):
+        print("  解包 python312.zip → python/Lib/（消除杀软对 zip 的勒索误报）…")
+        with zipfile.ZipFile(zip_path) as z:
+            z.extractall(os.path.join(dst, "Lib"))
+        os.remove(zip_path)
+        with open(os.path.join(dst, "python312._pth"), "w", encoding="ascii") as f:
+            f.write(".\\Lib\n.\n\n# Uncomment to run site.main() automatically\n#import site\n")
+
 
 def make_icon():
     """assets/buffett.png → icon.ico（多尺寸，供安装器/快捷方式使用）。"""
