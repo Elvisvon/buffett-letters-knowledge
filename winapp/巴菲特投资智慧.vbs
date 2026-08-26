@@ -180,6 +180,20 @@ If port = 0 Then
         WScript.Sleep 3000               ' 给 python 启动时间（同时让日志落盘）
     End If
 
+    ' 启动尝试三：可见（最小化）窗口直接运行。
+    ' 部分安全软件会拦截「脚本隐藏启动进程」，但对可见进程放行；
+    ' 最小化只占任务栏一个按钮，不打扰使用。
+    If pid = 0 Or errNo <> 0 Then
+        cmd = """" & pyExe & """ -u """ & scriptPath & """ --no-browser --port 8666"
+        On Error Resume Next
+        pid = sh.Run(cmd, 7, False)      ' 7 = 最小化到任务栏
+        If Err.Number <> 0 Then pid = 0
+        errNo = Err.Number
+        errDesc = Err.Description
+        On Error GoTo 0
+        WScript.Sleep 1000
+    End If
+
     If pid = 0 Or errNo <> 0 Then
         ' 失败详情：错误码 + python 自检 + 调试日志 + 可手动复现的命令
         Dim diag, diagOut, diagErr, pyInfo
