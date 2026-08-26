@@ -2,10 +2,15 @@
  * ======================================================================
  * 行为（与 Mac 版 main.swift 对齐）：
  *   1. 探测 127.0.0.1:8666 是否已有本应用服务（/llm-config.js 含 BUFFETT_LLM_CONFIG 标记）；
- *   2. 未运行则静默拉起内置 Python 本地服务（首选 8666，端口被占用自动回退 8667+）；
+ *   2. 未运行则拉起内置 Python 本地服务，启动方式三级兜底：
+ *        a. 隐藏创建（CREATE_NO_WINDOW）——常规机器无任何窗口；
+ *        b. 可见最小化控制台——部分安全软件拦截"隐藏启动"，但放行可见进程；
+ *        c. ShellExecute 经由资源管理器路径启动——行为最接近手动双击。
+ *      首选端口 8666，被占用自动回退 8667+；
  *   3. 打开 Edge 应用模式窗口承载应用（找不到 Edge 则回退默认浏览器）。
  * 服务 PID 写入 %APPDATA%\巴菲特投资智慧\server.pid（ASCII），供停止/卸载使用。
- * 失败时：错误码 + 安装目录 + python 输出（管道捕获，写入 launch-debug.log）一并提示。
+ * 失败时：错误码 + 安装目录 + python 输出（管道捕获，launch-debug.log）一并提示；
+ * 若日志中能解析出服务实际地址（探测异常时），仍会直接打开该地址。
  *
  * 编译（macOS 交叉编译，由 package_windows.py 调用）：
  *   x86_64-w64-mingw32-gcc -O2 -municode -mwindows \
@@ -34,6 +39,7 @@ static wchar_t g_pidfile[MAX_PATH];    /* %APPDATA%\巴菲特投资智慧\server
 static wchar_t g_debuglog[MAX_PATH];   /* %APPDATA%\巴菲特投资智慧\launch-debug.log */
 static HANDLE  g_hOutR = NULL;         /* python 输出管道读端（诊断用） */
 static HANDLE  g_hProc = NULL;         /* python 进程句柄 */
+static DWORD   g_last_err = 0;         /* 最近一次启动失败的错误码 */
 
 /* ---------- 通用 ---------- */
 static void die_msg(const wchar_t *title, const wchar_t *fmt, ...)
@@ -122,16 +128,18 @@ static int wait_server(void)
     return 0;
 }
 
-/* ---------- 启动内置 Python（隐藏 + 输出管道捕获） ---------- */
-static int start_python(void)
+/* ---------- 启动内置 Python（CreateProcess；visible=1 时最小化可见控制台） ---------- */
+static int start_python(int visible)
 {
     wchar_t py[MAX_PATH], script[MAX_PATH], cmd[1200];
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
     SECURITY_ATTRIBUTES sa;
-    HANDLE hOutW = NULL;
+    HANDLE hOutW = NULL, hNul = NULL;
     wchar_t pidbuf[32];
+    char ascii[32];
     DWORD written;
+    DWORD flags;
 
     swprintf(py, MAX_PATH, L"%ls\\python\\python.exe", g_appdir);
     swprintf(script, MAX_PATH, L"%ls\\app\\serve_buffett_app.py", g_appdir);
@@ -142,51 +150,71 @@ static int start_python(void)
     if (GetFileAttributesW(script) == INVALID_FILE_ATTRIBUTES)
         die_msg(L"巴菲特投资智慧", L"安装目录缺少文件：\n  %ls", script);
 
-    swprintf(cmd, 1200, L"\"%ls\" -u \"%ls\" --no-browser --port %d", py, script, START_PORT);
+    swprintf(cmd, 1200, L"\"%ls\" -u \"%ls\" --no-browser --port %d",
+             py, script, START_PORT);
 
     memset(&si, 0, sizeof si);
     si.cb = sizeof si;
     memset(&sa, 0, sizeof sa);
     sa.nLength = sizeof sa;
     sa.bInheritHandle = TRUE;
-    if (CreatePipe(&g_hOutR, &hOutW, &sa, 0)) {
-        SetHandleInformation(g_hOutR, HANDLE_FLAG_INHERIT, 0);
-        si.dwFlags = STARTF_USESTDHANDLES;
-        si.hStdOutput = hOutW;
-        si.hStdError = hOutW;
-        si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-    }
 
-    if (!CreateProcessW(NULL, cmd, NULL, NULL, TRUE, CREATE_NO_WINDOW,
+    /* stdout/stderr → 管道（诊断日志）；stdin → NUL（避免无效句柄问题） */
+    if (CreatePipe(&g_hOutR, &hOutW, &sa, 0))
+        SetHandleInformation(g_hOutR, HANDLE_FLAG_INHERIT, 0);
+    hNul = CreateFileW(L"NUL", GENERIC_READ,
+                       FILE_SHARE_READ | FILE_SHARE_WRITE, &sa,
+                       OPEN_EXISTING, 0, NULL);
+    si.dwFlags = STARTF_USESTDHANDLES;
+    if (visible) {
+        si.dwFlags |= STARTF_USESHOWWINDOW;
+        si.wShowWindow = SW_SHOWMINIMIZED;
+    }
+    si.hStdInput = hNul;
+    si.hStdOutput = hOutW;
+    si.hStdError = hOutW;
+
+    flags = visible ? 0 : CREATE_NO_WINDOW;
+    if (!CreateProcessW(NULL, cmd, NULL, NULL, TRUE, flags,
                         NULL, g_appdir, &si, &pi)) {
-        DWORD e = GetLastError();
+        g_last_err = GetLastError();
         if (hOutW) CloseHandle(hOutW);
-        die_msg(L"巴菲特投资智慧",
-                L"本地服务启动失败（无法运行内置 Python）。\n\n"
-                L"错误码：%lu\n安装目录：%ls\n\n"
-                L"手动复现（命令提示符 cmd 中运行）：\n"
-                L"  \"%ls\" -u \"%ls\" --no-browser --port 8666\n\n"
-                L"常见原因：安全软件拦截 / 安装不完整 / 非 64 位系统。",
-                e, g_appdir, py, script);
+        if (hNul) CloseHandle(hNul);
+        return 0;
     }
     if (hOutW) CloseHandle(hOutW);
+    if (hNul) CloseHandle(hNul);
     g_hProc = pi.hProcess;
     CloseHandle(pi.hThread);
 
     /* 记录 PID（ASCII 文本，供停止服务/卸载器读取） */
     swprintf(pidbuf, 32, L"%lu", pi.dwProcessId);
+    int len = WideCharToMultiByte(CP_ACP, 0, pidbuf, -1, ascii, 32, NULL, NULL);
     HANDLE h = CreateFileW(g_pidfile, GENERIC_WRITE, 0, NULL,
                            CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (h != INVALID_HANDLE_VALUE) {
-        char ascii[32];
-        int len = WideCharToMultiByte(CP_ACP, 0, pidbuf, -1, ascii, 32, NULL, NULL);
         if (len > 0) WriteFile(h, ascii, (DWORD)(len - 1), &written, NULL);
         CloseHandle(h);
     }
     return 1;
 }
 
-/* 启动失败时：把 python 已输出的内容写入调试日志（供弹窗展示） */
+/* ---------- 启动兜底：ShellExecute（最接近手动双击，安全软件最不会拦） ---------- */
+static int start_python_shell(void)
+{
+    wchar_t py[MAX_PATH], script[MAX_PATH], args[1200];
+    HINSTANCE h;
+
+    swprintf(py, MAX_PATH, L"%ls\\python\\python.exe", g_appdir);
+    swprintf(script, MAX_PATH, L"%ls\\app\\serve_buffett_app.py", g_appdir);
+    swprintf(args, 1200, L"-u \"%ls\" --no-browser --port %d", script, START_PORT);
+    h = ShellExecuteW(NULL, L"open", py, args, g_appdir, SW_SHOWMINIMIZED);
+    if ((INT_PTR)h > 32) return 1;
+    g_last_err = 2;                       /* ShellExecute 失败，无精确码 */
+    return 0;
+}
+
+/* ---------- 启动失败时：把 python 已输出的内容写入调试日志 ---------- */
 static void dump_debug_log(void)
 {
     char buf[8192];
@@ -207,6 +235,32 @@ static void dump_debug_log(void)
     }
 }
 
+/* 从调试日志解析服务端口（探测异常时的兜底）：找 "127.0.0.1:PORT" */
+static int log_port(void)
+{
+    HANDLE h;
+    char raw[8192];
+    DWORD rd = 0;
+    const char *p, *q;
+    int port = 0;
+
+    h = CreateFileW(g_debuglog, GENERIC_READ, FILE_SHARE_READ, NULL,
+                    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (h == INVALID_HANDLE_VALUE) return 0;
+    ReadFile(h, raw, sizeof raw - 1, &rd, NULL);
+    CloseHandle(h);
+    raw[rd] = 0;
+    p = strstr(raw, "127.0.0.1:");
+    if (!p) return 0;
+    p += 10;
+    q = p;
+    while (*q >= '0' && *q <= '9') q++;
+    if (q == p) return 0;
+    port = atoi(p);
+    if (port < 1 || port > 65535) return 0;
+    return port;
+}
+
 /* ---------- 定位 Edge ---------- */
 static int find_edge(wchar_t *out, int cap)
 {
@@ -224,7 +278,6 @@ static int find_edge(wchar_t *out, int cap)
             return 1;
         }
     }
-    /* 注册表 App Paths 兜底（Edge 自定义安装位置） */
     if (RegOpenKeyExW(HKEY_LOCAL_MACHINE,
                       L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\msedge.exe",
                       0, KEY_READ, &hk) == ERROR_SUCCESS) {
@@ -264,6 +317,50 @@ static void open_window(int port)
     }
 }
 
+/* 失败弹窗：错误码 + 安装目录 + 调试日志 + 手动复现命令 */
+static void show_failure(void)
+{
+    wchar_t msg[2500];
+    wchar_t logw[1800] = L"";
+    wchar_t py[MAX_PATH], script[MAX_PATH];
+
+    swprintf(py, MAX_PATH, L"%ls\\python\\python.exe", g_appdir);
+    swprintf(script, MAX_PATH, L"%ls\\app\\serve_buffett_app.py", g_appdir);
+
+    dump_debug_log();
+    {
+        HANDLE h = CreateFileW(g_debuglog, GENERIC_READ, FILE_SHARE_READ, NULL,
+                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (h != INVALID_HANDLE_VALUE) {
+            char raw[1600];
+            DWORD rd = 0;
+            ReadFile(h, raw, sizeof raw - 1, &rd, NULL);
+            CloseHandle(h);
+            raw[rd] = 0;
+            if (rd > 0)
+                MultiByteToWideChar(CP_ACP, 0, raw, -1, logw, 1799);
+        }
+    }
+    swprintf(msg, sizeof msg / sizeof(wchar_t),
+             L"本地服务启动失败。\n\n"
+             L"错误码：%lu\n"
+             L"安装目录：%ls\n"
+             L"%ls%ls%ls"
+             L"手动复现（命令提示符 cmd 中运行）：\n"
+             L"  \"%ls\" -u \"%ls\" --no-browser --port 8666\n"
+             L"（PowerShell 中运行则开头加 & 再加空格）\n\n"
+             L"常见原因：\n"
+             L"  · 安全软件拦截（将安装目录加入信任区，或暂时退出后重试）；\n"
+             L"  · 安装不完整（重新下载安装包并重装）；\n"
+             L"  · 非 64 位系统。",
+             g_last_err, g_appdir,
+             logw[0] ? L"调试日志（python 输出）：\n" : L"",
+             logw[0] ? logw : L"",
+             logw[0] ? L"\n" : L"",
+             py, script);
+    MessageBoxW(NULL, msg, L"巴菲特投资智慧", MB_OK | MB_ICONERROR);
+}
+
 /* ---------- 入口 ---------- */
 int wmain(void)
 {
@@ -281,44 +378,26 @@ int wmain(void)
         if (probe_port(START_PORT)) port = START_PORT;
     }
 
-    /* 2) 未运行 → 拉起内置 Python */
+    /* 2) 未运行 → 拉起内置 Python（三级兜底） */
     if (!port) {
-        if (!start_python()) return 1;
+        if (!start_python(0))               /* a. 隐藏 */
+            if (!start_python(1))           /* b. 可见最小化 */
+                start_python_shell();       /* c. ShellExecute */
         port = wait_server();
     }
 
-    /* 3) 失败 → 展示诊断信息 */
+    /* 3) 失败处理：能从日志解析出服务地址则照常打开，否则弹诊断框 */
     if (!port) {
-        wchar_t msg[2500];
-        wchar_t logw[1800] = L"";
-        dump_debug_log();
-        {
-            HANDLE h = CreateFileW(g_debuglog, GENERIC_READ, FILE_SHARE_READ, NULL,
-                                   OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-            if (h != INVALID_HANDLE_VALUE) {
-                char raw[1600];
-                DWORD rd = 0;
-                ReadFile(h, raw, sizeof raw - 1, &rd, NULL);
-                CloseHandle(h);
-                raw[rd] = 0;
-                if (rd > 0)
-                    MultiByteToWideChar(CP_ACP, 0, raw, -1, logw, 1799);
-            }
+        int lp = log_port();
+        if (lp > 0) {
+            open_window(lp);
+            if (g_hProc) { WaitForSingleObject(g_hProc, 3000); CloseHandle(g_hProc); }
+            if (g_hOutR) CloseHandle(g_hOutR);
+            return 0;
         }
-        swprintf(msg, sizeof msg / sizeof(wchar_t),
-                 L"本地服务启动失败（20 秒内未就绪）。\n\n"
-                 L"安装目录：%ls\n"
-                 L"%ls%ls%ls"
-                 L"\n请检查：\n"
-                 L"  1. 安装目录是否完整（python\\ 文件夹存在）；\n"
-                 L"  2. 8666-8685 端口是否被防火墙拦截；\n"
-                 L"  3. 查看「使用说明.txt」的故障排查一节。",
-                 g_appdir,
-                 logw[0] ? L"调试日志（python 输出）：\n" : L"",
-                 logw[0] ? logw : L"",
-                 logw[0] ? L"\n" : L"");
-        MessageBoxW(NULL, msg, L"巴菲特投资智慧", MB_OK | MB_ICONEXCLAMATION);
+        show_failure();
         if (g_hProc) { WaitForSingleObject(g_hProc, 3000); CloseHandle(g_hProc); }
+        if (g_hOutR) CloseHandle(g_hOutR);
         return 2;
     }
 
