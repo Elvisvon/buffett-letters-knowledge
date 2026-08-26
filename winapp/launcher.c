@@ -37,6 +37,7 @@
 static wchar_t g_appdir[MAX_PATH];     /* 本 exe 所在目录（安装目录） */
 static wchar_t g_pidfile[MAX_PATH];    /* %APPDATA%\巴菲特投资智慧\server.pid */
 static wchar_t g_debuglog[MAX_PATH];   /* %APPDATA%\巴菲特投资智慧\launch-debug.log */
+static wchar_t g_flagfile[MAX_PATH];   /* %APPDATA%\巴菲特投资智慧\server-blocked.flag */
 static HANDLE  g_hOutR = NULL;         /* python 输出管道读端（诊断用） */
 static HANDLE  g_hProc = NULL;         /* python 进程句柄 */
 
@@ -71,6 +72,7 @@ static void init_paths(void)
     CreateDirectoryW(dir, NULL);            /* %APPDATA% 已存在，只建一层 */
     swprintf(g_pidfile, MAX_PATH, L"%ls\\server.pid", dir);
     swprintf(g_debuglog, MAX_PATH, L"%ls\\launch-debug.log", dir);
+    swprintf(g_flagfile, MAX_PATH, L"%ls\\server-blocked.flag", dir);
 }
 
 /* ---------- 端口探测：GET /llm-config.js 并检查标记 ---------- */
@@ -291,6 +293,18 @@ static void open_window(int port)
     }
 }
 
+/* 写「服务模式不可用」标记：本机安全软件持续拦截服务时，后续启动直接走离线模式 */
+static void write_blocked_flag(void)
+{
+    HANDLE h = CreateFileW(g_flagfile, GENERIC_WRITE, 0, NULL,
+                           CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (h != INVALID_HANDLE_VALUE) {
+        DWORD w;
+        WriteFile(h, "1", 1, &w, NULL);
+        CloseHandle(h);
+    }
+}
+
 /* 离线模式：直接打开内置 HTML（file://）——本地服务被安全软件拦截时
  * 也能完整使用阅读/搜索/划线/笔记（数据存浏览器 localStorage） */
 static void open_file_mode(void)
@@ -312,11 +326,28 @@ static void open_file_mode(void)
         ShellExecuteW(NULL, L"open", url, NULL, NULL, SW_SHOWNORMAL);
     }
     MessageBoxW(NULL,
-                L"本地服务未能启动（可能被安全软件拦截），已改用离线模式打开。\n\n"
-                L"阅读、搜索、划线与笔记功能正常；笔记/收藏保存在浏览器本地。\n"
-                L"如需完整功能（数据文件持久化 + 环境变量密钥注入），\n"
-                L"请将安装目录加入杀毒软件信任区后重新启动。",
+                L"本地服务未能启动或已被安全软件终止，已改用离线模式打开。\n\n"
+                L"阅读、搜索、划线与笔记功能正常；笔记/收藏保存在浏览器本地。\n\n"
+                L"如需恢复完整功能（数据文件持久化）：\n"
+                L"  1. 把安装目录加入杀毒软件信任区；\n"
+                L"  2. 删除 %APPDATA%\\巴菲特投资智慧\\server-blocked.flag；\n"
+                L"  3. 重新启动。",
                 L"巴菲特投资智慧", MB_OK | MB_ICONINFORMATION);
+}
+
+/* 驻留监控：打开服务窗口后盯 10 秒，若服务被安全软件终止（探测失败），
+ * 补开离线模式窗口并写标记，保证应用一定可用 */
+static void monitor_and_fallback(int port)
+{
+    int t;
+    for (t = 0; t < 10; t++) {
+        Sleep(1000);
+        if (!probe_port(port)) {
+            write_blocked_flag();
+            open_file_mode();
+            return;
+        }
+    }
 }
 
 /* ---------- 入口 ---------- */
@@ -324,30 +355,35 @@ int wmain(void)
 {
     WSADATA wsa;
     int port = 0;
+    int blocked;
 
     WSAStartup(MAKEWORD(2, 2), &wsa);
     init_paths();
+    blocked = GetFileAttributesW(g_flagfile) != INVALID_FILE_ATTRIBUTES;
 
-    /* 1) 快速探测：服务已在运行则直接打开窗口 */
+    /* 1) 快速探测：服务已在运行则直接打开窗口。
+     *    若上次服务被安全软件杀过（标记存在），不再尝试拉起，直接复用或离线 */
     if (probe_port(START_PORT)) {
         port = START_PORT;
-    } else {
+    } else if (!blocked) {
         Sleep(800);                        /* 消除「双开同时启动」竞态 */
         if (probe_port(START_PORT)) port = START_PORT;
     }
 
     /* 2) 未运行 → 拉起内置 Python（三级兜底） */
-    if (!port) {
+    if (!port && !blocked) {
         if (!start_python(0))               /* a. 隐藏 */
             if (!start_python(1))           /* b. 可见最小化 */
                 start_python_shell();       /* c. ShellExecute */
         port = wait_server();
     }
 
-    /* 3) 服务就绪 → 打开应用窗口；否则转离线模式（文件直开，无需服务） */
+    /* 3) 服务就绪 → 打开应用窗口并驻留监控；否则转离线模式（文件直开） */
     if (port) {
         open_window(port);
+        monitor_and_fallback(port);
     } else {
+        write_blocked_flag();
         dump_debug_log();                  /* 留痕：%APPDATA%\巴菲特投资智慧\launch-debug.log */
         if (g_hProc) { WaitForSingleObject(g_hProc, 3000); CloseHandle(g_hProc); }
         if (g_hOutR) CloseHandle(g_hOutR);
