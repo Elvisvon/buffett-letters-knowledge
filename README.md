@@ -81,9 +81,22 @@ brew install makensis           # 一次性前置依赖（NSIS 3.x；首次打�
 python3 build_buffett_app.py        # → 巴菲特投资智慧.html
 python3 package_app.py              # → dist/巴菲特投资智慧.app + DMG（Mac）
 python3 package_windows.py          # → dist/巴菲特投资智慧-vX.Y-Setup.exe（Windows）
+python3 release.py --version X.Y    # → 把 Mac DMG + Windows Setup.exe 一起发布到 GitHub Release
 ```
 
 仅依赖 Python 3 标准库（含纯标准库 xlsx 解析器，无需 openpyxl）；App 壳需 macOS Command Line Tools（自带 swiftc）；Windows 安装器需 `brew install makensis`，并首次联网下载 embeddable Python 到 `vendor/python-embed/` 缓存（之后可 `--no-python-download` 离线打包）。
+
+## 发布 GitHub Release（Mac + Windows 安装包）
+
+```bash
+python3 release.py --version 2.1            # 安装包已存在时直接发布
+python3 release.py --version 2.1 --build    # 先打包 Mac + Windows 再发布
+python3 release.py --version 2.1 --dry-run  # 演练：只打印将执行的操作
+```
+
+- 生成/更新标签 `vX.Y` 对应的 Release，附件名统一为 ASCII（`BuffettWisdom-vX.Y.dmg` / `BuffettWisdom-vX.Y-Setup.exe`，规避 GitHub 对非 ASCII 附件名的截断），重复执行自动覆盖
+- 依赖 gh CLI 并已登录：`brew install gh && gh auth login`
+- 发布地址：`https://github.com/pwu0125/buffett-letters-knowledge/releases/tag/vX.Y`
 
 ## 目录结构
 
@@ -99,6 +112,7 @@ python3 package_windows.py          # → dist/巴菲特投资智慧-vX.Y-Setup.
 ├── package_app.py                    # App/DMG 打包器（Mac）
 ├── winapp/                           # Windows 版源文件：启动器/停止服务 VBS、NSIS 模板、使用说明
 ├── package_windows.py                # NSIS 安装器打包器（Windows，macOS 上交叉打包）
+├── release.py                        # 一键发布 GitHub Release（Mac DMG + Windows Setup.exe）
 ├── assets/                           # buffett.png / munger.png（128px 内嵌图标源）
 ├── vendor/echarts.min.js             # ECharts 5.5.1（构建时内嵌，离线可用）
 ├── vendor/python-embed/              # embeddable Python 缓存（Windows 打包用，可离线重建）
