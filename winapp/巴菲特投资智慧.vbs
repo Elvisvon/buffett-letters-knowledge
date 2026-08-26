@@ -96,6 +96,7 @@ End Function
 
 ' ---------- 主流程 ----------
 Dim port, url, pyExe, scriptPath, cmd, pid, tf
+Dim errNo, errDesc, i
 
 ' 1) 快速探测：服务已在运行则直接打开窗口（不等 20 秒）
 port = 0
@@ -109,15 +110,68 @@ End If
 ' 2) 未运行 → 静默启动内置 Python 服务（隐藏窗口；无需系统安装 Python）
 If port = 0 Then
     If Not fso.FolderExists(dataDir) Then fso.CreateFolder(dataDir)
-    pyExe      = """" & appDir & "\python\python.exe"""
-    scriptPath = """" & appDir & "\app\serve_buffett_app.py"""
-    cmd = pyExe & " -u " & scriptPath & " --no-browser --port 8666"
-    pid = sh.Run(cmd, 0, False)
-    If pid = 0 Then
-        MsgBox "本地服务启动失败：无法运行内置 Python。" & vbCrLf & _
-               "请确认安装目录完整（python\ 与 app\ 文件夹存在），或重新安装。", _
+    pyExe      = appDir & "\python\python.exe"
+    scriptPath = appDir & "\app\serve_buffett_app.py"
+
+    ' 预检：安装完整性（常见于安全软件拦截了解压）
+    Dim missing
+    missing = ""
+    If Not fso.FileExists(pyExe) Then missing = missing & vbCrLf & "  " & pyExe
+    If Not fso.FileExists(scriptPath) Then missing = missing & vbCrLf & "  " & scriptPath
+    If Len(missing) > 0 Then
+        MsgBox "安装目录缺少文件：" & missing & vbCrLf & vbCrLf & _
+               "可能原因：安全软件拦截了安装解压，或安装包下载不完整。" & vbCrLf & _
+               "建议：重新下载安装包后重装（安装时可暂时退出杀毒软件）。", _
                vbCritical, "巴菲特投资智慧"
-        WScript.Quit 1
+        WScript.Quit 3
+    End If
+
+    ' 隐藏启动（窗口样式 0）；失败时捕获精确错误码
+    cmd = """" & pyExe & """ -u """ & scriptPath & """ --no-browser --port 8666"
+    pid = 0
+    For i = 1 To 2
+        On Error Resume Next
+        pid = sh.Run(cmd, 0, False)
+        errNo = Err.Number
+        errDesc = Err.Description
+        On Error GoTo 0
+        If pid <> 0 And errNo = 0 Then Exit For
+        WScript.Sleep 500                ' 重试一次（应对安全软件瞬时拦截）
+    Next
+
+    If pid = 0 Or errNo <> 0 Then
+        ' 兜底自检：前台运行 python -V，让 python 自身的报错可见（诊断用）
+        Dim diag, diagOut, diagErr, pyInfo
+        diagOut = "" : diagErr = "" : pyInfo = ""
+        On Error Resume Next
+        Set diag = sh.Exec("""" & pyExe & """ -V")
+        If Err.Number <> 0 Then
+            pyInfo = "无法启动 python.exe（" & Err.Number & " " & Err.Description & "）"
+        Else
+            If Not diag Is Nothing Then
+                If Not diag.StdOut.AtEndOfStream Then diagOut = diag.StdOut.ReadAll
+                If Not diag.StdErr.AtEndOfStream Then diagErr = diag.StdErr.ReadAll
+            End If
+            If Len(Trim(diagOut & " " & diagErr)) = 0 Then
+                pyInfo = "python.exe 无输出（可能被安全软件拦截）"
+            Else
+                pyInfo = Trim(diagOut & " " & diagErr)
+            End If
+        End If
+        On Error GoTo 0
+
+        MsgBox "本地服务启动失败。" & vbCrLf & vbCrLf & _
+               "错误码：" & errNo & " " & errDesc & vbCrLf & _
+               "python 自检：" & pyInfo & vbCrLf & _
+               "安装目录：" & appDir & vbCrLf & vbCrLf & _
+               "请在「命令提示符」中手动运行以下命令，查看完整报错并告诉我：" & vbCrLf & _
+               "  """ & pyExe & """ -u """ & scriptPath & """ --no-browser --port 8666" & vbCrLf & vbCrLf & _
+               "常见原因：" & vbCrLf & _
+               "  · 安全软件拦截 python.exe（将安装目录加入信任区，或暂时退出后重试）；" & vbCrLf & _
+               "  · 安装不完整（重新下载安装包并重装）；" & vbCrLf & _
+               "  · 系统为 32 位或 ARM（本应用仅支持 64 位 Windows 10/11）。", _
+               vbCritical, "巴菲特投资智慧"
+        WScript.Quit 4
     End If
     ' 记录 PID（供「停止服务.vbs」与卸载器使用）
     Set tf = fso.CreateTextFile(pidFile, True, False)
