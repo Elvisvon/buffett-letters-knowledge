@@ -22,7 +22,9 @@
 - **背景解释**：选中文章中的词语 →「🔍 背景解释」，AI 结合文章内容与**写作年份的市场背景**（从年度索引自动注入：市场环境、重大事件、核心主题）解释金融概念；支持就解释继续追问；满意的解释可保存到笔记「背景解释」栏，随时回顾，导出时一并包含
 - **编辑风索引纵览**：顶栏「📖 索引」进入独立的杂志风分类索引页（`#/index`），Playfair 衬线标题 + 暖米色排版，含 Hero 统计、5 个标签页（年度信件 / 主题分类 / 行业分类 / 事件时期 / 选股方法）、信件系列与事件类型筛选；信件卡片可直接跳转应用内阅读，与主应用共享全部数据，不替换原有界面
 
-## 安装版（Mac 版可安装 App，原生窗口 + Dock 图标）
+## 安装版（Mac / Windows 可安装 App）
+
+### Mac 版（原生窗口 + Dock 图标）
 
 ```bash
 python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/巴菲特投资智慧-vX.Y.dmg
@@ -33,6 +35,20 @@ python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/�
 - **外部链接**：原文链接等外部网页自动用系统默认浏览器打开，应用内始终停留在本地页面
 - **自包含**：188 篇文章 / 分类索引 / 巴菲特人格 Skill / 构建脚本全部内嵌于 App 内，不依赖安装路径，完全离线可用
 - **LLM 密钥**：应用内设置面板填写，或先 `export DEEPSEEK_API_KEY=sk-xxx` 再启动（密钥不落盘）
+
+### Windows 版（NSIS 安装器 + 卸载器，内置 Python 运行时）
+
+```bash
+python3 package_windows.py      # 生成 dist/巴菲特投资智慧-vX.Y-Setup.exe（安装时自动生成 uninstall.exe 卸载器）
+brew install makensis           # 一次性前置依赖（NSIS 3.x；首次打包还会下载 vendor 缓存）
+```
+
+- **安装**：双击 `巴菲特投资智慧-vX.Y-Setup.exe` → 按用户安装到 `%LOCALAPPDATA%\巴菲特投资智慧`（无需管理员权限），创建开始菜单/桌面快捷方式与「应用和功能」卸载条目；未签名 SmartScreen 提示点「更多信息 → 仍要运行」即可
+- **卸载**：开始菜单「卸载巴菲特投资智慧」或「应用和功能」→ 卸载；自动停止本地服务、清理文件/快捷方式/注册表，**默认保留**笔记数据（`%APPDATA%\巴菲特投资智慧`），可勾选一并删除
+- **启动体验**：双击「巴菲特投资智慧」→ 静默拉起内置 Python 本地服务（127.0.0.1:8666，端口占用自动回退 8667+）→ 打开 Edge 应用模式窗口（无地址栏，类原生窗口）；再次启动复用已有服务；「停止服务」单独结束后台服务
+- **自包含**：无需目标机器安装 Python（捆绑 python.org embeddable 运行时，服务脚本零第三方依赖）；64 位 Windows 10/11
+- **数据位置**：`%APPDATA%\巴菲特投资智慧\state.json`（与 Mac 版同结构；`serve_buffett_app.py` 已按平台自动分流）
+- 完整说明见安装包内「使用说明.txt」
 
 ## 记忆材料持久化（笔记 / 收藏 / 已读 / AI 对话）
 
@@ -63,10 +79,11 @@ python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/�
 
 ```bash
 python3 build_buffett_app.py        # → 巴菲特投资智慧.html
-python3 package_app.py              # → dist/巴菲特投资智慧.app + DMG
+python3 package_app.py              # → dist/巴菲特投资智慧.app + DMG（Mac）
+python3 package_windows.py          # → dist/巴菲特投资智慧-vX.Y-Setup.exe（Windows）
 ```
 
-仅依赖 Python 3 标准库（含纯标准库 xlsx 解析器，无需 openpyxl）；App 壳需 macOS Command Line Tools（自带 swiftc）。
+仅依赖 Python 3 标准库（含纯标准库 xlsx 解析器，无需 openpyxl）；App 壳需 macOS Command Line Tools（自带 swiftc）；Windows 安装器需 `brew install makensis`，并首次联网下载 embeddable Python 到 `vendor/python-embed/` 缓存（之后可 `--no-python-download` 离线打包）。
 
 ## 目录结构
 
@@ -79,9 +96,12 @@ python3 package_app.py              # → dist/巴菲特投资智慧.app + DMG
 ├── serve_buffett_app.py              # 本地启动器（环境变量注入密钥 + /api/state 记忆持久化）
 ├── 启动巴菲特知识库.command           # macOS 一键启动（终端方式）
 ├── macapp/main.swift                 # 原生窗口壳（Swift + WKWebView，Dock 图标）
-├── package_app.py                    # App/DMG 打包器
+├── package_app.py                    # App/DMG 打包器（Mac）
+├── winapp/                           # Windows 版源文件：启动器/停止服务 VBS、NSIS 模板、使用说明
+├── package_windows.py                # NSIS 安装器打包器（Windows，macOS 上交叉打包）
 ├── assets/                           # buffett.png / munger.png（128px 内嵌图标源）
 ├── vendor/echarts.min.js             # ECharts 5.5.1（构建时内嵌，离线可用）
+├── vendor/python-embed/              # embeddable Python 缓存（Windows 打包用，可离线重建）
 ├── skills/celebrity-buffett/         # 项目级巴菲特人格 Skill（构建时嵌入应用）
 ├── skills/celebrity-charlie-munger/  # 项目级芒格人格 Skill（构建时嵌入应用）
 └── llm-config.js                     # 默认 LLM 配置（无密钥）

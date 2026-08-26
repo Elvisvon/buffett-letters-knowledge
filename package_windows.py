@@ -1,0 +1,213 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+巴菲特投资智慧 · Windows 安装器打包器（在 macOS / Linux 上交叉打包）
+====================================================================
+
+把整个项目封装为 Windows 版可安装应用（NSIS 安装器）：
+  - 内置 Python embeddable 运行时（python.org 官方压缩包；服务脚本零第三方依赖）
+  - app/ 内嵌全部资源（html / 知识库 / 技能 / 服务脚本），与 Mac 版一致
+  - 启动器（VBS）：静默拉起本地服务（127.0.0.1:8666 起，端口自动回退），
+    打开 Edge 应用模式窗口承载应用；再次启动复用已有服务
+  - 记忆材料（笔记/收藏/已读/AI 对话）持久化到 %APPDATA%\\巴菲特投资智慧\\state.json
+  - 安装器自动生成 uninstall.exe（卸载时停止服务 + 清理，默认保留用户数据）
+
+用法：
+  python3 package_windows.py            # 打包（输出 dist/巴菲特投资智慧-vX.Y-Setup.exe）
+  python3 package_windows.py --version 2.0
+  python3 package_windows.py --no-python-download   # 只用 vendor 缓存，不访问网络
+
+产物：
+  dist/巴菲特投资智慧-vX.Y-Setup.exe    # NSIS 安装器（安装时生成 uninstall.exe 卸载器）
+
+依赖：
+  - makensis（NSIS 3.x：brew install makensis）
+  - Pillow（生成 .ico 图标）
+  - 网络（首次下载 python.org embeddable Python；之后走 vendor/ 缓存）
+"""
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+import urllib.request
+import zipfile
+
+try:
+    from PIL import Image
+except ImportError:
+    Image = None
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+DIST = os.path.join(HERE, "dist")
+STAGE = os.path.join(DIST, "stage-win")
+APP_DIR = os.path.join(STAGE, "巴菲特投资智慧")
+ICON_SRC = os.path.join(HERE, "assets", "buffett.png")
+
+PYTHON_VERSION = "3.12.8"
+PYTHON_ZIP = os.path.join(HERE, "vendor", "python-embed",
+                          "python-%s-embed-amd64.zip" % PYTHON_VERSION)
+PYTHON_URL = ("https://www.python.org/ftp/python/%s/python-%s-embed-amd64.zip"
+              % (PYTHON_VERSION, PYTHON_VERSION))
+
+# 随包分发的项目资源（app/，与 Mac 版 package_app.py 的 BUNDLED 一致）
+BUNDLED = [
+    "巴菲特投资智慧.html",
+    "serve_buffett_app.py",
+    "build_buffett_app.py",
+    "llm-config.js",
+    "README.md",
+    "巴菲特致股东信分类索引(1956-2025) .xlsx",
+    "巴菲特致股东信知识库",
+    "skills",
+]
+
+
+def run(cmd, **kw):
+    print("  $", " ".join(cmd) if isinstance(cmd, list) else cmd)
+    return subprocess.run(cmd, check=True, **kw)
+
+
+def ensure_python(no_download=False):
+    """下载（或复用缓存）并解压 embeddable Python 到 stage/python/。"""
+    if not os.path.isfile(PYTHON_ZIP):
+        if no_download:
+            sys.exit("[error] 未找到缓存 %s（--no-python-download），"
+                     "请先联网运行一次以完成下载。" % PYTHON_ZIP)
+        print("[1/5] 下载 embeddable Python %s …" % PYTHON_VERSION)
+        os.makedirs(os.path.dirname(PYTHON_ZIP), exist_ok=True)
+        urllib.request.urlretrieve(PYTHON_URL, PYTHON_ZIP)
+    print("[1/5] 校验并解压 embeddable Python …")
+    with zipfile.ZipFile(PYTHON_ZIP) as z:
+        bad = z.testzip()
+        if bad:
+            sys.exit("[error] Python 压缩包损坏: %s" % bad)
+        dst = os.path.join(APP_DIR, "python")
+        if os.path.exists(dst):
+            shutil.rmtree(dst)
+        os.makedirs(dst)
+        z.extractall(dst)
+
+
+def make_icon():
+    """assets/buffett.png → icon.ico（多尺寸，供安装器/快捷方式使用）。"""
+    if Image is None:
+        sys.exit("[error] 需要 Pillow：python3 -m pip install pillow")
+    print("[2/5] 生成 icon.ico …")
+    img = Image.open(ICON_SRC).convert("RGBA")
+    out = os.path.join(APP_DIR, "icon.ico")
+    img.save(out, format="ICO",
+             sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64),
+                    (128, 128), (256, 256)])
+    return out
+
+
+def copy_app_resources():
+    print("[3/5] 拷贝项目资源到 app/ …")
+    dst = os.path.join(APP_DIR, "app")
+    os.makedirs(dst, exist_ok=True)
+    for item in BUNDLED:
+        src = os.path.join(HERE, item)
+        if not os.path.exists(src):
+            print("[warn] 缺少资源，已跳过:", item, file=sys.stderr)
+            continue
+        target = os.path.join(dst, item)
+        if os.path.isdir(src):
+            shutil.copytree(src, target, ignore=shutil.ignore_patterns(
+                ".DS_Store", "__pycache__"))
+        else:
+            shutil.copy2(src, target)
+
+
+def write_vbs(src_name, version):
+    """winapp/*.vbs → UTF-16 LE（带 BOM）——WSH 在任何语言区域下都按 Unicode 解码。"""
+    src = os.path.join(HERE, "winapp", src_name)
+    dst = os.path.join(APP_DIR, src_name)
+    with open(src, encoding="utf-8") as f:
+        text = f.read()
+    with open(dst, "wb") as f:
+        f.write(b"\xff\xfe")                      # UTF-16 LE BOM
+        f.write(text.encode("utf-16-le"))
+    print("  %s → %s（UTF-16 LE + BOM）" % (src_name, os.path.relpath(dst, HERE)))
+
+
+def write_usage(version):
+    """winapp/使用说明.txt → UTF-8（带 BOM，现代记事本/NSIS 均可正确显示）。"""
+    src = os.path.join(HERE, "winapp", "使用说明.txt")
+    dst = os.path.join(APP_DIR, "使用说明.txt")
+    with open(src, encoding="utf-8") as f:
+        text = f.read().replace("@VERSION@", version)
+    with open(dst, "w", encoding="utf-8-sig") as f:
+        f.write(text)
+    print("  使用说明.txt → %s（UTF-8 + BOM）" % os.path.relpath(dst, HERE))
+
+
+def render_nsi(version, icon):
+    """渲染 NSIS 脚本（UTF-8 + BOM，makensis 以 Unicode 模式编译中文）。"""
+    src = os.path.join(HERE, "winapp", "巴菲特投资智慧.nsi")
+    dst = os.path.join(STAGE, "巴菲特投资智慧.nsi")
+    with open(src, encoding="utf-8") as f:
+        text = f.read()
+    text = (text
+            .replace("@VERSION@", version)
+            .replace("@STAGE_ABS@", STAGE)
+            .replace("@ICON_ABS@", icon)
+            .replace("@OUTFILE_ABS@", os.path.join(DIST, "巴菲特投资智慧-v%s-Setup.exe" % version)))
+    with open(dst, "w", encoding="utf-8-sig") as f:
+        f.write(text)
+    print("[4/5] NSIS 脚本 → %s（UTF-8 + BOM）" % os.path.relpath(dst, HERE))
+    return dst
+
+
+def build_setup(nsi):
+    """makensis 编译 → dist/巴菲特投资智慧-vX.Y-Setup.exe。"""
+    makensis = shutil.which("makensis")
+    if not makensis:
+        sys.exit("[error] 未找到 makensis，请先安装：brew install makensis")
+    print("[5/5] makensis 编译安装器 …")
+    run([makensis, nsi])
+
+
+def verify(version, icon):
+    print("\n===== 产物校验 =====")
+    exe = os.path.join(DIST, "巴菲特投资智慧-v%s-Setup.exe" % version)
+    for p in (exe, icon):
+        print("  %s  %.1f MB" % (os.path.relpath(p, HERE),
+                                 os.path.getsize(p) / 1048576.0))
+    if not os.path.isfile(exe):
+        sys.exit("[error] 安装器未生成")
+    py = os.path.join(APP_DIR, "python", "python.exe")
+    app_html = os.path.join(APP_DIR, "app", "巴菲特投资智慧.html")
+    vbs = os.path.join(APP_DIR, "巴菲特投资智慧.vbs")
+    for p in (py, app_html, vbs):
+        if not os.path.exists(p):
+            sys.exit("[error] 缺少关键产物: %s" % p)
+    print("  stage 结构: python.exe / app/巴菲特投资智慧.html / 启动器 vbs 均在位")
+    print("[ok] 完成：%s" % exe)
+
+
+def main():
+    ap = argparse.ArgumentParser(description="巴菲特投资智慧 Windows 安装器打包器")
+    ap.add_argument("--version", default="2.0", help="版本号（默认 2.0）")
+    ap.add_argument("--no-python-download", action="store_true",
+                    help="只用 vendor 缓存，不访问网络")
+    args = ap.parse_args()
+
+    if os.path.exists(STAGE):
+        shutil.rmtree(STAGE)
+    os.makedirs(APP_DIR)
+
+    ensure_python(args.no_python_download)
+    icon = make_icon()
+    copy_app_resources()
+    write_vbs("巴菲特投资智慧.vbs", args.version)
+    write_vbs("停止服务.vbs", args.version)
+    write_usage(args.version)
+    nsi = render_nsi(args.version, icon)
+    build_setup(nsi)
+    verify(args.version, icon)
+
+
+if __name__ == "__main__":
+    main()

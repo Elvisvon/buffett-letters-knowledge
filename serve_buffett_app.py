@@ -38,11 +38,16 @@ INDEX = "巴菲特投资智慧.html"
 DEFAULT_BASE = "https://api.deepseek.com/v1"
 DEFAULT_MODEL = "deepseek-v4-flash"
 
-# 记忆材料（笔记/收藏/已读/AI 对话）的本地持久化目录：
-#   默认 ~/Library/Application Support/巴菲特投资智慧/（用户级目录，天然不进 Git）
+# 记忆材料（笔记/收藏/已读/AI 对话）的本地持久化目录（用户级目录，天然不进 Git）：
+#   macOS / Linux: ~/Library/Application Support/巴菲特投资智慧/
+#   Windows:       %APPDATA%\巴菲特投资智慧\
 #   可用环境变量 BUFFETT_DATA_DIR 覆盖（例如指向项目内时请在 .gitignore 忽略）
-DATA_DIR = (os.environ.get("BUFFETT_DATA_DIR") or
-            os.path.join(os.path.expanduser("~"), "Library", "Application Support", "巴菲特投资智慧"))
+if os.name == "nt":
+    _appdata = os.environ.get("APPDATA") or os.path.expanduser("~")
+    DATA_DIR = os.environ.get("BUFFETT_DATA_DIR") or os.path.join(_appdata, "巴菲特投资智慧")
+else:
+    DATA_DIR = (os.environ.get("BUFFETT_DATA_DIR") or
+                os.path.join(os.path.expanduser("~"), "Library", "Application Support", "巴菲特投资智慧"))
 STATE_FILE = os.path.join(DATA_DIR, "state.json")
 
 
