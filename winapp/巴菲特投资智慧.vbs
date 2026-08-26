@@ -94,9 +94,33 @@ Function FindEdge()
     FindEdge = ""
 End Function
 
+' ---------- 工具：按 UTF-8 读取文件（兼容 PowerShell 重定向日志） ----------
+Function ReadFileAny(path)
+    Dim st, txt
+    txt = ""
+    On Error Resume Next
+    Set st = CreateObject("ADODB.Stream")
+    st.Type = 2                        ' adTypeText
+    st.Charset = "utf-8"
+    st.Open
+    st.LoadFromFile path
+    txt = st.ReadText
+    st.Close
+    If Err.Number <> 0 Then txt = ""
+    On Error GoTo 0
+    ReadFileAny = txt
+End Function
+
+Function LogTail(path, maxChars)
+    Dim txt
+    txt = ReadFileAny(path)
+    If Len(txt) > maxChars Then txt = "…" & Right(txt, maxChars)
+    LogTail = txt
+End Function
+
 ' ---------- 主流程 ----------
 Dim port, url, pyExe, scriptPath, cmd, pid, tf
-Dim errNo, errDesc, i
+Dim errNo, errDesc, i, debugLog, logTail
 
 ' 1) 快速探测：服务已在运行则直接打开窗口（不等 20 秒）
 port = 0
@@ -112,6 +136,7 @@ If port = 0 Then
     If Not fso.FolderExists(dataDir) Then fso.CreateFolder(dataDir)
     pyExe      = appDir & "\python\python.exe"
     scriptPath = appDir & "\app\serve_buffett_app.py"
+    debugLog   = dataDir & "\launch-debug.log"
 
     ' 预检：安装完整性（常见于安全软件拦截了解压）
     Dim missing
@@ -126,7 +151,7 @@ If port = 0 Then
         WScript.Quit 3
     End If
 
-    ' 隐藏启动（窗口样式 0）；失败时捕获精确错误码
+    ' 启动尝试一：直接隐藏运行（窗口样式 0），失败时捕获精确错误码
     cmd = """" & pyExe & """ -u """ & scriptPath & """ --no-browser --port 8666"
     pid = 0
     For i = 1 To 2
@@ -139,8 +164,24 @@ If port = 0 Then
         WScript.Sleep 500                ' 重试一次（应对安全软件瞬时拦截）
     Next
 
+    ' 启动尝试二：PowerShell 兜底（隐藏运行 + 输出重定向到调试日志）。
+    ' Run 解析失败的个别环境 PS 可成功；即使失败，日志里也会有 python 的真实报错。
     If pid = 0 Or errNo <> 0 Then
-        ' 兜底自检：前台运行 python -V，让 python 自身的报错可见（诊断用）
+        cmd = "powershell -NoProfile -ExecutionPolicy Bypass -Command " & _
+              """& '" & pyExe & "' -u '" & scriptPath & _
+              "' --no-browser --port 8666 2>&1 | Out-File -FilePath '" & debugLog & _
+              "' -Encoding utf8"""
+        On Error Resume Next
+        pid = sh.Run(cmd, 0, False)
+        If Err.Number <> 0 Then pid = 0
+        errNo = Err.Number
+        errDesc = Err.Description
+        On Error GoTo 0
+        WScript.Sleep 3000               ' 给 python 启动时间（同时让日志落盘）
+    End If
+
+    If pid = 0 Or errNo <> 0 Then
+        ' 失败详情：错误码 + python 自检 + 调试日志 + 可手动复现的命令
         Dim diag, diagOut, diagErr, pyInfo
         diagOut = "" : diagErr = "" : pyInfo = ""
         On Error Resume Next
@@ -159,21 +200,28 @@ If port = 0 Then
             End If
         End If
         On Error GoTo 0
+        logTail = LogTail(debugLog, 800)
 
-        MsgBox "本地服务启动失败。" & vbCrLf & vbCrLf & _
-               "错误码：" & errNo & " " & errDesc & vbCrLf & _
-               "python 自检：" & pyInfo & vbCrLf & _
-               "安装目录：" & appDir & vbCrLf & vbCrLf & _
-               "请在「命令提示符」中手动运行以下命令，查看完整报错并告诉我：" & vbCrLf & _
-               "  """ & pyExe & """ -u """ & scriptPath & """ --no-browser --port 8666" & vbCrLf & vbCrLf & _
-               "常见原因：" & vbCrLf & _
-               "  · 安全软件拦截 python.exe（将安装目录加入信任区，或暂时退出后重试）；" & vbCrLf & _
-               "  · 安装不完整（重新下载安装包并重装）；" & vbCrLf & _
-               "  · 系统为 32 位或 ARM（本应用仅支持 64 位 Windows 10/11）。", _
-               vbCritical, "巴菲特投资智慧"
+        Dim msg
+        msg = "本地服务启动失败。" & vbCrLf & vbCrLf & _
+              "错误码：" & errNo & " " & errDesc & vbCrLf & _
+              "python 自检：" & pyInfo & vbCrLf & _
+              "安装目录：" & appDir & vbCrLf
+        If logTail <> "" Then
+            msg = msg & vbCrLf & "调试日志（python 真实报错）：" & vbCrLf & logTail & vbCrLf
+        End If
+        msg = msg & vbCrLf & "手动复现（命令提示符 cmd 中运行）：" & vbCrLf & _
+              "  """ & pyExe & """ -u """ & scriptPath & """ --no-browser --port 8666" & vbCrLf & _
+              "（PowerShell 中运行则开头加 & 再加空格）" & vbCrLf & vbCrLf & _
+              "常见原因：" & vbCrLf & _
+              "  · 安全软件拦截 python.exe（将安装目录加入信任区，或暂时退出后重试）；" & vbCrLf & _
+              "  · 安装不完整（重新下载安装包并重装）；" & vbCrLf & _
+              "  · 系统为 32 位或 ARM（本应用仅支持 64 位 Windows 10/11）。"
+        MsgBox msg, vbCritical, "巴菲特投资智慧"
         WScript.Quit 4
     End If
-    ' 记录 PID（供「停止服务.vbs」与卸载器使用）
+    ' 记录 PID（供「停止服务.vbs」与卸载器使用；PS 兜底时记录的是 powershell 的 PID，
+    ' taskkill /T 会连同其子进程 python 一起结束）
     Set tf = fso.CreateTextFile(pidFile, True, False)
     tf.Write pid
     tf.Close
@@ -181,12 +229,17 @@ If port = 0 Then
 End If
 
 If port = 0 Then
-    MsgBox "本地服务启动失败（20 秒内未就绪）。" & vbCrLf & vbCrLf & _
-           "请检查：" & vbCrLf & _
+    logTail = LogTail(debugLog, 800)
+    Dim msg2
+    msg2 = "本地服务启动失败（20 秒内未就绪）。" & vbCrLf
+    If logTail <> "" Then
+        msg2 = msg2 & "调试日志：" & vbCrLf & logTail & vbCrLf
+    End If
+    msg2 = msg2 & vbCrLf & "请检查：" & vbCrLf & _
            "  1. 安装目录是否完整（python\ 文件夹存在）；" & vbCrLf & _
            "  2. 8666-8685 端口是否被防火墙拦截；" & vbCrLf & _
-           "  3. 查看「使用说明.txt」的故障排查一节。", _
-           vbExclamation, "巴菲特投资智慧"
+           "  3. 查看「使用说明.txt」的故障排查一节。"
+    MsgBox msg2, vbExclamation, "巴菲特投资智慧"
     WScript.Quit 2
 End If
 
