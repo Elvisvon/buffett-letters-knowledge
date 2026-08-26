@@ -119,7 +119,9 @@ Section "应用文件（必需）" SecMain
 SectionEnd
 
 Section "桌面快捷方式" SecDesktop
-  CreateShortcut "$DESKTOP\巴菲特投资智慧.lnk" "$INSTDIR\巴菲特投资智慧.vbs" "" "$INSTDIR\icon.ico" 0
+  ; 先删除可能存在的旧版残留（曾指向已移除的 vbs），再创建指向 exe 的新图标
+  Delete "$DESKTOP\巴菲特投资智慧.lnk"
+  CreateShortcut "$DESKTOP\巴菲特投资智慧.lnk" "$INSTDIR\巴菲特投资智慧.exe" "" "$INSTDIR\icon.ico" 0
 SectionEnd
 
 ; ---------- 卸载段 ----------
