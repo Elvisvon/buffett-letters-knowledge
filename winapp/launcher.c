@@ -1,7 +1,8 @@
 /* 巴菲特投资智慧 · Windows 启动器（编译版，替代易被杀软误报的 VBS 脚本）
  * ======================================================================
  * 行为（与 Mac 版 main.swift 对齐）：
- *   1. 探测 127.0.0.1:8666 是否已有本应用服务（/llm-config.js 含 BUFFETT_LLM_CONFIG 标记）；
+ *   1. 扫描 127.0.0.1:8666-8685 是否已有本应用服务
+ *      （/api/llm-config 含 buffett-wisdom 标记）；
  *   2. 未运行则拉起内置 Python 本地服务，启动方式三级兜底：
  *        a. 隐藏创建（CREATE_NO_WINDOW）——常规机器无任何窗口；
  *        b. 可见最小化控制台——部分安全软件拦截"隐藏启动"，但放行可见进程；
@@ -32,7 +33,7 @@
 
 #define START_PORT 8666
 #define MAX_PORT   8685
-#define MARKER_ASC "BUFFETT_LLM_CONFIG"   /* 服务标记（ASCII，字节比较） */
+#define MARKER_ASC "buffett-wisdom"   /* 服务标记（ASCII，字节比较） */
 
 static wchar_t g_appdir[MAX_PATH];     /* 本 exe 所在目录（安装目录） */
 static wchar_t g_pidfile[MAX_PATH];    /* %APPDATA%\巴菲特投资智慧\server.pid */
@@ -75,7 +76,7 @@ static void init_paths(void)
     swprintf(g_flagfile, MAX_PATH, L"%ls\\server-blocked.flag", dir);
 }
 
-/* ---------- 端口探测：GET /llm-config.js 并检查标记 ---------- */
+/* ---------- 端口探测：GET /api/llm-config 并检查应用标记 ---------- */
 static int probe_port(int port)
 {
     SOCKET s;
@@ -83,7 +84,7 @@ static int probe_port(int port)
     u_long nb = 1;
     fd_set wf;
     struct timeval tv;
-    const char *req = "GET /llm-config.js HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n";
+    const char *req = "GET /api/llm-config HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n";
     char buf[4096];
     int got = 0, r;
     DWORD to = 1500;
@@ -116,6 +117,14 @@ static int probe_port(int port)
     buf[got] = 0;
     closesocket(s);
     return strstr(buf, MARKER_ASC) != NULL;
+}
+
+static int find_existing_server(void)
+{
+    int p;
+    for (p = START_PORT; p <= MAX_PORT; p++)
+        if (probe_port(p)) return p;
+    return 0;
 }
 
 static int wait_server(void)
@@ -361,13 +370,12 @@ int wmain(void)
     init_paths();
     blocked = GetFileAttributesW(g_flagfile) != INVALID_FILE_ATTRIBUTES;
 
-    /* 1) 快速探测：服务已在运行则直接打开窗口。
+    /* 1) 扫描完整回退端口段：服务已在运行则直接打开窗口。
      *    若上次服务被安全软件杀过（标记存在），不再尝试拉起，直接复用或离线 */
-    if (probe_port(START_PORT)) {
-        port = START_PORT;
-    } else if (!blocked) {
+    port = find_existing_server();
+    if (!port && !blocked) {
         Sleep(800);                        /* 消除「双开同时启动」竞态 */
-        if (probe_port(START_PORT)) port = START_PORT;
+        port = find_existing_server();
     }
 
     /* 2) 未运行 → 拉起内置 Python（三级兜底） */

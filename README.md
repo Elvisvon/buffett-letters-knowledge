@@ -16,7 +16,7 @@
 - **笔记与划线**：选中文字 → 高亮（黄/蓝）/ 下划线 / 笔记；**笔记正文支持 Markdown 渲染**（标题/加粗/列表/引用/代码块/链接，AI 答复保存后直接呈现排版）；文章级笔记自动保存；一键导出 `.md` + `.json`
 - **AI 讨论**：每篇文章旁聊天面板，自动携带文章全文与你的笔记；每条 AI 答复可一键「加入笔记」；OpenAI 兼容接口（默认 DeepSeek）
 - **与巴菲特对话 / 与芒格对话**：基于 `celebrity-buffett` / `celebrity-charlie-munger` 人格（distilly 蒸馏，项目内 `skills/` 下）的双对话专栏，主页双入口（巴菲特头像 / 芒格头像），护城河、多元思维模型等框架先研究再回答；两套对话记忆独立持久化
-- **主页 Hero 交互图**：巴菲特历年收益率（1957–2025，纯账面价值口径）——逐年收益率柱状图（正琥珀/负深红）+ 累计净值对数轴曲线 + 年化收益虚线，十字线 tooltip、图例开关、滚轮/滑块缩放，右上角标注口径说明；数据来自 `buffet_return_data.csv`（OCR 提取 + 官方年报交叉校验）
+- **主页 Hero 交互图**：巴菲特历年表现（1957–2018；1957–1964 为合伙基金收益，1965–2018 为伯克希尔每股账面价值增幅）——年度变动率柱状图（正琥珀/负深红）+ 累计净值对数轴曲线 + 年化收益虚线，十字线 tooltip、图例开关、滚轮/滑块缩放，右上角标注口径说明；数据来自 `buffet_return_data.csv`（OCR 提取 + 复算校验）。2019 年后伯克希尔已改用每股市场价值作为官方长期表现表口径，未与此前账面价值序列拼接。
 - **侧栏隐藏/显示**：顶栏 `◧/◨` 按钮一键收起/展开左侧栏，正文与 Hero 图随之伸缩，偏好持久化
 - **流式输出**：AI 讨论与两路人格对话均为 SSE 流式逐字渲染
 - **背景解释**：选中文章中的词语 →「🔍 背景解释」，AI 结合文章内容与**写作年份的市场背景**（从年度索引自动注入：市场环境、重大事件、核心主题）解释金融概念；支持就解释继续追问；满意的解释可保存到笔记「背景解释」栏，随时回顾，导出时一并包含
@@ -31,10 +31,10 @@ python3 package_app.py          # 生成 dist/巴菲特投资智慧.app + dist/�
 ```
 
 - **DMG 安装**：把 `巴菲特投资智慧.app` 拖入 Applications（或任意位置）即可；首次打开如被 Gatekeeper 拦截，右键 → 打开，或 `xattr -dr com.apple.quarantine "/Applications/巴菲特投资智慧.app"`
-- **原生体验**：双击 App → 打开原生窗口（Swift + WKWebView 承载页面），**Dock 图标停留**，后台自动拉起本地服务（127.0.0.1:8666）；关闭窗口即退出并停止服务
+- **原生体验**：双击 App → 打开原生窗口（Swift + WKWebView 承载页面），**Dock 图标停留**，后台自动拉起本地服务（首选 127.0.0.1:8666，端口占用时回退至 8685）；关闭窗口即退出并停止服务
 - **外部链接**：原文链接等外部网页自动用系统默认浏览器打开，应用内始终停留在本地页面
 - **自包含**：188 篇文章 / 分类索引 / 巴菲特人格 Skill / 构建脚本全部内嵌于 App 内，不依赖安装路径，完全离线可用
-- **LLM 密钥**：应用内设置面板填写，或先 `export DEEPSEEK_API_KEY=sk-xxx` 再启动（密钥不落盘）
+- **LLM 密钥**：应用内设置面板填写（仅存本机浏览器 localStorage），或先 `export DEEPSEEK_API_KEY=sk-xxx` 再启动（环境变量密钥不写入应用状态）
 
 ### Windows 版（NSIS 安装器 + 卸载器，内置 Python 运行时）
 
@@ -54,7 +54,7 @@ brew install makensis mingw-w64 # 一次性前置依赖（NSIS 3.x + MinGW 交�
 
 - 笔记、划线高亮、收藏、已读标记、文章 AI 讨论、与巴菲特对话、与芒格对话，都会**实时保存到本地文件**：`~/Library/Application Support/巴菲特投资智慧/state.json`
 - 该目录属于**本机用户数据**，任何 Git 仓库都不会包含它——上传 GitHub 不涉及这部分信息；如需改存项目目录，可设 `BUFFETT_DATA_DIR`（此时项目 `.gitignore` 已忽略 `.buffett-data/` 兜底）
-- API Key 等设置**绝不落盘**：只存在于内存（环境变量注入）或浏览器 localStorage
+- 环境变量或项目根 `.env` 提供的 API Key 只进入本地服务内存，不写入应用状态；在设置面板手动填写的 Key 仅保存在本机浏览器 localStorage
 - 直接双击 html（无服务）时自动降级为浏览器 localStorage，不影响使用
 
 ## 快速开始
@@ -65,12 +65,13 @@ brew install makensis mingw-w64 # 一次性前置依赖（NSIS 3.x + MinGW 交�
 - 开发调试：双击「启动巴菲特知识库.command」或终端运行 `python3 serve_buffett_app.py`
 - 直接双击 html 也可离线阅读（此时在应用「设置」面板手动填写 API Key，仅存本机浏览器）
 
-服务地址 `http://127.0.0.1:8666/巴菲特投资智慧.html`（端口可用 `BUFFETT_PORT` 调整；若打开 404，先确认没有残留旧服务占用端口：`lsof -iTCP:8666 -sTCP:LISTEN`）。
+服务首选地址为 `http://127.0.0.1:8666/巴菲特投资智慧.html`；端口可用 `BUFFETT_PORT` 调整，若被占用会自动尝试随后 19 个端口，请以启动日志打印的实际地址为准。
 
 ## LLM 密钥安全设计
 
-- **任何文件都不包含 API Key**。`llm-config.js` 只有默认 base/model（`key: ""`）。
-- `serve_buffett_app.py` 启动本地服务时从环境变量 `DEEPSEEK_API_KEY` 读取密钥（未设置则回退项目根 `.env`），通过动态 `/llm-config.js` 端点注入，**密钥只存在于内存**，不落盘。
+- **任何受版本控制的文件和生成物都不包含 API Key**。`llm-config.js` 只有默认 base/model（`key: ""`）。本机 `.env` 已被 Git 忽略。
+- `serve_buffett_app.py` 启动本地服务时从环境变量 `DEEPSEEK_API_KEY` 读取密钥（未设置则回退脚本同目录的 `.env`），前端通过受同源策略保护的 JSON 接口 `/api/llm-config` 在运行时读取；服务只暴露应用入口，不把仓库文件作为静态资源提供。
+- 设置面板不会显示或回存服务端注入的 Key；只有用户主动手填的 Key 才会保存在当前浏览器 localStorage。
 - 默认模型 `deepseek-v4-flash`；可在应用「设置」面板修改 Base / Key / Model。
 
 ## 重新构建
@@ -92,6 +93,7 @@ python3 release.py --version X.Y    # → 把 Mac DMG + Windows Setup.exe 一起
 python3 release.py --version 2.1            # 安装包已存在时直接发布
 python3 release.py --version 2.1 --build    # 先打包 Mac + Windows 再发布
 python3 release.py --version 2.1 --dry-run  # 演练：只打印将执行的操作
+python3 release.py --version 2.1 --repos owner/repo  # 明确发布到指定仓库
 ```
 
 - 生成/更新标签 `vX.Y` 对应的 Release，附件名统一为 ASCII（`BuffettWisdom-vX.Y.dmg` / `BuffettWisdom-vX.Y-Setup.exe`，规避 GitHub 对非 ASCII 附件名的截断），重复执行自动覆盖
@@ -104,9 +106,9 @@ python3 release.py --version 2.1 --dry-run  # 演练：只打印将执行的操�
 ├── 巴菲特投资智慧.html               # 单文件应用（数据全部内嵌，约 3.7MB）
 ├── 巴菲特致股东信知识库/             # 原始文章（md + 原站 html）
 ├── 巴菲特致股东信分类索引(1956-2025) .xlsx  # 五维分类索引数据源
-├── buffet_return_data.csv            # 巴菲特历年收益率（1957–2025 账面口径，Hero 图数据源）
+├── buffet_return_data.csv            # 历年收益（1957–1964 合伙基金；1965–2018 每股账面价值，Hero 图数据源）
 ├── build_buffett_app.py              # 构建脚本（内嵌 ECharts / 图标 / 收益率）
-├── serve_buffett_app.py              # 本地启动器（环境变量注入密钥 + /api/state 记忆持久化）
+├── serve_buffett_app.py              # 本地启动器（同源运行时配置 + /api/state 记忆持久化）
 ├── 启动巴菲特知识库.command           # macOS 一键启动（终端方式）
 ├── macapp/main.swift                 # 原生窗口壳（Swift + WKWebView，Dock 图标）
 ├── package_app.py                    # App/DMG 打包器（Mac）

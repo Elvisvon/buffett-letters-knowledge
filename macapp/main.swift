@@ -1,8 +1,8 @@
 // 巴菲特投资智慧 · 原生 macOS 窗口壳
 // ==================================
 // - 双击 .app → 原生窗口承载 WKWebView，Dock 图标停留（常规激活策略）
-// - 自动在后台启动 bundle 内 python3 本地服务（127.0.0.1:8666），窗口关闭即停止
-// - 若 8666 已有可用服务（如开发者手动启动），直接复用、不重复拉起
+// - 自动在后台启动 bundle 内 python3 本地服务（首选 127.0.0.1:8666），窗口关闭即停止
+// - 8666 被占用时跟随服务回退到 8667–8685；若已有可用服务则直接复用
 // - 外部链接（非本机）交给系统默认浏览器，应用内保持本地页面
 // 编译：xcrun swiftc -O -swift-version 5 -target arm64-apple-macos12.0 \
 //        -o 巴菲特投资智慧 macapp/main.swift -framework Cocoa -framework WebKit
@@ -15,24 +15,56 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
     var webView: WKWebView!
     var server: Process?
     var serverOwned = false
+    var terminationPending = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)          // 常规应用：Dock 图标 + 菜单栏
         buildMenu()
         buildWindow()
-        let url = URL(string: "http://127.0.0.1:8666/")!
-        ensureService(url: url) { [weak self] ok in
+        ensureService { [weak self] serviceURL in
             guard let self = self else { return }
-            if ok {
-                self.webView.load(URLRequest(url: url))
+            if let serviceURL = serviceURL {
+                self.webView.load(URLRequest(url: serviceURL))
             } else {
-                self.showFatal("本地服务启动失败。\n\n请确认已安装 Command Line Tools：\n  xcode-select --install\n\n或检查 127.0.0.1:8666 是否被其他程序占用。")
+                self.showFatal("本地服务启动失败。\n\n请确认已安装 Command Line Tools：\n  xcode-select --install\n\n或检查 127.0.0.1:8666–8685 是否全部被占用。")
             }
         }
         NSApp.activate(ignoringOtherApps: true)
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
+
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard !terminationPending, webView?.url != nil else {
+            return terminationPending ? .terminateLater : .terminateNow
+        }
+        terminationPending = true
+
+        // 等页面把 debounce 中的文章笔记和完整状态写回服务，再停止自有服务。
+        // 普通 pagehide keepalive 有约 64 KiB 限制，无法可靠保存较大的笔记/对话状态。
+        webView.callAsyncJavaScript(
+            "return await window.BUF.flushState();",
+            arguments: [:],
+            in: nil,
+            in: .page
+        ) { [weak self] _ in
+            DispatchQueue.main.async { self?.finishTermination() }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            self?.finishTermination()
+        }
+        return .terminateLater
+    }
+
+    private func finishTermination() {
+        guard terminationPending else { return }
+        terminationPending = false
+        if serverOwned {
+            server?.terminate()
+            serverOwned = false
+        }
+        NSApp.reply(toApplicationShouldTerminate: true)
+    }
 
     func applicationWillTerminate(_ notification: Notification) {
         if serverOwned { server?.terminate() }       // 只停自己拉起的服务
@@ -103,39 +135,61 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
     }
 
     private func probe(url: URL, completion: @escaping (Bool) -> Void) {
-        var req = URLRequest(url: url)
+        let endpoint = url.appendingPathComponent("api/llm-config")
+        var req = URLRequest(url: endpoint)
         req.timeoutInterval = 2
         URLSession.shared.dataTask(with: req) { data, resp, _ in
             guard let resp = resp as? HTTPURLResponse, resp.statusCode == 200,
-                  let data = data, let s = String(data: data, encoding: .utf8) else {
+                  let data = data,
+                  let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  obj["app"] as? String == "buffett-wisdom" else {
                 completion(false); return
             }
-            completion(s.contains("BUFFETT_DATA"))   // 确认是巴菲特应用的服务
+            completion(true)   // 确认是当前协议的巴菲特应用服务
         }.resume()
     }
 
-    private func ensureService(url: URL, completion: @escaping (Bool) -> Void) {
+    private func probeFirst(urls: [URL], completion: @escaping (URL?) -> Void) {
+        guard !urls.isEmpty else { completion(nil); return }
+        let group = DispatchGroup()
+        let resultQueue = DispatchQueue(label: "com.local.buffett.service-probe")
+        var available: [URL] = []
+        for url in urls {
+            group.enter()
+            probe(url: url) { ok in
+                if ok { resultQueue.sync { available.append(url) } }
+                group.leave()
+            }
+        }
+        group.notify(queue: resultQueue) {
+            let first = available.min { ($0.port ?? Int.max) < ($1.port ?? Int.max) }
+            completion(first)
+        }
+    }
+
+    private func ensureService(completion: @escaping (URL?) -> Void) {
         // 注意：所有 completion 必须在主线程回调（WKWebView 只能在主线程操作）
-        probe(url: url) { [weak self] ok in
+        let urls = (8666...8685).compactMap { URL(string: "http://127.0.0.1:\($0)/") }
+        probeFirst(urls: urls) { [weak self] existingURL in
             guard let self = self else { return }
-            if ok {                                       // 复用已有服务
+            if let existingURL = existingURL {             // 复用已有服务
                 self.serverOwned = false
-                DispatchQueue.main.async { completion(true) }
+                DispatchQueue.main.async { completion(existingURL) }
                 return
             }
             guard let proj = Bundle.main.resourceURL?.appendingPathComponent("project"),
                   let py = self.findPython() else {
-                DispatchQueue.main.async { completion(false) }
+                DispatchQueue.main.async { completion(nil) }
                 return
             }
             let p = Process()
             p.executableURL = py
-            p.arguments = ["serve_buffett_app.py", "--no-browser"]
+            p.arguments = ["serve_buffett_app.py", "--port", "8666", "--no-browser"]
             p.currentDirectoryURL = proj
             p.standardOutput = FileHandle.nullDevice
             p.standardError = FileHandle.nullDevice
             do { try p.run() } catch {
-                DispatchQueue.main.async { completion(false) }
+                DispatchQueue.main.async { completion(nil) }
                 return
             }
             self.server = p
@@ -143,12 +197,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
             var tries = 0
             func poll() {
                 if tries > 40 {
-                    DispatchQueue.main.async { completion(false) }
+                    DispatchQueue.main.async { completion(nil) }
                     return
                 }
                 tries += 1
-                self.probe(url: url) { ok in
-                    if ok { DispatchQueue.main.async { completion(true) } }
+                self.probeFirst(urls: urls) { serviceURL in
+                    if let serviceURL = serviceURL { DispatchQueue.main.async { completion(serviceURL) } }
                     else { DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { poll() } }
                 }
             }
@@ -197,6 +251,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
                  decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         guard let u = navigationAction.request.url else { decisionHandler(.cancel); return }
+        if u.scheme?.lowercased() == "mailto" {
+            NSWorkspace.shared.open(u)
+            decisionHandler(.cancel)
+            return
+        }
         if u.host == nil || u.host == "127.0.0.1" || u.host == "localhost" || u.scheme == "about" {
             decisionHandler(.allow); return
         }
